@@ -1,0 +1,9 @@
+infile
+start
+end
+Eff_length1_pop
+S[
+Theta(Wat)
+Theta(Taj)
+Theta(Fu&Li)
+TajimaD
