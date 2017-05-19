@@ -352,7 +352,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                         statistics[0].Hnfw[pop1] = fay_wu_normalized2(n,thetaL,thetaSo,(double)Sco,coef,thetaTo);
                         statistics[0].Ez[pop1]   = E_zeng(n,thetaL,thetaSo,(long int)Sco,coef);
                         */
-
+                                    
                         /*check analysis using Achaz approach*/
                         /**/
                         for(x=1;x<=floor(nsam[pop1]/2);x++) {
@@ -370,7 +370,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                             else w1[x] = (double)nsam[pop1]/1.0;
                             if(x == nsam[pop1]-x) w2[x] = (double)nsam[pop1]/((double)x*(double)(nsam[pop1] - x)*2.0);
                             else w2[x] = (double)nsam[pop1]/((double)x*(double)(nsam[pop1] - x)*1.0);
-
+                            
                             if(x == nsam[pop1]-x) sfreqn[x] = (int)((sfreq[pop1][x] + sfreq[pop1][nsam[pop1]-x] + sfreqn[x] + sfreqn[nsam[pop1]-x])/2.0);
                             else sfreqn[x] = sfreq[pop1][x] + sfreq[pop1][nsam[pop1]-x] + sfreqn[x] + sfreqn[nsam[pop1]-x];
                         }
@@ -657,7 +657,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                             for(y=0;y<nsam[pop1]/2;y++)  mean_freqsptr[y] = (double)statistics[0].H1freq[pop1][y+1];
                             mean_S = 0.0; for(y=0;y<nsam[pop1]-1;y++) mean_S += (double)mean_freqsptr[y];
                             for(y=0;y<nsam[pop1]/2;y++) mean_freqsptr[y] = mean_freqsptr[y]/mean_S;
-
+                            
                             statistics[0].To_ii[pop1] = -10000.0;
                             statistics[0].To_i0[pop1] = -10000.0;
                             statistics[0].ToH0_00[pop1] = -10000.0;

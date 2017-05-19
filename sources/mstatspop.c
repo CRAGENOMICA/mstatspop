@@ -1491,10 +1491,10 @@ int main(int argc, const char * argv[])
 		exit(1);
 	}
 	
-	if((statistics[0].piwHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
-		exit(1);
-	}
+    if((statistics[0].piwHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+        printf("\n  Error allocating memory.");
+        exit(1);
+    }
 	if((statistics[0].piaHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
 		printf("\n  Error allocating memory.");
 		exit(1);
@@ -2176,6 +2176,10 @@ int main(int argc, const char * argv[])
                 printf("\n  Error allocating memory.");
                 exit(1);
             }
+            if((stats_iter[0].thetaTHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                printf("\n  Error allocating memory.");
+                exit(1);
+            }
             
             if((stats_iter[0].piaHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
                 printf("\n  Error allocating memory.");
@@ -2649,7 +2653,7 @@ int main(int argc, const char * argv[])
 	free(statistics[0].piant);
 	free(statistics[0].piTnt);
 	free(statistics[0].fst);
-	free(statistics[0].piwHKY);
+    free(statistics[0].piwHKY);
 	free(statistics[0].piaHKY);
 	free(statistics[0].piTHKY);
 	free(statistics[0].fstHKY);
@@ -2753,7 +2757,8 @@ int main(int argc, const char * argv[])
         free(stats_iter[0].piant);
         free(stats_iter[0].piTnt);
 		free(stats_iter[0].fst);
-		free(stats_iter[0].piwHKY);
+        free(stats_iter[0].piwHKY);
+        free(stats_iter[0].thetaTHKY);
 		free(stats_iter[0].piaHKY);
 		free(stats_iter[0].piTHKY);
 		free(stats_iter[0].fstHKY);
