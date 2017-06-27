@@ -6,7 +6,7 @@
  *  \brief     zindex.h
  *  \details
  *  \author    Joan Jené
- *  \version   1.9.2
+ *  \version   1.9
  *  \date      May 22, 2017
  *  \history   - April 7, 2007 :  The SGZIndex struct has its own SScanState struct.
  *             - April 10, 2007 : Comments updated & items++ added.
@@ -16,7 +16,6 @@
  *             - April 20, 2017 : Library updated for Mac Os X.
  *             - May 19, 2017   : fzseekNearest added.
  *             - May 22, 2017   : C++ things (comments, declararions, ...) changed to C things.
- *             - May 22, 2017   : fgetc returns 0 (GZ_EOF) when EOF instead of returning the -5 error code.
  *  \pre
  *  \bug
  *  \warning
@@ -33,8 +32,9 @@
  *
  *            load_index_from_file("data.tfa.index", &idx);
  *
- *            fzseek(handle, &gz, &idx, "000064681", false, DO_NOT_GET_NEAREST);
- *
+ *            long int row_num = 0;
+ *            int from_last_search = 1;
+ *            fzseek(handle, &gz, &idx, "000064681", &row_num, from_last_search);
  *            unload_all_index_positions(&idx);
  *
  *      Example:
@@ -245,10 +245,9 @@ extern "C" {
      * @param file_handle is the compressed file handle.
      * @param z is the GZ structure of the compressed file.
      * @param idx is the index file structure.
-     * @search_id is the ID to be found.
-     * @row_num is the sequence number to be reached (0-based). It is also a return parameter that indicates the reached sequence number.
+     * @param search_id is the ID to be found.
+     * @param row_num is the sequence number to be reached (0-based). It is also a return parameter that indicates the reached sequence number.
      * @param from_last_search is 1 if the search must be done from the last found position.
-     * @param get_nearest is DO_NOT_GET_NEAREST if False and GET_R_NEAREST if get nearest from right.
      *
      * @return 	GZ_OK
      * 			GZ_PARAMS_ERROR

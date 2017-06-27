@@ -23,7 +23,8 @@ extern "C" {
 
 /* prints out ALL the results... */
 int print_output( int mainargc,int npops,int *nsam,
-					FILE *file_out, char *file_input, char *file_output,
+					FILE *file_out, SGZip *file_out_gz,
+                    char *file_input, char *file_output,
 					int gfffiles, char *file_GFF, char *subset_positions,
 					char *code_name, char *genetic_code,
 					long int length, long int length_seg,
@@ -39,7 +40,8 @@ int print_output( int mainargc,int npops,int *nsam,
 					double *nsites1_pop, double *nsites1_pop_outg,
 				    double *nsites2_pop, double *nsites2_pop_outg,
 					double *nsites3_pop, double *nsites3_pop_outg,
-					long int niterdata, char *matrix_pol, int *r2i_ploidies,char *matrix_pol_tcga);
+					long int niterdata, char *matrix_pol, int *r2i_ploidies,
+                    char *matrix_pol_tcga,char *chr_name);
 
 #ifdef	__cplusplus
 }

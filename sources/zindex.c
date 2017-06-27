@@ -6,7 +6,7 @@
  *  \brief     zindex.c
  *  \details
  *  \author    Joan Jené
- *  \version   1.9.2
+ *  \version   1.9
  *  \date      May 22, 2017
  *  \pre
  *  \bug
@@ -312,11 +312,11 @@ gz_return fzseek(FILE *file_handle, SGZip *z, struct SGZIndex *idx, const char *
 				/* There is a difference between accessing the first block of data or accessing the others */
 				if (search->position == 0) {
 					/* Accessing the first block of data */
-					CALL_ZLIB(inflateInit2(&((*z).strm), windowBits | ENABLE_ZLIB_GZIP));
+					CALL_ZLIB(inflateInit2(&((*z).strm), windowBits | ENABLE_ZLIB_GZIP)); /* (windowBits | ENABLE_ZLIB_GZIP) = 47 */
 					flush = Z_FULL_FLUSH;
 				} else {
 					/* Accessing the second block of data and others */
-					CALL_ZLIB(inflateInit2(&((*z).strm), -windowBits));
+					CALL_ZLIB(inflateInit2(&((*z).strm), -windowBits)); /* windowBits = 15 */
 					flush = Z_BLOCK;
 				}
 

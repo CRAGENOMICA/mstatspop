@@ -17,7 +17,7 @@
 extern "C" {
 #endif
 
-int get_msdata( FILE *file_input,SGZip *input_gz,
+int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_logerr_gz,
 		char **matrix_pol, long int **matrix_freq, long int **matrix_pos,
 		long int *length_seg, int *nsamuser, int npops, int nsamtot, long int length, long int *nmhits,
 		int *matrix_mask, float *vector_mask, float svratio, double **vector_priors, int *npriors,

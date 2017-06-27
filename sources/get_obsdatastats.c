@@ -10,7 +10,10 @@
 
 #include "zutil.h"
 
-int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
+int get_obsstats(FILE *file_output,SGZip *file_output_gz,
+                 FILE *file_mask,
+                 FILE *file_logerr,SGZip *file_logerr_gz,
+                 int n_samp, long int n_site,
 				 long int *n_realsite,char **names,char *DNA_matr,double *matrix_sizepos,
 				 double *matrix_segrpos,char **matrix_pol,long int **matrix_freq,
 				 long int **matrix_pos,double *length_al,long int *length_seg,
@@ -65,63 +68,63 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
 	
 	/* Two pointers indicating the samples that are current samples and the outgroup samples */
 	if((nnsam = (int *) calloc(maxnsamp,sizeof(int))) == 0) {
-		fprintf(file_output,"Error: memory not reallocated. get_obsstats.1"); 
+		fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstats.1"); 
 		return(0);
 	}
 	/* matrix of polymorphisms: only 0 and 1 */
     if((*matrix_pol = (char *) calloc (maxnsamp*maxbialsites, sizeof(char))) == 0) {
-        fprintf(file_output,"Error: memory not reallocated. get_obsstat.3");
+        fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.3");
         return(0);
     }
     if((*matrix_pol_tcga = (char *) calloc (maxnsamp*maxbialsites, sizeof(char))) == 0) {
-        fprintf(file_output,"Error: memory not reallocated. get_obsstat.3");
+        fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.3");
         return(0);
     }
 	/* indicates the position and the frequency */
 	if((*matrix_pos = (long int *) calloc (maxbialsites, sizeof(long int))) == 0) {
-		fprintf(file_output,"Error: memory not reallocated. get_obsstat.4"); 
+		fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.4"); 
 		return(0);
 	}
 	if((*matrix_freq = (long int *) calloc (maxbialsites, sizeof(long int))) == 0) {
-		fprintf(file_output,"Error: memory not reallocated. get_obsstat.5"); 
+		fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.5"); 
 		return(0);
 	}
 	if((*matrix_sv = (long int *) calloc (maxbialsites, sizeof(long int))) == 0) {
-		fprintf(file_output,"Error: memory not reallocated. get_obsstat.7"); 
+		fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.7"); 
 		return(0);
 	}
 	if((unic = (long int *) calloc (maxnsamp, sizeof(long int))) == 0) {
-		fprintf(file_output,"Error: memory not reallocated. get_obsstat.6"); 
+		fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.6"); 
 		return(0);
 	}
 	/* indicates the position of the mhits */
 	/*
 	if((mhitbp = (long int *) calloc (maxnsite, sizeof(long int))) == 0) {
-		fprintf(file_output,"Error: memory not reallocated. get_obsstat.6"); 
+		fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.6"); 
 		return(0);
 	}
 	*/
 	if((mvbp = (long int *) calloc (maxnsite, sizeof(long int))) == 0) {
-		fprintf(file_output,"Error: memory not reallocated. get_obsstat.13"); 
+		fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.13"); 
 		return(0);
 	}
  
 	if(n_samp > maxnsamp) {
         /* Reallocation in case the value be larger than specified */
         if((*matrix_pol = (char *) realloc (*matrix_pol,(n_samp*maxbialsites)*sizeof(char))) == 0) {
-            fprintf(file_output,"Error: memory not reallocated. get_obsstat.7b");
+            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.7b");
             return(0);
         }
         if((*matrix_pol_tcga = (char *) realloc (*matrix_pol_tcga,(n_samp*maxbialsites)*sizeof(char))) == 0) {
-            fprintf(file_output,"Error: memory not reallocated. get_obsstat.7b");
+            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.7b");
             return(0);
         }
         if((nnsam = (int *) realloc(nnsam,n_samp*sizeof(int))) == 0) {
-            fprintf(file_output,"Error: memory not reallocated. get_obsstats.9"); 
+            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstats.9"); 
             return(0);
         }
         if((unic = (long int *) realloc(unic,n_samp*sizeof(long int))) == 0) {
-            fprintf(file_output,"Error: memory not reallocated. get_obsstats.11"); 
+            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstats.11"); 
             return(0);
         }
         maxnsamp = n_samp;
@@ -129,12 +132,12 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
     if(n_site > maxnsite) {
 		/*
         if((mhitbp = (long int *) realloc (mhitbp,n_site*sizeof(long int))) == 0) {
-            fprintf(file_output,"Error: memory not reallocated. get_obsstat.8"); 
+            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.8"); 
             return(0);
         }
 		*/
         if((mvbp = (long int *) realloc (mvbp,n_site*sizeof(long int))) == 0) {
-            fprintf(file_output,"Error: memory not reallocated. get_obsstat.12"); 
+            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.12"); 
             return(0);
         }
         maxnsite = n_site;
@@ -150,12 +153,8 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
     /* calculate number of samples in outgroup and in the current sample */
 	/* if no outgroup, then all sequences are samples */
 	if(n_samp < 2) {
-		printf(" n_samples: %d .",n_samp);
-		printf(" NOT ENOUGH SAMPLES.");
-		if(file_output) {
-			fprintf(file_output," n_samples: %d .",n_samp);
-			fprintf(file_output," NOT ENOUGH SAMPLES.");
-		}
+        fzprintf(file_logerr,file_logerr_gz," n_samples: %d .",n_samp);
+        fzprintf(file_logerr,file_logerr_gz," NOT ENOUGH SAMPLES.");
 		return(0);
 	}
 	for(x=0;x<n_samp;x++) nnsam[x] = x;
@@ -398,7 +397,7 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
                             mv++;
                             if(mv >= maxnsite) {
                                 if((mvbp = (long int *) realloc (mvbp,(mv+128)*sizeof(long int))) == 0) {
-                                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.12"); 
+                                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.12"); 
                                     return(0);
                                 }
                                 maxnsite = mv;
@@ -417,23 +416,23 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
                             if(bial_sites == maxbialsites) {
                                 maxbialsites += 128;
                                 if((*matrix_pol = realloc(*matrix_pol,(maxnsamp)*(maxbialsites)*sizeof(char))) == 0) {
-                                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.11");
+                                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.11");
                                     return(0);
                                 }
                                 if((*matrix_pol_tcga = realloc(*matrix_pol_tcga,(maxnsamp)*(maxbialsites)*sizeof(char))) == 0) {
-                                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.11");
+                                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.11");
                                     return(0);
                                 }
                                 if((*matrix_pos = realloc(*matrix_pos,(maxbialsites)*sizeof(long int))) == 0) {
-                                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.12");
+                                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.12");
                                     return(0);
                                 }
                                 if((*matrix_freq = realloc(*matrix_freq,(maxbialsites)*sizeof(long int))) == 0) {
-                                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.13");
+                                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.13");
                                     return(0);
                                 }
                                 if((*matrix_sv = realloc(*matrix_sv,(maxbialsites)*sizeof(long int))) == 0) {
-                                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.14");
+                                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.14");
                                     return(0);
                                 }
                             }
@@ -522,7 +521,7 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
 				mv++;
                 if(mv >= maxnsite) {
                     if((mvbp = (long int *) realloc (mvbp,(mv+128)*sizeof(long int))) == 0) {
-                        fprintf(file_output,"Error: memory not reallocated. get_obsstat.12");
+                        fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.12");
                         return(0);
                     }
                     maxnsite = mv;
@@ -541,30 +540,30 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
             if(bial_sites == maxbialsites) {
                 /*
 				if(maxbialsites == 32767) {
-                    printf("\n Sorry, it is only accepted a maximum of 32767 biallelic sites per loci. It has been cut at position %ld.",xx+1);
-                    if(file_output) fprintf(file_output,"\n Sorry, it is only accepted a maximum of 32767 biallelic sites per loci. It has been cut at position %ld.",xx+1);
+                    fzprintf(file_logerr,file_logerr_gz,"\n Sorry, it is only accepted a maximum of 32767 biallelic sites per loci. It has been cut at position %ld.",xx+1);
+                    fzprintf(file_logerr,file_logerr_gz,"\n Sorry, it is only accepted a maximum of 32767 biallelic sites per loci. It has been cut at position %ld.",xx+1);
                     return(0);
                 }
                 else if(maxbialsites > 32767 - 128) maxbialsites = 32767;
                     else */maxbialsites += 128;
                 if((*matrix_pol = realloc(*matrix_pol,(maxnsamp)*(maxbialsites)*sizeof(char))) == 0) {
-                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.11");
+                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.11");
                     return(0);
                 }
                 if((*matrix_pol_tcga = realloc(*matrix_pol_tcga,(maxnsamp)*(maxbialsites)*sizeof(char))) == 0) {
-                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.11");
+                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.11");
                     return(0);
                 }
                 if((*matrix_pos = realloc(*matrix_pos,(maxbialsites)*sizeof(long int))) == 0) {
-                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.12");
+                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.12");
                     return(0);
                 }
                 if((*matrix_freq = realloc(*matrix_freq,(maxbialsites)*sizeof(long int))) == 0) {
-                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.13");
+                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.13");
                     return(0);
                 }
                 if((*matrix_sv = realloc(*matrix_sv,(maxbialsites)*sizeof(long int))) == 0) {
-                    fprintf(file_output,"Error: memory not reallocated. get_obsstat.14");
+                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.14");
                     return(0);
                 }
             }
@@ -593,34 +592,34 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
     if(file_output) {
 		if(output == 0 || output == 10) {
 			/*
-			fprintf(file_output,"\n\nWARNING: Positions with missing values and multiple hits (including codon positions with more than 2 variants) are filtered using THE COMPLETE FILE included.");
-			fprintf(file_output,"\n\nREADING INPUT FILE DATA:\n\n Number of Total Samples (if diploid, doubled): %d\n Valid sites: %.2f\n Multiple hits: %ld\n Polymorphic (biallelic) positions with missing samples: %ld\n Ratio missing/positions: %f\n Ratio trans/transv: %.3f.",nnnsam-!outgroup_presence,_sites,mhits,mv,(double)totalmis/(double)(nnnsam*_sites),(double)transitions/(double)transversions);
+			fzprintf(file_logerr,file_logerr_gz,"\n\nWARNING: Positions with missing values and multiple hits (including codon positions with more than 2 variants) are filtered using THE COMPLETE FILE included.");
+			fzprintf(file_logerr,file_logerr_gz,"\n\nREADING INPUT FILE DATA:\n\n Number of Total Samples (if diploid, doubled): %d\n Valid sites: %.2f\n Multiple hits: %ld\n Polymorphic (biallelic) positions with missing samples: %ld\n Ratio missing/positions: %f\n Ratio trans/transv: %.3f.",nnnsam-!outgroup_presence,_sites,mhits,mv,(double)totalmis/(double)(nnnsam*_sites),(double)transitions/(double)transversions);
 			*/
 			if(*nmhits) {
-                fprintf(file_output,"\n Position(s) of the multiple hits ");
+                fzprintf(file_output,file_output_gz,"\n Position(s) of the multiple hits ");
                 if(include_unknown)
-                    fprintf(file_output," (minor frequency not outgroup excluded in the analysis):");
+                    fzprintf(file_output,file_output_gz," (minor frequency not outgroup excluded in the analysis):");
                 else
-                    fprintf(file_output," (excluded from the analysis):");
+                    fzprintf(file_output,file_output_gz," (excluded from the analysis):");
 				for(x=0;x<*nmhits;x++) {
-					if(formatfile>0) fprintf(file_output," %ld",mhitbp[x]+formatfile-1);
-                    else fprintf(file_output," %ld",mhitbp[x]);
+					if(formatfile>0) fzprintf(file_output,file_output_gz," %ld",mhitbp[x]+formatfile-1);
+                    else fzprintf(file_output,file_output_gz," %ld",mhitbp[x]);
 				}
 			}
 			if(mv) {
-				fprintf(file_output,"\n Position(s) of the Variable (converted biallelic if mhits) base with missing samples:");
+				fzprintf(file_output,file_output_gz,"\n Position(s) of the Variable (converted biallelic if mhits) base with missing samples:");
 				for(x=0;x<mv;x++) {
-					if(formatfile>0) fprintf(file_output," %ld",mvbp[x] + formatfile-1);
-                    else fprintf(file_output," %ld",mvbp[x]);
+					if(formatfile>0) fzprintf(file_output,file_output_gz," %ld",mvbp[x] + formatfile-1);
+                    else fzprintf(file_output,file_output_gz," %ld",mvbp[x]);
 				}
 			}
-			fprintf(file_output,"\n\n Names from sample selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/(int)atoi(ploidy));
+			fzprintf(file_output,file_output_gz,"\n\n Names from sample selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/(int)atoi(ploidy));
 			z = 0;
 			for(y=0;y<npops-!outgroup_presence;y++) {
-				if(y < npops-1 || npops==1) fprintf(file_output,"\n\n Population[%d]:\n",y);
-				else fprintf(file_output,"\n\n Outgroup: \n");
+				if(y < npops-1 || npops==1) fzprintf(file_output,file_output_gz,"\n\n Population[%d]:\n",y);
+				else fzprintf(file_output,file_output_gz,"\n\n Outgroup: \n");
 				for(x=0;x<nsamuser[y]/atoi(ploidy);x++) {
-					fprintf(file_output,"\n %s",names[z]);
+					fzprintf(file_output,file_output_gz,"\n %s",names[z]);
 					z+=atoi(ploidy);
 				}
 			}
@@ -628,7 +627,7 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
             printf(".\n\nCalculating statistics...\n");
             fflush(stdout);
             */
-            fprintf(file_output,".\n\nCalculating statistics...\n");
+            fzprintf(file_output,file_output_gz,".\n\nCalculating statistics...\n");
             fflush(file_output);
 		}
 	}
@@ -640,29 +639,29 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
 			printf("\n\nREADING INPUT FILE DATA:\n\n Number of Total Samples (if diploid, doubled): %d\n Valid sites: %.2f\n Multiple hits: %ld\n Polymorphic (biallelic) positions with missing samples: %ld\n Ratio missing/positions: %f\n Ratio trans/transv: %.3f.",nnnsam-!outgroup_presence,_sites,*nmhits,mv,(double)totalmis/(double)(nnnsam*_sites),(double)transitions/(double)transversions);
 			*/
 			if(*nmhits) {
-                printf("\n Position(s) of the multiple hits ");
+                fzprintf(file_output,file_output_gz,"\n Position(s) of the multiple hits ");
                 if(include_unknown)
-                    printf(" (minor frequency not outgroup excluded in the analysis):");
+                    fzprintf(file_output,file_output_gz," (minor frequency not outgroup excluded in the analysis):");
                 else
-                    printf(" (excluded from the analysis):");
+                    fzprintf(file_output,file_output_gz," (excluded from the analysis):");
 				for(x=0;x<*nmhits;x++) {
-					if(formatfile>0) printf(" %ld",mhitbp[x] + formatfile-1);
-                    else printf(" %ld",mhitbp[x]);
+					if(formatfile>0) fzprintf(file_output,file_output_gz," %ld",mhitbp[x] + formatfile-1);
+                    else fzprintf(file_output,file_output_gz," %ld",mhitbp[x]);
 				}
 			}
 			if(mv) {
-				printf("\n Position(s) of the Variable (biallelic) base with missing samples:");
+				fzprintf(file_output,file_output_gz,"\n Position(s) of the Variable (biallelic) base with missing samples:");
 				for(x=0;x<mv;x++) {
-					printf(" %ld",mvbp[x]);
+					fzprintf(file_output,file_output_gz," %ld",mvbp[x]);
 				}
 			}
-			printf("\n\n Names from samples selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/atoi(ploidy));
+			fzprintf(file_output,file_output_gz,"\n\n Names from samples selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/atoi(ploidy));
 			z = 0;
 			for(y=0;y<npops-!outgroup_presence;y++) {
-				if(y < npops-1 || npops==1) printf("\n\n Population[%d]:\n",y);
-				else printf("\n\n Outgroup: \n");
+				if(y < npops-1 || npops==1) fzprintf(file_output,file_output_gz,"\n\n Population[%d]:\n",y);
+				else fzprintf(file_output,file_output_gz,"\n\n Outgroup: \n");
 				for(x=0;x<nsamuser[y]/atoi(ploidy);x++) {
-					printf("\n %s",names[z]);
+					fzprintf(file_output,file_output_gz,"\n %s",names[z]);
 					z++;
 				}
 			}
@@ -682,7 +681,7 @@ int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
         }
         /*
         if(file_output)
-			fprintf(file_output,"Not valid sites available ");
+			fzprintf(file_logerr,file_logerr_gz,"Not valid sites available ");
 		else
 			printf("Not valid sites available ");
         return 0;*/

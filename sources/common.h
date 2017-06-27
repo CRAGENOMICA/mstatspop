@@ -18,8 +18,11 @@ extern "C" {
 #include <string.h>
 #include <stdlib.h>
 #include <math.h>
+#include "zutil.h"
+#include "zindex.h"
 
-#define MSTATSPOP "\nmstatspop v.0.1beta (20170519)\n" \
+
+#define MSTATSPOP "\nmstatspop v.0.1beta (20170627)\n" \
 		   "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera\n" \
 		   "Variability Analyses of multiple populations: " \
 		   "Calculation and estimation of statistics and neutrality tests.\n"
@@ -31,8 +34,9 @@ extern "C" {
 #define MSP_GENCODE_COMBINATIONS    (unsigned long) 64 /* 4^3 */
 #define MSP_GFF_CRITERIA_MSG_LEN    (unsigned long) 20 /* e.g. "MIN" */
 #define MSP_MAX_FILELINE_LEN		(unsigned long) 102400
-
-#define SAMPLE_LARGE 4000
+#define MSP_MAX_NAME                (unsigned long) 1024
+#define MSP_MAX_COL_LINE            (unsigned long) 32767*2
+#define SAMPLE_LARGE                (unsigned long) 4000
 
 /* For compatibility for some old compilers */
 #ifndef NULL

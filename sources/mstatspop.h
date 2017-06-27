@@ -29,17 +29,18 @@ extern "C" {
 #include "ran1.h"
 #include "util.h"
 #include "zutil.h"
-
+#include "zindex.h"
+    
 /*introduce the FASTA file and the number of populations (with sample sizes)*/
-int get_obsdata( FILE *,FILE *,SGZip *,FILE *,char *,int ,char *,char *,char **,
+int get_obsdata( FILE *,SGZip *,FILE *,SGZip *,FILE *, SGZip *,FILE *,char *,int ,char *,char *,char **,
 						long int **,long int **, long int *, long int *, double *,
 						long int *,int,char *,int *,int,double *,double *,int,
 						double *,double **,long int **,long int *,int,int,char *,
 						double *,double *,double *,double *,double *,double *, double *,double *, 
-						double *, double *, double **,double **,int *, char **);
+						double *, double *, double **,double **,int *, char **,char *,int);
 						
 /*introduce the ms file and the number of populations (with sample sizes) and length*/			
-    int get_msdata( FILE *file_input,SGZip *,
+    int get_msdata( FILE *file_input,SGZip *,FILE *file_logerr,SGZip *file_logerr_gz,
                    char **matrix_pol, long int **matrix_freq, long int **matrix_pos,
                    long int *length_seg, int *nsamuser, int npops, int nsamtot, long int length, long int *nmhits,
                    int *matrix_mask, float *vector_mask, float svratio, double **vector_priors, int *npriors,
@@ -64,16 +65,20 @@ int calc_piwpiafst(int, int, int, int *, char *, long int, struct stats *,
 /*calculate fstH, Hapw, Hapa*/
 int calc_hwhafsth (int, int *, char *, long int, struct stats *);	
 
-int read_weights_file(FILE *file_es, FILE *file_output, float **wV, long int **Pp, long int *nV, long int *wlimit_end);
-	
-int read_coordinates(FILE *file_wcoor, FILE *file_output,long int **wgenes, long int *nwindows);
-
-int read_weights_positions_file(FILE *file_ws,SGZip *file_ws_gz, FILE *file_output, float **wP, float **wPV, float **wV, long int *welimit_end);
+int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, SGZip *file_output_gz, FILE *file_logerr, SGZip *file_logerr_gz, long int **wgenes, long int *nwindows,char *chr_name);
 
 int get_tfadata(FILE *file_output,
+    SGZip *file_output_gz,
 	FILE *file_input,
 	SGZip *input_gz,
-	char **matrix_pol,
+    struct SGZIndex *index_input,
+    char *file_wps,
+    FILE *file_ws,
+    SGZip *file_ws_gz,
+    struct SGZIndex *index_w,
+    FILE *file_logerr,
+    SGZip *file_logerr_gz,
+    char **matrix_pol,
 	long int **matrix_freq,
 	long int **matrix_pos,
 	long int *length,
@@ -105,12 +110,6 @@ int get_tfadata(FILE *file_output,
     double **lengthamng,
     double **lengthamng_outg,
 	int *sort_nsam,
-	
-	float *wV,
-	long int *Pp,
-	long int nV,
-	float *wP,
-	float *wPV,
 	long int *wgenes,
 	long int nwindows,
     long int first_slide,
@@ -120,10 +119,9 @@ int get_tfadata(FILE *file_output,
 	long int *li/**/,
     int *npriors,
     double **vector_priors,
-    long int wlimit_end,
-    long int welimit_end,
-    char **matrix_pol_tcga
-
+    char **matrix_pol_tcga,
+    char *chr_name,
+    int first
 );
 void usage(void);
 

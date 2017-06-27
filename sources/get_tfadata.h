@@ -14,17 +14,19 @@
 #include "common.h"
 #include "usegff.h"
 #include "get_obsdatastats.h"
-#include "zutil.h"
 
 #ifdef	__cplusplus
 extern "C" {
 #endif
+    
+#define MAXLEN 1000
 
-int read_coordinates(FILE *file_wcoor, FILE *file_output,long int **wgenes, long int *nwindows);
-int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz,FILE *file_output, float **wP, float **wPV, float **wV,long int *wlimit_end);
-int read_weights_file(FILE *file_es, FILE *file_output, float **wV, long int **Pp, long int *nV, long int *welimit_end);
-int function_read_tfasta(FILE *file_input,SGZip *input_gz,long int init_site,long int end_site,int *n_sam, long int *n_site, char ***names, char **DNA_matr,char **matrix_pol_tcga);
-
+int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, SGZip *file_output_gz, FILE *file_logerr, SGZip *file_logerr_gz, long int **wgenes, long int *nwindows,char *chr_name);
+int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZIndex *index_w,FILE *file_logerr,SGZip *file_logerr_gz, double **wP, double **wPV, double **wV, long int *wlimit_end,long int init_site, double *window_size, long int *n_sitesw, int weight_window, char *chr_name,int first);
+int function_read_tfasta(FILE *file_input,SGZip *input_gz,struct SGZIndex *index_input,FILE *file_logerr,SGZip *file_logerr_gz,long int init_site,long int end_site,int *n_sam, long int *n_site, char ***names, char **DNA_matr,char **matrix_pol_tcga,char *chr_name,int first);
+int transform_beg_chr(char *ID, char *chr_name, long int beg,int nchstr, int count0s);
+int check_comment(char *c, FILE *file_input, SGZip *file_input_gz);
+    
 #ifdef	__cplusplus
 }
 #endif

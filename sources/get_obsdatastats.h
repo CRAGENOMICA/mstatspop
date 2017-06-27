@@ -16,7 +16,10 @@ extern "C" {
 
 #include "zutil.h"
 
-int get_obsstats(FILE *file_output,FILE *file_mask,int n_samp, long int n_site,
+int get_obsstats(FILE *file_output,SGZip *file_output_gz,
+                 FILE *file_mask,
+                 FILE *file_logerr,SGZip *file_logerr_gz,
+                 int n_samp, long int n_site,
 				 long int *n_realsite,char **names,char *DNA_matr,double *matrix_sizepos,
 				 double *matrix_segrpos,char **matrix_pol,long int **matrix_freq,
 				 long int **matrix_pos,double *length_al,long int *length_seg,

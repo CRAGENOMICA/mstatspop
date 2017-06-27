@@ -6,8 +6,8 @@
  *  \brief     zutil.c
  *  \details
  *  \author    Joan Jené
- *  \version   1.14
- *  \date      May 22, 2017
+ *  \version   1.15
+ *  \date      June 22, 2017
  *  \pre
  *  \bug
  *  \warning
@@ -165,15 +165,21 @@ int fzgetc(FILE * file_handle, SGZip *z) {
 		}
 
 		if ((*z).bytes_read == 0) {
-			inflateEnd(&((*z).strm));
+			private_setEnd(file_handle, z);
 			ret = GZ_EOF;
 		} else {
-			/* Return the current char */
-			ret = (*z).out[(*z).pointer];
-
-			/* Increment the pointer for the next call to this function */
-			(*z).pointer++;
-
+            if ((*z).have > 0) { /* If the last inflated compressed block has uncompressed chars, then: */
+                /* Return the current char */
+                ret = (*z).out[(*z).pointer];
+                /* Increment the pointer for the next call to this function */
+                (*z).pointer++;
+            } else {
+                /* the last inflated uncompressed block has 0 uncompressed chars. */
+            	/* Assumed is the last block of uncompressed data. */
+            	private_setEnd(file_handle, z);
+                ret = GZ_EOF;
+            }
+                
 			if ((*z).pointer >= (*z).have) {
 				(*z).pointer = 0;
 				(*z).strm.avail_out = CHUNK;
@@ -452,14 +458,24 @@ int fzeof(FILE * file_handle, SGZip *z) {
 			  ((*z).strm.avail_out != 0) &&  there is no more input data to uncompress and
 			  ((*z).pointer >= (*z).have))) == 1) { there is no more chars in the buffer*/
 
-			inflateEnd(&((*z).strm));
-
-			/* Initialize first time to true */
-			(*z).first_time = 1;
+			private_setEnd(file_handle, z);
 		}
 	}
 
 	return ret;
+}
+
+void private_setEnd(FILE * file_handle, SGZip *z) {
+	/* End inflate */
+	inflateEnd(&((*z).strm));
+
+	/* Initialize first time to true */
+	(*z).first_time = 1;
+
+	/* fzeof conditions to be EOF */
+	(*z).strm.avail_in = 0;
+	(*z).pointer       = 0;
+	(*z).have          = 0;
 }
 
 gz_return save_index_to_file(const char *file_name, struct SGZIndex *idx);

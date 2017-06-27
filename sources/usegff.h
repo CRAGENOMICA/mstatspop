@@ -50,14 +50,16 @@ struct valuesgff
 
 int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 			double *matrix_sizepos,int n_samp,long int n_site,char *DNA_matr,
-			double *matrix_segrpos,FILE *file_output,int mainargc,int include_unknown,
+			double *matrix_segrpos,FILE *file_output,SGZip *file_output_gz,int mainargc,
+            FILE *file_logerr, SGZip *file_logerr_gz,int include_unknown,
 			char *criteria_transcripts, int type_output, long int *nmhits, long int *mhitbp,
-			int outgroup_presence, int nsamoutg);
+			int outgroup_presence, int nsamoutg,char *chr_name, int first);
 
 int tripletnsamp(char *cod3n,char *DNA_matr,char strand,double *cmat,
 					int n_samp,long int n_site,long int end,long int ii,
-					FILE *file_output/*,int mainargc*/,int include_unknown,int type_output,
-					long int *nmhits, long int *mhitbp, int outgroup_presence, int nsamoutg);
+					FILE *file_output,SGZip *file_output_gz/*,int mainargc*/,int include_unknown,int type_output,
+					long int *nmhits, long int *mhitbp, int outgroup_presence, int nsamoutg,
+                    FILE *file_logerr, SGZip *file_logerr_gz);
 	
 int comp_trcpt_id(const void *a,const void *b);
 int comp_start_id(const void *a,const void *b);

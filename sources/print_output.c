@@ -22,7 +22,8 @@ static char tripletsU[64][3] =
 
 /* prints out ALL the results... */
 int print_output( int mainargc,int npops,int *nsam,
-					FILE *file_out, char *file_input, char *file_output,
+					FILE *file_out, SGZip *file_out_gz,
+                    char *file_input, char *file_output,
 					int gfffiles, char *file_GFF, char *subset_positions,
 					char *code_name, char *genetic_code,
 					long int length, long int length_seg,
@@ -39,7 +40,7 @@ int print_output( int mainargc,int npops,int *nsam,
 				    double *nsites2_pop, double *nsites2_pop_outg,
 					double *nsites3_pop, double *nsites3_pop_outg,
 					long int niterdata, char *matrix_pol, int *r2i_ploidies,
-                    char *matrix_pol_tcga)
+                    char *matrix_pol_tcga,char *chr_name)
 {
 	int x=0;
 	int y=0;
@@ -108,6 +109,7 @@ int print_output( int mainargc,int npops,int *nsam,
             }
             if(formatfile == 3) { /*tfasta*/
                 if(npriors == 2) {
+                    fprintf(file_out,"scaffold_name: %s\t",chr_name);
                     fprintf(file_out,"start_window: %.0f\t",vector_priors[0]);
                     fprintf(file_out,"end_window: %.0f\t",vector_priors[1]);
                 }
@@ -315,15 +317,15 @@ int print_output( int mainargc,int npops,int *nsam,
 				for(x=0;x<np;x++) {
 					if(nsam[x] > 1) {
 						fprintf(file_out,"S[%d]: %d\t",x,(int)statistics[0].S[x]);
-						if(nsites2_pop_outg[x] > 0) fprintf(file_out,"Theta/nt(Wat)[%d]: %f\t",x,statistics[0].thetaS[x]/(double)nsites2_pop[x]);
+						if(nsites2_pop[x] > 0) fprintf(file_out,"Theta/nt(Wat)[%d]: %f\t",x,statistics[0].thetaS[x]/(double)nsites2_pop[x]);
                         else fprintf(file_out,"Theta/nt(Wat)[%d]: NA\t",x);
-						if(nsites2_pop_outg[x] > 0) fprintf(file_out,"Theta/nt(Taj)[%d]: %f\t",x,statistics[0].thetaT[x]/(double)nsites2_pop[x]);
+						if(nsites2_pop[x] > 0) fprintf(file_out,"Theta/nt(Taj)[%d]: %f\t",x,statistics[0].thetaT[x]/(double)nsites2_pop[x]);
                         else fprintf(file_out,"Theta/nt(Taj)[%d]: NA\t",x);
-						if(nsites2_pop_outg[x] > 0) fprintf(file_out,"Theta/nt(Fu&Li)[%d]: %f\t",x,statistics[0].thetaFL[x]/(double)nsites2_pop[x]);
+						if(nsites2_pop[x] > 0) fprintf(file_out,"Theta/nt(Fu&Li)[%d]: %f\t",x,statistics[0].thetaFL[x]/(double)nsites2_pop[x]);
                         else fprintf(file_out,"Theta/nt(Fu&Li)[%d]: NA\t",x);
-						if(nsites3_pop_outg[x] > 0) fprintf(file_out,"Theta/nt(Achaz,Wat)[%d]: %f\t",x,statistics[0].thetaSA[x]/(double)nsites3_pop[x]);
+						if(nsites3_pop[x] > 0) fprintf(file_out,"Theta/nt(Achaz,Wat)[%d]: %f\t",x,statistics[0].thetaSA[x]/(double)nsites3_pop[x]);
                         else fprintf(file_out,"Theta/nt(Achaz,Wat)[%d]: NA\t",x);
-						if(nsites3_pop_outg[x] > 0) fprintf(file_out,"Theta/nt(Achaz,Taj)[%d]: %f\t",x,statistics[0].thetaTA[x]/(double)nsites3_pop[x]);
+						if(nsites3_pop[x] > 0) fprintf(file_out,"Theta/nt(Achaz,Taj)[%d]: %f\t",x,statistics[0].thetaTA[x]/(double)nsites3_pop[x]);
                         else fprintf(file_out,"Theta/nt(Achaz,Taj)[%d]: NA\n",x);
 						if(statistics[0].thetaTHKY[x] > -10000/* && missratio == 0.*/) fprintf(file_out,"Theta/nt(Taj)HKY[%d]: %f\t",x,statistics[0].thetaTHKY[x]);
 						else fprintf(file_out,"Theta/nt(Taj)HKY[%d]: NA\t",x);
@@ -1309,6 +1311,7 @@ int print_output( int mainargc,int npops,int *nsam,
 		if(output == 6) {
 			/*Matrix SNPs*/
 			fprintf(file_out,"#Run: %ld",niterdata);
+            fprintf(file_out,"\nscaffold_name: %s",chr_name);
 			fprintf(file_out,"\n#SNP chr");
 			for(x=0;x<npops-!outgroup_presence;x++) { for(y=0;y<nsam[x];y++) { fprintf(file_out," ind%03d%03d",x,y);}}
 			fprintf(file_out,"\n");
@@ -1399,6 +1402,7 @@ int print_output( int mainargc,int npops,int *nsam,
 				/*header*/
 				fprintf(file_out,"#mstatspop output for dadi format of joint frequency spectrum.\n");
 				fprintf(file_out,"#Input file: %s\n",file_input);
+                fprintf(file_out,"#scaffold_name: %s\n",chr_name);
 				fprintf(file_out,"#Note: All alleles are defined arbitrarily to A and T.\n");
 				fprintf(file_out,"Ref_int\tRef_out\tAllele1\t");
 				for(x=0;x<npops-oo;x++) fprintf(file_out,"Pop_%03d\t",x);
@@ -1475,6 +1479,7 @@ int print_output( int mainargc,int npops,int *nsam,
                     }
                     if(formatfile == 3) {
                         if(npriors == 2) {
+                            fprintf(file_out,"scaffold_name:\t%s\t",chr_name);
                             fprintf(file_out,"start_window:\t%.0f\t",vector_priors[0]);
                             fprintf(file_out,"end_window:\t%.0f\t",vector_priors[1]);
                         }

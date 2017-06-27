@@ -52,6 +52,7 @@ int main(int argc, const char * argv[])
 	char file_GFF[MSP_MAX_FILENAME];
 	char file_H1f[MSP_MAX_FILENAME];
 	char file_H0f[MSP_MAX_FILENAME];
+    char file_log[MSP_MAX_FILENAME];
 	
 	memset( file_in,  0, MSP_MAX_FILENAME);
 	memset( file_out, 0, MSP_MAX_FILENAME);
@@ -61,15 +62,17 @@ int main(int argc, const char * argv[])
 	memset( file_H0f, 0, MSP_MAX_FILENAME);
 			
 	FILE *file_input	= 	0;
-	SGZip file_input_gz;
-
+    FILE *file_logerr   =   stdout;
 	FILE *file_output	=	stdout;
 	FILE *file_mask	    =	0;
 	FILE *file_H1freq	=	0;
 	FILE *file_H0freq	=	0;
 
+    SGZip file_input_gz;
+    SGZip file_output_gz;
+    SGZip file_logerr_gz;
 
-	/* GFF variables */
+    /* GFF variables */
 	int 	gfffiles			= 0;
 	/*int 	observed_data	= 0;*/
 	char 	subset_positions[ MSP_MAX_GFF_WORDLEN ];		
@@ -172,40 +175,41 @@ int main(int argc, const char * argv[])
 	int sort_index;/*used in the loop*/
 	
 	/*tfasta windows and weights*/
-	long int *Pp; /*number of position (for effect sizes)*//*not used*/
-	long int nV; /*number of variants at file ov variant weights (effect sizes)*//*not used*/
-	float *wV;/*weight at variant (effect sizes)*//*not yet functional although we can recover*/
 	long int *wgenes;/*init and end coordinates*/
 	long int nwindows;/*number of fragments*/
-    float *wP;/*weight for each position*/
-    float *wPV;/*weight for the variant at each position*/
 
     long int slide=0;
     long int first_slide=0;
 	long int window=0;
     char file_wps[MSP_MAX_FILENAME];
-    char file_effsz[MSP_MAX_FILENAME];
-    char file_effps[MSP_MAX_FILENAME];
 	char file_Wcoord[MSP_MAX_FILENAME];
     FILE *file_ws   	= 	0;
     SGZip file_ws_gz;
 
     FILE *file_es   	= 	0;
 	FILE *file_wcoor    =   0;
+    SGZip file_wcoor_gz;
 	
-	int Physical_length=1;
-    long int wlimit_end;
-    long int welimit_end;
+    struct SGZIndex index_input;
+    struct SGZIndex index_w;
+    
+    int Physical_length=1;
     int mask_print;
     
+    int nscaffolds;
+    char *chr_name = 0;
+    char chr_name_all[ MSP_MAX_NAME];
+    char **chr_name_array;
+    int j,k;
+    int first = 0;
+    
+    memset( chr_name_all, 0, MSP_MAX_NAME);
     memset( subset_positions, 0, 	MSP_MAX_GFF_WORDLEN );
     memset( code_name, 0, 			MSP_GENETIC_CODETYPE_LEN );
     memset( genetic_code, 0, 		MSP_GENCODE_COMBINATIONS +1);
     memset( criteria_transcript, 0, MSP_GFF_CRITERIA_MSG_LEN );
     
     memset( file_wps,    0, MSP_MAX_FILENAME);
-    memset( file_effsz,  0, MSP_MAX_FILENAME);
-    memset( file_effps,  0, MSP_MAX_FILENAME);
     memset( file_Wcoord, 0, MSP_MAX_FILENAME);
 	
 	/***** DEFAULTS *****/
@@ -234,8 +238,6 @@ int main(int argc, const char * argv[])
     ploidy[0]           = '1';/* 1:haploid, 2:diploid, and so on...NO, next Ver */
     ploidy[1]           = '\0';
     strcpy( criteria_transcript,"long\0");
-    wlimit_end          = 0; /*limit of the positions defined at weights*/
-    welimit_end         = 0; /*limit of the positions defined at effect sizes*/
     coordfile           = 0;
     mask_print          = 0;
     first_slide         = 0;
@@ -294,8 +296,14 @@ int main(int argc, const char * argv[])
                 case 'T': /* i output File, el path */
                     arg++;
                     strcpy( file_out, argv[arg] );
-                    if( (file_output = fopen( file_out, "w")) == 0) {
+                    if( (file_output = fopen( file_out, "w")) == 0) { /*zipped not available yet*/
                         fprintf(stdout,"\n It is not possible to write in the output file %s\n", file_out);
+                        exit(1);
+                    }
+                    strcpy(file_log, file_out);
+                    strcat(file_log,".log");
+                    if( (file_logerr = fzopen( file_log, "w", &file_logerr_gz)) == 0) {
+                        fprintf(stdout,"\n It is not possible to write the log file %s.", file_log);
                         exit(1);
                     }
                     break;
@@ -458,14 +466,14 @@ int main(int argc, const char * argv[])
 					}
 					break;
 					
-				case 'a': /* a Name of file of the Alternative frequency spectrum */
+				case 'A': /* a Name of file of the Alternative frequency spectrum */
 							 /* Only with optimal tests (in GSL libs) */
 					arg++;
 					strcpy( file_H1f, argv[arg] );					
 					H1frq = 1;
 					break;
 					
-				case 'n': /* a Name of file of the NULL frequency spectrum */
+				case 'S': /* a Name of file of the NULL frequency spectrum */
 							 /* Only with optimal tests (in GSL libs) */
 					arg++;
 					strcpy( file_H0f, argv[arg] );					
@@ -539,10 +547,6 @@ int main(int argc, const char * argv[])
 					strcpy(file_Wcoord, argv[arg] );
                     coordfile = 1;
 					break;
-                case 'e' : /*file with the effect size of each variant */
-                    arg++;
-                    strcpy(file_effsz, argv[arg]);
-                    break;
                 case 'E' : /*file with the weight for each position */
                     arg++;
                     strcpy(file_wps, argv[arg]);
@@ -555,6 +559,10 @@ int main(int argc, const char * argv[])
                     arg++;
                     first_slide = (long int)atol(argv[arg]);
                     break;					
+                case 'n' : /* name of the scaffold to analyze*/
+                    arg++;
+                    strcpy( chr_name_all, argv[arg] );
+                    break;
 				case 'h' : /* h HEEEEEEEEEEELPPPPPPPPPPPPPP!!! */
 					usage();
 					exit(0);
@@ -565,59 +573,104 @@ int main(int argc, const char * argv[])
 		
 		/*few filters*/
 		if(!(formatfile == 1 || formatfile == 2) && force_outgroup == 1) {
-			printf("\nError. The option -F 1 is only compatible with -f 'ms'.\n");
+			fzprintf(file_logerr,&file_logerr_gz,"\nError. The option -F 1 is only compatible with -f 'ms'.\n");
 			exit(1);
 		}
         if(npops == 0) {
-            printf("\nError. The option -N must be included.\n");
+            fzprintf(file_logerr,&file_logerr_gz,"\nError. The option -N must be included.\n");
             exit(1);
         }
         if(window <=0 && formatfile == 3 && coordfile == 0) {
-            printf("\nError. The option -w or -W must be included with option -f tfa.\n");
+            fzprintf(file_logerr,&file_logerr_gz,"\nError. The option -w or -W must be included with option -f tfa.\n");
             exit(1);
         }
-        if(slide == 0 && window > 0)
+        if(slide == 0 && window > 0 && coordfile == 0)
             slide = window;
-		if(slide < window && formatfile == 3) {
-			printf("\nError. The value at option -z (slide) must be equal or larger than the number at -w (window)\n");
+		if(slide <= 0 && formatfile == 3 && coordfile == 0) {
+			fzprintf(file_logerr,&file_logerr_gz,"\nError. The value at option -z (slide) must be larger than 0\n");
 			exit(1);
 		}
         if(first_slide < 0 && formatfile == 3) {
-            printf("\nError. The value at option -Z (first slide) must be larger than or equal to 0.\n");
+            fzprintf(file_logerr,&file_logerr_gz,"\nError. The value at option -Z (first slide) must be larger than or equal to 0.\n");
             exit(1);
         }
         if(length == 0 && formatfile == 1) {
-            printf("\nError. length (-l option) must be defined with ms input file.\n");
+            fzprintf(file_logerr,&file_logerr_gz,"\nError. length (-l option) must be defined with ms input file.\n");
             exit(1);
         }
         if(formatfile == 0 && niterdata > 1) {
-            printf("\nError. The option ");
+            fzprintf(file_logerr,&file_logerr_gz,"\nError. The option ");
             exit(1);
         }
         if(include_unknown == 1)
             niter = 0;
 		
-		/* STEP 2: READING FILE INFO --------------------------------------------- */
+        if(strcmp(chr_name_all,"") == 0) {
+               fzprintf(file_logerr,&file_logerr_gz,"\nError: the name of the scaffold (option -n) must be defined\n");
+               exit(1);
+        }
+        /*
+        if(file_Wcoord[0]!=0 && (slide > 0 && window>0)) {
+            fzprintf(file_logerr,&file_logerr_gz,"\n the option -W (coordinates file) is incompatible with definitions of -w and -z ");
+            exit(1);
+        }
+        */
+        /* STEP 2: READING FILE INFO --------------------------------------------- */
 		
 		/* Opening files */
 		if( file_in[0] == '\0' ) {
 			file_input = stdin;
 			file_input_gz.file_compressed = 0;
+            if(formatfile == 3) {
+                /*tfa must be a file because it needs the index file*/
+                fzprintf(file_logerr,&file_logerr_gz,"\nError: tfa format file needs indexation. \nstdout is not available using this option. \n");
+                exit(1);
+            }
 		}
 		else {
 			if( (file_input = fzopen( file_in, "r", &file_input_gz)) == 0) {
-				printf("\n It is not possible to open the input file %s.", file_in);
+				fzprintf(file_logerr,&file_logerr_gz,"\n It is not possible to open the input file %s.", file_in);
 				exit(1);
 			}
+            if(formatfile == 3) {/*tfasta file*/
+                load_index_from_file(file_input_gz.index_file_name, &index_input);
+            }
 		}
 		
 		if( (f = (char *)malloc((unsigned long)BUFSIZ*10)) == NULL ) {
-			printf("\nError: memory not reallocated. main.4 \n");
+			fzprintf(file_logerr,&file_logerr_gz,"\nError: memory not reallocated. main.4 \n");
 			exit(1);
 		}
 		/* Definition of a File Stream Buffer, for buffered IO */
 		setbuf(file_input,f);
 				
+        /*separate all values of the list chr_name_all in chr_name_array: */
+        /* Only do the list if input and output is tfa*/
+        nscaffolds = 1;
+        if(formatfile == 3) {
+            chr_name_array = (char **)calloc(nscaffolds,sizeof(char *));
+            chr_name_array[0] = (char *)calloc(1,sizeof(MSP_MAX_NAME));
+            j=0;
+            while(chr_name_all[j] != '\0') {
+                k=0;
+                while(chr_name_all[j] != ',' && chr_name_all[j] != '\0' && j < MSP_MAX_NAME) {
+                    chr_name_array[nscaffolds-1][k] = chr_name_all[j];
+                    j++; k++;
+                }
+                if(chr_name_all[j] == ',') {
+                    nscaffolds += 1;
+                    chr_name_array = (char **)realloc(chr_name_array,nscaffolds*sizeof(char *));
+                    chr_name_array[nscaffolds-1] = (char *)calloc(1,sizeof(MSP_MAX_NAME));
+                    j++;
+                }
+            }
+        }
+        else {
+            chr_name_array = (char **)calloc(1,sizeof(char *));
+            chr_name_array[0] = (char *)calloc(1,sizeof(MSP_MAX_NAME));
+            strcpy(chr_name_array[0],chr_name_all);
+        }
+                
         /*if( (formatfile == 1 || formatfile == 2) && output == 0 && niter > 1) output = 1;*/
         /*if( (formatfile == 1 || formatfile == 2)) length_al = length;*/
 		if( formatfile == 0) strcpy(file_mas,file_in);		
@@ -633,7 +686,7 @@ int main(int argc, const char * argv[])
 			/* Al cargar los datos, -N, hemos rellenado el vector */
 			/* TODO: Check for errors in realloc */
 			if((vint_perpop_nsam = (int *)realloc( vint_perpop_nsam, (npops+1)*sizeof(int) )) == 0) {
-				printf("Error allocating memory");
+				fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 				exit(1);
 			}
 			
@@ -654,7 +707,7 @@ int main(int argc, const char * argv[])
 			npf = npops - 1; /* TODO: Mirar de cambiar por npops - 1...*/
 						
 			if((file_H1freq = fopen(file_H1f, "r")) == 0) {
-				printf("\n Error opening Alternative frequency spectrum file %s",file_H1f);
+				fzprintf(file_logerr,&file_logerr_gz,"\n Error opening Alternative frequency spectrum file %s",file_H1f);
 				exit(1);
 			}
 			
@@ -666,34 +719,34 @@ int main(int argc, const char * argv[])
 				 */
 				/* antes 1026 y 1024 */
 				if((cad = (char *) calloc( MSP_MAX_FILELINE_LEN, sizeof(char))) == 0) {
-					printf("Error allocating memory");
+					fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 					exit(1);
 				}
 				
 				fgets( cad, MSP_MAX_FILELINE_LEN, file_H1freq); 
 			}
 			else {
-				printf("\n Error reading Alternative frequency spectrum file %s", file_H1f);
+				fzprintf(file_logerr,&file_logerr_gz,"\n Error reading Alternative frequency spectrum file %s", file_H1f);
 				exit(1);
 			}
 
 			if((freqspH1 	= (double **)	calloc( (unsigned long)npf, sizeof(double *))) == 0) {
-				printf("Error allocating memory");
+				fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 				exit(1);
 			}
 			
 			if((freqspH0 	= (double **)	calloc( (unsigned long)npf, sizeof(double *))) == 0) {
-				printf("Error allocating memory");
+				fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 				exit(1);
 			}
 			
 			if((thetaH1 		= (double *)	calloc( (unsigned long)npf, sizeof(double))) == 0) {
-				printf("Error allocating memory");
+				fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 				exit(1);
 			}
 			
 			if((thetaH0 		= (double *)	calloc( (unsigned long)npf, sizeof(double))) == 0) {
-				printf("Error allocating memory");
+				fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 				exit(1);
 			}
 			
@@ -701,12 +754,12 @@ int main(int argc, const char * argv[])
 			for(x=0;x<npf;x++) 
 			{
 				if((freqspH1[x] = (double *) calloc((unsigned long)vint_perpop_nsam[x], sizeof(double))) == 0) {
-					printf("Error allocating memory");
+					fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 					exit(1);
 				}
 				
 				if((freqspH0[x] = (double *) calloc((unsigned long)vint_perpop_nsam[x], sizeof(double))) == 0) {
-					printf("Error allocating memory");
+					fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 					exit(1);
 				}
 					
@@ -716,7 +769,7 @@ int main(int argc, const char * argv[])
 					cad1 = cad;	/* TODO: REVISAR, copiando punteros! */
 				}
 				else {
-					printf("\n  Error reading Alternative frequency spectrum file %s, line %d",file_H1f,x+2);
+					fzprintf(file_logerr,&file_logerr_gz,"\n  Error reading Alternative frequency spectrum file %s, line %d",file_H1f,x+2);
 					exit(1);
 				}
 				
@@ -747,19 +800,19 @@ int main(int argc, const char * argv[])
 		if(H0frq == 1 && H1frq == 1) 
 		{
 			if((file_H0freq = fopen(file_H0f,"r")) == 0) {
-				printf("\n Error opening NULL frequency spectrum file %s",file_H0f);
+				fzprintf(file_logerr,&file_logerr_gz,"\n Error opening NULL frequency spectrum file %s",file_H0f);
 				exit(1);
 			}
 			if(!feof(file_H0freq)) {
 				if((cad = (char *)calloc(1026,sizeof(char))) == 0) {
-					printf("Error allocating memory");
+					fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 					exit(1);
 				}
 				
 				fgets(cad,1024,file_H1freq);
 			}
 			else {
-				printf("\n Error reading NULL frequency spectrum file %s",file_H0f);
+				fzprintf(file_logerr,&file_logerr_gz,"\n Error reading NULL frequency spectrum file %s",file_H0f);
 				exit(1);
 			}
 			
@@ -771,7 +824,7 @@ int main(int argc, const char * argv[])
 					cad1 = cad;
 				}
 				else {
-					printf("\n  Error reading NULL frequency spectrum file %s, line %d",file_H0f,x+2);
+					fzprintf(file_logerr,&file_logerr_gz,"\n  Error reading NULL frequency spectrum file %s, line %d",file_H0f,x+2);
 					exit(1);
 				}
 				for(y=1;y<vint_perpop_nsam[x];y++) {
@@ -1022,20 +1075,20 @@ int main(int argc, const char * argv[])
 				/* Con control de errores, comprobar que es correcto (IUPAC,etc) */
 			}
 			else {
-					printf(" %s: Unknown code, sorry", code_name);
+					fzprintf(file_logerr,&file_logerr_gz," %s: Unknown code, sorry", code_name);
 					exit(1);
 			}	
 		}
 		
 		/*ordering data: in case O is not a flag included*/
 		if(int_total_nsam_order > 0 && int_total_nsam_order+!outgroup_presence != int_total_nsam) {
-			printf("Error: the number of samples defined in -N and -O are different");
+			fzprintf(file_logerr,&file_logerr_gz,"Error: the number of samples defined in -N and -O are different");
 			exit(1);
 		}
 		if(int_total_nsam_order == 0) {
 			int_total_nsam_order = int_total_nsam-!outgroup_presence;
 			if((sort_nsam = (int *) calloc( (unsigned long)int_total_nsam, sizeof(int) )) == 0) {
-				printf("Error allocating memory");
+				fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 				exit(1);
 			}
 			for( sort_index = 0; sort_index < int_total_nsam; sort_index++ ) {
@@ -1043,64 +1096,6 @@ int main(int argc, const char * argv[])
 			}
 		}
 		
-		/* -------------------------------------------------------------------- */
-		/* -------------------------------------------------------------------- */
-        /* -------------------------------------------------------------------- */
-        /*open the file for weigth for positions, if included*/
-        if( file_wps[0] == '\0') {
-            file_ws = 0;
-            wP=0;
-        }
-        else {
-            if( (file_ws = fzopen( file_wps, "r", &file_ws_gz)) == 0) {
-                fprintf(file_output,"\n It is not possible to open the file for weights of positions %s\n", file_effps);
-                exit(1);
-            }
-            if(read_weights_positions_file(file_ws,&file_ws_gz,file_output,&wP,&wPV,&wV,&wlimit_end) == 0) {
-                fprintf(file_output,"Error processing weights file %s\n", file_wps);
-                exit(1);
-            }
-        }
-		/* -------------------------------------------------------------------- */
-		/* Opening coordinates file */
-		if( file_Wcoord[0] == '\0' ) {
-			file_wcoor = 0;
-			nwindows = 0;
-		}
-		else {
-			if( (file_wcoor = fopen( file_Wcoord, "r")) == 0) {
-				fprintf(file_output,"\n It is not possible to open the coordinates file %s\n", file_Wcoord);
-				exit(1);
-			}
-			if(read_coordinates(file_wcoor,file_output,&wgenes,&nwindows) == 0) {
-				fprintf(file_output,"Error processing coordinates file %s\n", file_Wcoord);
-				exit(1);
-			}
-			window = -1; 
-			slide = -1;
-		}
-        /* -------------------------------------------------------------------- */
-        /*open the file for effect sizes, if included*//*DEPRECATED*/
-        if( file_effsz[0] == '\0') {
-            file_es = 0;
-            wV = 0;
-        }
-        else {
-            if( (file_es = fopen( file_effsz, "r")) == 0) {
-                fprintf(file_output,"\n It is not possible to open the effect sizes file %s\n", file_effsz);
-                exit(1);
-            }
-            if(read_weights_file(file_es,file_output,&wV,&Pp,&nV,&welimit_end) == 0) {
-                fprintf(file_output,"Error processing effect sizes file %s\n", file_effsz);
-                exit(1);
-            }
-            if(wlimit_end > 0 && welimit_end > 0) {
-                if(wlimit_end != welimit_end) {
-                    printf("\nError: The files of the weights and effect sizes have different position lengths.\n");
-                    exit(1);
-                }
-            }
-        }
 		/* -------------------------------------------------------------------- */
         /* -------------------------------------------------------------------- */
 		/* -------------------------------------------------------------------- */
@@ -1127,60 +1122,60 @@ int main(int argc, const char * argv[])
 
 	/*alloc memory for lengths of populations*/
 	if((nsites1_pop 		= (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((nsites2_pop 	= (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((nsites3_pop 	= (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((nsites1_pop_outg = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((nsites2_pop_outg = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((nsites3_pop_outg = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((anx = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((bnx = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((anxo = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	if((bnxo = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
     if((lengthamng = (double **)	calloc( (unsigned long)npops, sizeof(double *))) == 0) {
-        printf("Error allocating memory");
+        fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
         exit(1);
     }
     if((lengthamng_outg = (double **)	calloc( (unsigned long)npops, sizeof(double *))) == 0) {
-        printf("Error allocating memory");
+        fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
         exit(1);
     }
     for(x=0;x<npops;x++) {
         if((lengthamng[x] = (double *) calloc( (unsigned long)npops, sizeof(double))) == 0) {
-            printf("Error allocating memory");
+            fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
             exit(1);
         }
         if((lengthamng_outg[x] = (double *) calloc( (unsigned long)npops, sizeof(double))) == 0) {
-            printf("Error allocating memory");
+            fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
             exit(1);
         }
     }
@@ -1208,7 +1203,7 @@ int main(int argc, const char * argv[])
             strcat(file_mas,"_MASK.txt");
 			
             if((file_mask = fopen(file_mas,"w")) == 0) {
-				printf("Error in mask file %s.",file_out);
+				fzprintf(file_logerr,&file_logerr_gz,"Error in mask file %s.",file_out);
 				exit(1);
 			}			
 			/*file_mask = stderr;*/ /* TODO: My GOD!!!! */
@@ -1238,7 +1233,7 @@ int main(int argc, const char * argv[])
             strcat(file_mas,"_MASK.txt");
 
             if((file_mask = fopen(file_mas,"w")) == 0) {
-				printf("Error in mask file %s.",file_out);
+				fzprintf(file_logerr,&file_logerr_gz,"Error in mask file %s.",file_out);
 				exit(1);
 			}
 		}
@@ -1262,23 +1257,23 @@ int main(int argc, const char * argv[])
 	/* TODO: Fix error checking */
 	statistics = 0;
 	if((statistics = (struct stats *)calloc(1,sizeof(struct stats))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	/* length of each sequence, excluding non-tcga */
 	if((sum_sam = 	(double *) calloc(int_total_nsam+(!outgroup_presence), sizeof(double))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	/*tcga content for each sample*/
 	if((tcga = (double **) calloc(int_total_nsam+(!outgroup_presence), sizeof(double *))) == 0) {
-		printf("Error allocating memory");
+		fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 		exit(1);
 	}
 	for( x=0; x<int_total_nsam+(!outgroup_presence); x++) 
 	{
 		if((tcga[x] = (double *) calloc(4,sizeof(double ))) == 0) { /*tcga content*/
-			printf("Error allocating memory");
+			fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 			exit(1);
 		}
 	}
@@ -1287,8 +1282,12 @@ int main(int argc, const char * argv[])
 	if( formatfile == 0 ) 
 	{
 		/*data from fasta*/
-		if (get_obsdata(file_output,
+        chr_name = chr_name_array[0];
+        first = 0;
+        
+		if (get_obsdata(file_output,&file_output_gz,
 				        file_input, &file_input_gz,
+                        file_logerr,&file_logerr_gz,
 						file_mask,
 						file_GFF, gfffiles,
 						subset_positions, genetic_code, &matrix_pol, &matrix_freq,
@@ -1299,9 +1298,9 @@ int main(int argc, const char * argv[])
 						outgroup_presence, criteria_transcript,nsites1_pop,nsites1_pop_outg,
 						nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,
 						anx,bnx,anxo,bnxo,lengthamng,lengthamng_outg,
-						sort_nsam,&matrix_pol_tcga) == 0)
+						sort_nsam,&matrix_pol_tcga,chr_name,first) == 0)
 		{
-			printf("Error processing input data.\n");
+			fzprintf(file_logerr,&file_logerr_gz,"Error processing input data.\n");
 			exit(1);
 		}
 		
@@ -1320,12 +1319,12 @@ int main(int argc, const char * argv[])
         length_al = length_al_real;
 	
 		if((vector_mask  = (float *)calloc((unsigned int)length,sizeof(float))) == 0) {
-			printf("Error allocating memory");
+			fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 			exit(1);
 		}
 		
 		if((matrix_mask = (int *)calloc((unsigned int)(int_total_nsam+1)*length,sizeof(int))) == 0) {
-			printf("Error allocating memory");
+			fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 			exit(1);
 		}
 		
@@ -1346,7 +1345,7 @@ int main(int argc, const char * argv[])
 		if(file_mas[0] != '-') /*file_mask defined*/
         {
 			if((file_mask = fopen (file_mas,"r")) == 0) {
-				printf("\n  It is not possible to open the input mask file %s.",file_mas);
+				fzprintf(file_logerr,&file_logerr_gz,"\n  It is not possible to open the input mask file %s.",file_mas);
 				exit(1);
 			}
 			li=0;n=0;vli=0;
@@ -1373,7 +1372,7 @@ int main(int argc, const char * argv[])
 				}
 				if(*c == 10 || *c == 13 || li > length) {
 					if(li > length) {
-						printf("\n  Error: Length of rows in mask file %s are longer than defined (row %ld is %ld > %ld). ",file_mas, n, li, length);
+						fzprintf(file_logerr,&file_logerr_gz,"\n  Error: Length of rows in mask file %s are longer than defined (row %ld is %ld > %ld). ",file_mas, n, li, length);
 						exit(1);
 					}
 					n++;
@@ -1392,7 +1391,7 @@ int main(int argc, const char * argv[])
 		/*}*/
 			/*if(include_unknown) {*/
 				if((sum_sam_mask = (double *)calloc(int_total_nsam,sizeof(double))) == 0) {
-					printf("Error allocating memory");
+					fzprintf(file_logerr,&file_logerr_gz,"Error allocating memory");
 					exit(1);
 				}
             /*}*/
@@ -1460,355 +1459,355 @@ int main(int argc, const char * argv[])
 	/*calloc pointers in struct*/
 
 	if((statistics[0].Sanc = (long int *)calloc(4*npops,sizeof(long int))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].piw  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].pia  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].piT  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].piant  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].piTnt  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].fst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
     if((statistics[0].piwHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-        printf("\n  Error allocating memory.");
+        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
         exit(1);
     }
 	if((statistics[0].piaHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].piTHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].fstHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].fst1all  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].hapw = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].hapa = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].hapT = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].fsth = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].fsth1all = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].Gst = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 
 	if((statistics[0].S  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].So  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaS  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaSo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaT  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaTo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaTHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaFL  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaFW  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaL  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaSA  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaTA  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].K     = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].KHKY    = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].Dtaj  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].Dfl  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].Ffl  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].Hnfw  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].Ez  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
     if((statistics[0].Yach  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-        printf("\n  Error allocating memory.");
+        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
         exit(1);
     }
     if((statistics[0].FH  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-        printf("\n  Error allocating memory.");
+        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
         exit(1);
     }
 	
 	if((statistics[0].R2  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].Fs  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].nhpop = (int *)calloc(1*npops,sizeof(int))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].length = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].length2 = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
     if((statistics[0].lengthamng  = (double **)calloc(npops,sizeof(double *))) == 0) {
-        printf("\n  Error allocating memory.");
+        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
         exit(1);
     }
     if((statistics[0].lengthamng_outg  = (double **)calloc(npops,sizeof(double *))) == 0) {
-        printf("\n  Error allocating memory.");
+        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
         exit(1);
     }
 	for(x=0;x<npops;x++) {
         if((statistics[0].lengthamng[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-            printf("\n  Error allocating memory.");
+            fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
             exit(1);
         }
         if((statistics[0].lengthamng_outg[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-            printf("\n  Error allocating memory.");
+            fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
             exit(1);
         }
 	}
 	if((statistics[0].total_tcga = (double *)calloc(4,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].tcga = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].sv = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].svT = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].freq   = (long int **)calloc(1*npops,sizeof(long int *))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].freqh  = (long int **)calloc(1*npops,sizeof(long int *))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].ToH0_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].To_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].To_00  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].To_i0  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].ToH0_00  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].To_Qc_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].To_Qw_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].To_Lc_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	
 	if((statistics[0].Rm  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].ZnA  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 
 	if((statistics[0].mdsd  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].mdg1  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 	if((statistics[0].mdg2  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].anx  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].bnx  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].anxo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].bnxo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	if((statistics[0].mdw   = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
 
 	if((statistics[0].linefreq   = (double **)calloc(int_total_nsam,sizeof(double *))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	
@@ -1822,48 +1821,48 @@ int main(int argc, const char * argv[])
 	
 	for(x=0;x<npops;x++) {
 		if((statistics[0].tcga [x]   = (double *)calloc(4,sizeof(double))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 		
 		if((statistics[0].freq [x]   = (long int *)calloc(vint_perpop_nsam[x],sizeof(long int))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 		
 		if((statistics[0].freqh[x]   = (long int *)calloc(int_total_nsam,sizeof(long int))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 		
 		if((statistics[0].sv[x]      = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 		if((statistics[0].svT[x]      = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 		
 		if((statistics[0].mdw[x]     = (double *)calloc((vint_perpop_nsam[x]*(vint_perpop_nsam[x]-1))/2,sizeof(double))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 		
 		for(y=0;y<npops;y++) {
 			if((statistics[0].sv[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-				printf("\n  Error allocating memory.");
+				fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 				exit(1);
 			}
 			if((statistics[0].svT[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-				printf("\n  Error allocating memory.");
+				fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 				exit(1);
 			}
 		}
 	}
 	for(x=0;x<int_total_nsam;x++) {
 		if((statistics[0].linefreq[x]= (double *)calloc(int_total_nsam+1,sizeof(double))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 		
@@ -1871,7 +1870,7 @@ int main(int argc, const char * argv[])
 	/*in case r2i_ploidies is undefined*/
 	if(r2i_ploidies == 0) {
 		if( (r2i_ploidies = (int *)calloc(2,sizeof(int)))== 0) {
-			printf("\nError: memory not reallocated. mstatspop.c.00 \n");
+			fzprintf(file_logerr,&file_logerr_gz,"\nError: memory not reallocated. mstatspop.c.00 \n");
 			exit(1);
 		}
 		r2i_ploidies[0] = 1;
@@ -1880,734 +1879,771 @@ int main(int argc, const char * argv[])
 	}
 	/*allocate R2p*/
 	if((statistics[0].R2p= (double **)calloc(r2i_ploidies[0],sizeof(double *))) == 0) {
-		printf("\n  Error allocating memory.");
+		fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 		exit(1);
 	}
 	for(x=0;x<r2i_ploidies[0];x++) {
 		if((statistics[0].R2p[x]= (double *)calloc(1*npops,sizeof(double))) == 0) {
-			printf("\n  Error allocating memory.");
+			fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
 			exit(1);
 		}
 	}
 	
 	/* Aqui el PROCESAMIENTO DE DATOS (y leer los fragmentos de datos (MS o TFA)*/
-	li = 0;
-	while(li < niterdata) 
-	{	
-		flaghky = 1; /* TODO: corrector de multiple hits... en ms format
-									 es tratado de manera diferente */
-		
-		/*read the ms format for each iteration*/
-		/* FUNCTION TO READ MS FILES*/
-		if(formatfile == 1 || formatfile == 2) 
-		{
-			/*read ms file*/
-			if(get_msdata( file_input,&file_input_gz,&matrix_pol,&matrix_freq,&matrix_pos,
-								&length_seg,vint_perpop_nsam,npops,int_total_nsam,
-								length,&nmhits,matrix_mask,vector_mask,ms_svratio,
-								&vector_priors,&npriors,&matrix_sv,
-								outgroup_presence,force_outgroup,freq_revert,sum_sam,
-								nsites1_pop, nsites1_pop_outg,formatfile,
-						        nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,anx,bnx,anxo,bnxo,lengthamng,lengthamng_outg,
-						        include_unknown,file_mas,freq_missing_ms,kind_length,
-						        &sum_sam_mask,&length_mask,&length_mask_real,&missratio,location_missing_ms,sort_nsam)) {
-				printf("\nError processing ms data.\n");
-				exit(1);
-			}
-            /*
-			length_al = 0.;
-			for(li2=0;li2<length;li2++) {
-				length_al += vector_mask[li2];
-			}
-			*/
-			flaghky = 0;
-			for(x=0;x<int_total_nsam;x++) {
-				for(y=0;y<int_total_nsam+1;y++) {
-					statistics[0].linefreq[x][y] = 0.;
-				}
-			}
-			
-			if(include_unknown) {
-				if(!(file_mas[0] == '-'  && file_mas[1] == '1')) {
-					for(x=0;x<int_total_nsam;x++) 
-						sum_sam[x] = sum_sam_mask[x] /*- nmhits*/ ;
-					length_al = length_mask- nmhits;
-				}
-				else {/*here is counting the positions with 0 and 1 (not gaps[8 or 9] and mhits)*/
-					/*in case including gaps in ms format, it must be included the total length region!!! (not only variants!!)*/
-					/*if(freq_missing_ms > 0.) {*/
-						for(x=0;x<int_total_nsam;x++) 
-							sum_sam[x] = (sum_sam_mask[x] /*- nmhits*/);
-                    length_al = length_mask- nmhits;
-					/*}
-					else {
-						length_al = length_mask - nmhits;
-					}
-					*/
-				}
-			}
-			else {
-                for(x=0;x<int_total_nsam;x++) {
-                    if (length - nmhits > 0)
-                        sum_sam[x] = length - nmhits;
-					else
-						sum_sam[x] = 0;
+    for(first=0;first<nscaffolds;first++) {
+        if(formatfile == 3) {
+            chr_name = chr_name_array[first];
+            wgenes = 0;
+            nwindows = 0;
+            /*read the file for weigth for positions, if included*/
+            if( file_Wcoord[0] != '\0') {
+                if( (file_wcoor = fzopen( file_Wcoord, "r", &file_wcoor_gz)) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n It is not possible to open the coordinates file %s\n", file_Wcoord);
+                    exit(1);
                 }
-				if(length - nmhits > 0)
-                    length_al = length - nmhits;
-                else
-                    length_al = 0;
-			}
-			z=0;
-			for(x=0;x<npops;x++) {
-				for(y=z;y<z+vint_perpop_nsam[x];y++) {
-					statistics[0].length[x] = 0;
-					for(w=0;w<4;w++) {
-						statistics[0].total_tcga[w] = 0;
-						statistics[0].tcga[x][w] = 0;
-					}
-				}
-				z += vint_perpop_nsam[x];
-			}
-		}
+                if(read_coordinates(file_wcoor,&file_wcoor_gz,file_output,&file_output_gz,file_logerr,&file_logerr_gz,&wgenes, &nwindows,chr_name) == 0) {
+                    exit(1);
+                }
+                window = -1;
+                slide = -1;
+                fzclose(file_wcoor, &file_wcoor_gz);
+            }
+            if( file_wps[0] != '\0' && first == 0) {
+                if( (file_ws = fzopen( file_wps, "r", &file_ws_gz)) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n It is not possible to open the weights file %s\n", file_wps);
+                    exit(1);
+                }
+                load_index_from_file(file_ws_gz.index_file_name, &index_w);
+            }
+        }
+        li = 0;
+        while(li < niterdata)
+        {
+            flaghky = 1; /* TODO: corrector de multiple hits... en ms format
+                                         es tratado de manera diferente */
+            
+            /*read the ms format for each iteration*/
+            /* FUNCTION TO READ MS FILES*/
+            if(formatfile == 1 || formatfile == 2) 
+            {
+                /*read ms file*/
+                if(get_msdata( file_input,&file_input_gz,file_logerr,&file_logerr_gz,
+                                    &matrix_pol,&matrix_freq,&matrix_pos,
+                                    &length_seg,vint_perpop_nsam,npops,int_total_nsam,
+                                    length,&nmhits,matrix_mask,vector_mask,ms_svratio,
+                                    &vector_priors,&npriors,&matrix_sv,
+                                    outgroup_presence,force_outgroup,freq_revert,sum_sam,
+                                    nsites1_pop, nsites1_pop_outg,formatfile,
+                                    nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,anx,bnx,anxo,bnxo,lengthamng,lengthamng_outg,
+                                    include_unknown,file_mas,freq_missing_ms,kind_length,
+                                    &sum_sam_mask,&length_mask,&length_mask_real,&missratio,location_missing_ms,sort_nsam)) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\nError processing ms data.\n");
+                    exit(1);
+                }
+                /*
+                length_al = 0.;
+                for(li2=0;li2<length;li2++) {
+                    length_al += vector_mask[li2];
+                }
+                */
+                flaghky = 0;
+                for(x=0;x<int_total_nsam;x++) {
+                    for(y=0;y<int_total_nsam+1;y++) {
+                        statistics[0].linefreq[x][y] = 0.;
+                    }
+                }
+                
+                if(include_unknown) {
+                    if(!(file_mas[0] == '-'  && file_mas[1] == '1')) {
+                        for(x=0;x<int_total_nsam;x++) 
+                            sum_sam[x] = sum_sam_mask[x] /*- nmhits*/ ;
+                        length_al = length_mask- nmhits;
+                    }
+                    else {/*here is counting the positions with 0 and 1 (not gaps[8 or 9] and mhits)*/
+                        /*in case including gaps in ms format, it must be included the total length region!!! (not only variants!!)*/
+                        /*if(freq_missing_ms > 0.) {*/
+                            for(x=0;x<int_total_nsam;x++) 
+                                sum_sam[x] = (sum_sam_mask[x] /*- nmhits*/);
+                        length_al = length_mask- nmhits;
+                        /*}
+                        else {
+                            length_al = length_mask - nmhits;
+                        }
+                        */
+                    }
+                }
+                else {
+                    for(x=0;x<int_total_nsam;x++) {
+                        if (length - nmhits > 0)
+                            sum_sam[x] = length - nmhits;
+                        else
+                            sum_sam[x] = 0;
+                    }
+                    if(length - nmhits > 0)
+                        length_al = length - nmhits;
+                    else
+                        length_al = 0;
+                }
+                z=0;
+                for(x=0;x<npops;x++) {
+                    for(y=z;y<z+vint_perpop_nsam[x];y++) {
+                        statistics[0].length[x] = 0;
+                        for(w=0;w<4;w++) {
+                            statistics[0].total_tcga[w] = 0;
+                            statistics[0].tcga[x][w] = 0;
+                        }
+                    }
+                    z += vint_perpop_nsam[x];
+                }
+            }
 
-		/* FUNCTION TO READ TRANSPOSED FASTA (TFA) FILES*/
-		if(formatfile == 3) {
-            if( get_tfadata(file_output,file_input,&file_input_gz,&matrix_pol,&matrix_freq,
-							&matrix_pos,&length,&length_seg,&length_al, 
-							&length_al_real,argc,vint_perpop_nsam,npops, 
-							&svratio,&missratio,include_unknown,sum_sam,tcga, 
-							&matrix_sv,&nmhits,output,outgroup_presence, 
-							nsites1_pop,nsites1_pop_outg,
-							nsites2_pop,nsites2_pop_outg,
-							nsites3_pop,nsites3_pop_outg,
-							anx,bnx,anxo,bnxo,
-							lengthamng,lengthamng_outg,sort_nsam,
-							wV,Pp,nV,wP,wPV,
-							wgenes,nwindows,
-							first_slide,slide,window,
-							Physical_length,
-							&li,&npriors,&vector_priors,
-                            wlimit_end,welimit_end,&matrix_pol_tcga) == 0)
-			{
-				/*printf("End processing input tfa data.\n");*/
-                break;
-                /*exit(1);*/
-			}
-			/*When the tfa file is finished then li=0, otherwise li=-1 and the loop continue*/
+            /* FUNCTION TO READ TRANSPOSED FASTA (TFA) FILES*/
+            if(formatfile == 3) { 
+                if( get_tfadata(file_output,&file_output_gz,
+                                file_input,&file_input_gz,&index_input,
+                                file_wps,file_ws,&file_ws_gz,&index_w,
+                                file_logerr,&file_logerr_gz,
+                                &matrix_pol,&matrix_freq,
+                                &matrix_pos,&length,&length_seg,&length_al, 
+                                &length_al_real,argc,vint_perpop_nsam,npops, 
+                                &svratio,&missratio,include_unknown,sum_sam,tcga, 
+                                &matrix_sv,&nmhits,output,outgroup_presence, 
+                                nsites1_pop,nsites1_pop_outg,
+                                nsites2_pop,nsites2_pop_outg,
+                                nsites3_pop,nsites3_pop_outg,
+                                anx,bnx,anxo,bnxo,
+                                lengthamng,lengthamng_outg,sort_nsam,
+                                wgenes,nwindows,
+                                first_slide,slide,window,
+                                Physical_length,
+                                &li,&npriors,&vector_priors,
+                                &matrix_pol_tcga,
+                                chr_name,first) == 0)
+                {
+                    /*printf("End processing input tfa data.\n");*/
+                    break;
+                    /*exit(1);*/
+                }
+                /*When the tfa file is finished then li=0, otherwise li=-1 and the loop continue*/
+                z=0;
+                for(x=0;x<npops;x++) {
+                    for(y=z;y<z+vint_perpop_nsam[x];y++) {
+                        statistics[0].length[x] = 0;
+                        for(w=0;w<4;w++) {
+                            statistics[0].total_tcga[w] = 0;
+                            statistics[0].tcga[x][w] = 0;
+                        }
+                    }
+                    z += vint_perpop_nsam[x];
+                }
+            }
+            
+            /*calculate number of effective nucleotides per population and tcga frequencies*/
             z=0;
             for(x=0;x<npops;x++) {
+                /*
+                nsites1_pop[x] -= nmhits;
+                nsites1_pop_outg[x] -= nmhits;
+                */
+                if(outgroup_presence)
+                    statistics[0].length2[x] = nsites2_pop_outg[x];
+                else
+                    statistics[0].length2[x] = nsites2_pop[x];
+                statistics[0].anx[x] = anx[x];
+                statistics[0].bnx[x] = bnx[x];
+                statistics[0].anxo[x] = anxo[x];
+                statistics[0].bnxo[x] = bnxo[x];
+                
                 for(y=z;y<z+vint_perpop_nsam[x];y++) {
-                    statistics[0].length[x] = 0;
-                    for(w=0;w<4;w++) {
-                        statistics[0].total_tcga[w] = 0;
-                        statistics[0].tcga[x][w] = 0;
+                    statistics[0].length[x] += sum_sam[y];
+                        for(w=0;w<4;w++) {
+                        statistics[0].total_tcga[w] += tcga[y][w];
+                        statistics[0].tcga[x][w] += tcga[y][w];
                     }
                 }
                 z += vint_perpop_nsam[x];
             }
-		}
-		
-		/*calculate number of effective nucleotides per population and tcga frequencies*/
-		z=0;
-		for(x=0;x<npops;x++) {
-			/*
-			nsites1_pop[x] -= nmhits;
-			nsites1_pop_outg[x] -= nmhits;
-			*/
-			if(outgroup_presence)
-                statistics[0].length2[x] = nsites2_pop_outg[x];
-            else
-                statistics[0].length2[x] = nsites2_pop[x];
-			statistics[0].anx[x] = anx[x];
-			statistics[0].bnx[x] = bnx[x];
-			statistics[0].anxo[x] = anxo[x];
-			statistics[0].bnxo[x] = bnxo[x];
-			
-			for(y=z;y<z+vint_perpop_nsam[x];y++) {
-				statistics[0].length[x] += sum_sam[y];
-					for(w=0;w<4;w++) {
-					statistics[0].total_tcga[w] += tcga[y][w];
-					statistics[0].tcga[x][w] += tcga[y][w];
-				}
-			}
-			z += vint_perpop_nsam[x];
-		}
-		
-		/*include lengthamng and calculations*/
-		for(x=0;x<npops-!outgroup_presence;x++) {
-			for(y=0;y<npops-!outgroup_presence;y++) {
-                statistics[0].lengthamng[x][y] = lengthamng[x][y];
-                statistics[0].lengthamng_outg[x][y] = lengthamng_outg[x][y];
-			}
-		}
-        for(x=0;x<int_total_nsam;x++) {
-            for(y=0;y<int_total_nsam+1;y++) {
-                statistics[0].linefreq[x][y] = 0.;
-            }
-        }
-		
-		sites_matrix = (long int *)calloc(4*(length_seg+1)*npops,sizeof(long int));
-		jfd = 			(double **)calloc(npops,sizeof(double *));
-		nfd = 			(int **)calloc(npops,sizeof(int *));
-		
-		for(x=0;x<npops;x++) {
-			jfd[x] = (double *)calloc(length_seg,sizeof(double));
-			nfd[x] = (int *)calloc(length_seg,sizeof(int));
-            for(y=1;y<vint_perpop_nsam[x];y++) {
-                statistics[0].freq[x][y] = 0;
-            }
-            statistics[0].mdsd[x] = -10000;
-		}
-		statistics[0].total_length = length_al;
-		statistics[0].total_real_length = length_al_real;
-		statistics[0].total_svratio = svratio;
-		statistics[0].nmhits = nmhits;
-
-		/*calculate statistics ------------------------------------------------ */
-        if( calc_sxsfss( npops,vint_perpop_nsam,matrix_pol,matrix_pos,
-                                length_seg,statistics,sites_matrix,outgroup_presence,force_outgroup) == 0) {
-            printf("\nError in calc_sxsfss function.1.\n");
-            exit(1);
-        }
-        if( jointfreqdist(npops,vint_perpop_nsam,matrix_pol,matrix_pos,
-                                length_seg,statistics,sites_matrix,jfd,nfd,outgroup_presence,force_outgroup) == 0) {
-            printf("\nError in jointfreqdist function.1.\n");
-            exit(1);
-        }
-        if( calc_piwpiafst(flaghky,formatfile,npops,vint_perpop_nsam,
-                                    matrix_pol,length_seg,statistics,matrix_sv,outgroup_presence,force_outgroup) == 0) {
-            printf("\nError in calc_piwpiafst function.1.\n");
-            exit(1);
-        }
-        if( calc_freqstats(npops,vint_perpop_nsam,matrix_pol,length_seg,
-                                    statistics,outgroup_presence,force_outgroup,include_unknown,n_ccov,H1frq) == 0) {
-            printf("\nError in freqstats function.1.\n");
-            exit(1);
-        }
-        if(H1frq && include_unknown == 0) 
-        {
-            if(calc_Toptimal_tests(npops,vint_perpop_nsam,statistics) == 0) {
-                printf("\nError in calc_Toptimal_tests function.1.\n");
-                exit(1);
-            }
-        }
-        
-        if(calcR2(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy)==0) {
-            printf("\nError in calc_R2 function.1.\n");
-            exit(1);
-        }	
-        
-        if(calcR2p(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,sum_sam,r2i_ploidies)==0) {
-            printf("\nError in calc_R2 function.1.\n");
-            exit(1);
-        }	
-        
-        /* Calculate statistics for haplotypes */
-        if(int_total_nsam < SAMPLE_LARGE) {
-            /*if(include_unknown==0) {*/
-            if(calc_mismatch(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy) == 0) {
-                printf("\nError in calc_mismatch function.1.\n");
-                exit(1);
-            }
-            /*}*/
-            if(include_unknown == 0 &&  ploidy[0] == '1')
-                {
-                if(calc_hwhafsth(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics) == 0) {
-                    printf("\nError in calc_hwhafsth function.1.\n");
-                    exit(1);
-                }
-                if(calcFs(npops,vint_perpop_nsam,statistics)==0) { /*need calc_freqstats and calc_hwhafsth to be calculated*/
-                    printf("\nError in calc_Fs function.1.\n");
-                    exit(1);
+            
+            /*include lengthamng and calculations*/
+            for(x=0;x<npops-!outgroup_presence;x++) {
+                for(y=0;y<npops-!outgroup_presence;y++) {
+                    statistics[0].lengthamng[x][y] = lengthamng[x][y];
+                    statistics[0].lengthamng_outg[x][y] = lengthamng_outg[x][y];
                 }
             }
-        }
-        
-        if(file_output) {
-            /*
-            fprintf(file_output,"Done.\n");
-            fflush(file_output);
-            printf("Done.\n");
-             */
-            fflush(stdout);
-        }
-        
-        /* Un monton de cosas casi-repes que volvemos a utilizar! */
-        /* PERMUTATION */
-        /* Only if not MS format */
-        if(niter && npops > 2 /*one is outgroup, forced or not*/ && include_unknown == 0)
-        {			
-            /*calloc pointers in structs for permutation test*/
-            if((stats_iter = (struct stats *)calloc(1,sizeof(struct stats))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-
-            if((stats_iter[0].piw  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
+            for(x=0;x<int_total_nsam;x++) {
+                for(y=0;y<int_total_nsam+1;y++) {
+                    statistics[0].linefreq[x][y] = 0.;
+                }
             }
             
-            if((stats_iter[0].pia  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].piT  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
+            sites_matrix = (long int *)calloc(4*(length_seg+1)*npops,sizeof(long int));
+            jfd = 			(double **)calloc(npops,sizeof(double *));
+            nfd = 			(int **)calloc(npops,sizeof(int *));
             
-            if((stats_iter[0].piant  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].piTnt  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].fst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].piwHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].thetaTHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].piaHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].piTHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].fstHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].fst1all  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].hapw = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].hapa = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].hapT = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].fsth = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].fsth1all = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].Gst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].K  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].KHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            stats_iter[0].freq  = 0;
-            if((stats_iter[0].sv = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].svT = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].nhpop  = (int *)calloc(1*npops,sizeof(int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].freqh  = (long int **)calloc(1*npops,sizeof(long int *))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].tcga  = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((stats_iter[0].length = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].length2 = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].lengthamng  = (double **)calloc(npops,sizeof(double *))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            if((stats_iter[0].lengthamng_outg  = (double **)calloc(npops,sizeof(double *))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
             for(x=0;x<npops;x++) {
-                if((stats_iter[0].lengthamng[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-                    printf("\n  Error allocating memory.");
-                    exit(1);
+                jfd[x] = (double *)calloc(length_seg,sizeof(double));
+                nfd[x] = (int *)calloc(length_seg,sizeof(int));
+                for(y=1;y<vint_perpop_nsam[x];y++) {
+                    statistics[0].freq[x][y] = 0;
                 }
-                if((stats_iter[0].lengthamng_outg[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-                    printf("\n  Error allocating memory.");
-                    exit(1);
-                }
-                if((stats_iter[0].tcga [x]  = (double *)calloc(4,sizeof(double))) == 0) {
-                    printf("\n  Error allocating memory.");
-                    exit(1);
-                }
-                
-                if((stats_iter[0].freqh[x]  = (long int *)calloc(int_total_nsam,sizeof(long int))) == 0) {
-                    printf("\n  Error allocating memory.");
-                    exit(1);
-                }
-                
-                if((stats_iter[0].sv[x]     = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-                    printf("\n  Error allocating memory.");
-                    exit(1);
-                }
-                if((stats_iter[0].svT[x]     = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-                    printf("\n  Error allocating memory.");
-                    exit(1);
-                }
-                
-                for(y=0;y<npops;y++) {
-                    if((stats_iter[0].sv[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-                        printf("\n  Error allocating memory.");
-                        exit(1);
-                    }
-                    if((stats_iter[0].svT[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-                        printf("\n  Error allocating memory.");
-                        exit(1);
-                    }
-                }
-                
+                statistics[0].mdsd[x] = -10000;
             }
-            for(x=0;x<npops;x++) {
-                for(w=0;w<4;w++) {
-                    stats_iter[0].tcga[x][w] = statistics[0].tcga[x][w];
-                }
-            }
-            stats_iter[0].total_length = length_al;
-            stats_iter[0].total_svratio = svratio;
-            stats_iter[0].nmhits = nmhits;
-            
-            if((piter = (struct probs *)calloc(1,sizeof(struct probs))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }			
-            
-            if((piter[0].i1  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].ih1 = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].i	  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].ih  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].igh  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            
-            if((piter[0].niteri1  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].niterih1 = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].niteri   = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].niterih  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if((piter[0].niterigh  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            
-            piter[0].iall	    = 0;
-            piter[0].ihall      = 0;
-            piter[0].ighall     = 0;
-            piter[0].niteriall  = 0;
-            piter[0].niterihall = 0;	
-            piter[0].niterighall= 0;
-            
-            if((matrix_perm = (char *)calloc(length_seg*int_total_nsam,sizeof(char))) == 0) {
-                printf("\n  Error allocating memory.");
-                exit(1);
-            }
-            
-            if(file_output && (output == 0 || output == 10)) {
-                /*fprintf(file_output,"Calculating permutation tests...\n");*/
-                fflush(file_output);
-                /*
-                printf("Calculating permutation test...\n");
-                fflush(stdout);
-                */
-            }
+            statistics[0].total_length = length_al;
+            statistics[0].total_real_length = length_al_real;
+            statistics[0].total_svratio = svratio;
+            statistics[0].nmhits = nmhits;
 
-            /*permute samples in pops:*/
-            if(npops > 2)
+            /*calculate statistics ------------------------------------------------ */
+            if( calc_sxsfss( npops,vint_perpop_nsam,matrix_pol,matrix_pos,
+                                    length_seg,statistics,sites_matrix,outgroup_presence,force_outgroup) == 0) {
+                fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_sxsfss function.1.\n");
+                exit(1);
+            }
+            if( jointfreqdist(npops,vint_perpop_nsam,matrix_pol,matrix_pos,
+                                    length_seg,statistics,sites_matrix,jfd,nfd,outgroup_presence,force_outgroup) == 0) {
+                fzprintf(file_logerr,&file_logerr_gz,"\nError in jointfreqdist function.1.\n");
+                exit(1);
+            }
+            if( calc_piwpiafst(flaghky,formatfile,npops,vint_perpop_nsam,
+                                        matrix_pol,length_seg,statistics,matrix_sv,outgroup_presence,force_outgroup) == 0) {
+                fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_piwpiafst function.1.\n");
+                exit(1);
+            }
+            if( calc_freqstats(npops,vint_perpop_nsam,matrix_pol,length_seg,
+                                        statistics,outgroup_presence,force_outgroup,include_unknown,n_ccov,H1frq) == 0) {
+                fzprintf(file_logerr,&file_logerr_gz,"\nError in freqstats function.1.\n");
+                exit(1);
+            }
+            if(H1frq && include_unknown == 0) 
             {
-                /* TODO: OJO que necesita inicializar las poblaciones de otra manera, segun ...*/
-                for(i=0;i<niter;i++) 
-                {				
-                    /*assign the (2) groups that will be included in permutation test*/
-                    nsam2[0] = vint_perpop_nsam[0];
-                    nsam2[1] = int_total_nsam - vint_perpop_nsam[npops-1] - vint_perpop_nsam[0];
-                    /*nsam2[2] = vint_perpop_nsam[npops-1];*/
-                    
-                    psam2[0] = 0;
-                    psam2[1] = vint_perpop_nsam[0];
-                    /*psam2[2] = psam2[1] + nsam2[1];*/
-                    
-                    if( permute(matrix_pol,length_seg,int_total_nsam,matrix_perm,nsam2,psam2,npops,vint_perpop_nsam[npops-1],int_total_nsam-vint_perpop_nsam[npops-1]) == 0) {
-                        printf("\nError in permute function.\n");
+                if(calc_Toptimal_tests(npops,vint_perpop_nsam,statistics) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_Toptimal_tests function.1.\n");
+                    exit(1);
+                }
+            }
+            
+            if(calcR2(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy)==0) {
+                fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_R2 function.1.\n");
+                exit(1);
+            }	
+            
+            if(calcR2p(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,sum_sam,r2i_ploidies)==0) {
+                fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_R2 function.1.\n");
+                exit(1);
+            }	
+            
+            /* Calculate statistics for haplotypes */
+            if(int_total_nsam < SAMPLE_LARGE) {
+                /*if(include_unknown==0) {*/
+                if(calc_mismatch(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_mismatch function.1.\n");
+                    exit(1);
+                }
+                /*}*/
+                if(include_unknown == 0 &&  ploidy[0] == '1')
+                    {
+                    if(calc_hwhafsth(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics) == 0) {
+                        fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_hwhafsth function.1.\n");
                         exit(1);
                     }
-                    /*HERE WE ASSUME THAT THE LENGTH SIZE ARE THE SAME THAN FOR ORIGINAL SAMPLES!! (OK FOR NO MISSING)*/
-                    for(x=0;x<npops;x++) {
-                        stats_iter[0].length[x]  = statistics[0].length[x];
-                        stats_iter[0].length2[x] = statistics[0].length2[x];
-                        for(yy=0;yy<npops;yy++) {
-                            stats_iter[0].lengthamng[x][yy] = statistics[0].lengthamng[x][yy];
-                            stats_iter[0].lengthamng_outg[x][yy] = statistics[0].lengthamng_outg[x][yy];
-                        }
-                    }
-
-                    if( calc_piwpiafst(0,0,npops,vint_perpop_nsam,matrix_perm,
-                                       length_seg,stats_iter,matrix_sv,
-                                       outgroup_presence,force_outgroup) == 0) {
-                        printf("\nError in calc_piwpiafst function.2.\n");
+                    if(calcFs(npops,vint_perpop_nsam,statistics)==0) { /*need calc_freqstats and calc_hwhafsth to be calculated*/
+                        fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_Fs function.1.\n");
                         exit(1);
-                    }
-                    if( ploidy[0] == '1') {
-                        if(calc_hwhafsth(npops,vint_perpop_nsam,matrix_perm,length_seg,stats_iter) == 0) {
-                            printf("\nError in calc_hwhafsth function.2.\n");
-                            exit(1);
-                        }
-                    }
-                    
-                    z=0;
-                    for(x=0;x<npops-1;x++) 
-                    {
-                        if(stats_iter[0].fst1all[x] != -10000 && statistics[0].fst1all[x] != -10000) {
-                            if(statistics[0].fst1all[x] <= stats_iter[0].fst1all[x]) 
-                                piter[0].i1[x]++;
-                            piter[0].niteri1[x]++;
-                            /*fprintf(file_output,"%.3f\t",stats_iter[0].fst1all[x]);*/
-                        }
-                        if(ploidy[0] == '1'){
-                            if(stats_iter[0].fsth1all[x] != -10000 && statistics[0].fsth1all[x] != -10000) {
-                                if(statistics[0].fsth1all[x] <= stats_iter[0].fsth1all[x]) 
-                                    piter[0].ih1[x]++;
-                                piter[0].niterih1[x]++;
-                            }
-                        }
-                    }
-                    
-                    /*fprintf(file_output,"\n");*/
-                    if(stats_iter[0].fstALL != -10000 && statistics[0].fstALL != -10000) {
-                        if(statistics[0].fstALL <= stats_iter[0].fstALL) 
-                            piter[0].iall++;
-                        piter[0].niteriall++;
-                    }
-                    
-                    if(ploidy[0] == '1')
-                    {
-                        if(stats_iter[0].fsthALL != -10000 && statistics[0].fsthALL != -10000) {
-                            if(statistics[0].fsthALL <= stats_iter[0].fsthALL) 
-                                piter[0].ihall++;
-                            piter[0].niterihall++;				
-                        }
-                        if(stats_iter[0].GstALL != -10000 && statistics[0].GstALL != -10000) {
-                            if(statistics[0].GstALL <= stats_iter[0].GstALL) 
-                                piter[0].ighall++;
-                            piter[0].niterighall++;				
-                        }
-                    }
-                }
-                if(file_output && (output == 0 || output == 10)) {
-                     /*fprintf(file_output,"Permutation test one vs all Done.\n");*/
-                     fflush(file_output);
-                     /*
-                     printf("Permutation test one vs all Done.\n");
-                     fflush(stdout);
-                     */
-                }
-                /* permute pairs of pops */
-                for(i=0;i<niter;i++)
-                {
-                    z = 0;
-                    psam2[0] = 0;
-                    psam2[1] = 0;
-                    
-                    for(x=0;x<npops-1;x++)
-                    {
-                        nsam2[0] = vint_perpop_nsam[x];
-                        psam2[1] = psam2[0] + vint_perpop_nsam[x];
-                        for(y=x+1;y<npops-0;y++) {
-                            nsam2[1] = vint_perpop_nsam[y];
-                            psam2[2] = psam2[1] + vint_perpop_nsam[y];
-                            nsam2[2] = vint_perpop_nsam[npops-1];
-                            if( permute(matrix_pol,length_seg,int_total_nsam,matrix_perm,nsam2,psam2,npops,vint_perpop_nsam[npops-1],int_total_nsam-vint_perpop_nsam[npops-1])== 0) {
-                                printf("\nError in permute function.\n");
-                                exit(1);
-                            }
-                            /*HERE WE ASSUME THAT THE LENGTH SIZE ARE THE SAME THAN FOR ORIGINAL SAMPLES!! (OK FOR NO MISSING)*/
-                            stats_iter[0].length[0]  = statistics[0].length[x];
-                            stats_iter[0].length2[0] = statistics[0].length2[x];
-                            stats_iter[0].length[1]  = statistics[0].length[y];
-                            stats_iter[0].length2[1] = statistics[0].length2[y];
-                            stats_iter[0].lengthamng[0][1] = statistics[0].lengthamng[x][y];
-                            stats_iter[0].lengthamng_outg[0][1] = statistics[0].lengthamng_outg[x][y];
-                            
-                            if( calc_piwpiafst(0,0,2+1/*outg*/,nsam2,matrix_perm,length_seg,stats_iter,matrix_sv,outgroup_presence,force_outgroup) == 0) {
-                                printf("\nError in calc_piwpiafst function.2.\n");
-                                exit(1);
-                            }
-                            if(int_total_nsam < SAMPLE_LARGE) {
-                                if( ploidy[0] == '1') {
-                                    if(calc_hwhafsth(2+1,nsam2,matrix_perm,length_seg,stats_iter) == 0) {
-                                        printf("\nError in calc_hwhafsth function.2.\n");
-                                        exit(1);
-                                    }
-                                }
-                            }
-                            if( stats_iter[0].fst[0] != -10000 && statistics[0].fst[z] != -10000) {
-                                if(statistics[0].fst[z] <= stats_iter[0].fst[0])
-                                    piter[0].i[z]++;
-                                piter[0].niteri[z]++;
-                            }
-                            if( ploidy[0] == '1' )
-                            {
-                                if(stats_iter[0].fsth[0] != -10000 && statistics[0].fsth[z] != -10000) {
-                                    if(statistics[0].fsth[z] <= stats_iter[0].fsth[0])
-                                        piter[0].ih[z]++;
-                                    piter[0].niterih[z]++;
-                                }
-                                if(stats_iter[0].Gst[0] != -10000 && statistics[0].Gst[z] != -10000) {
-                                    if(statistics[0].Gst[z] <= stats_iter[0].Gst[0])
-                                        piter[0].igh[z]++;
-                                    piter[0].niterigh[z]++;
-                                }
-                            }
-                            psam2[1] += vint_perpop_nsam[y]; /*!outgroup_presence at loops*/
-                            z++;
-                        }
-                        psam2[0] += vint_perpop_nsam[x];
                     }
                 }
             }
+            
             if(file_output) {
                 /*
                 fprintf(file_output,"Done.\n");
                 fflush(file_output);
-                printf("Done.\n");
+                fzprintf(file_logerr,&file_logerr_gz,"Done.\n");
                  */
                 fflush(stdout);
             }
+            
+            /* Un monton de cosas casi-repes que volvemos a utilizar! */
+            /* PERMUTATION */
+            /* Only if not MS format */
+            if(niter && npops > 2 /*one is outgroup, forced or not*/ && include_unknown == 0)
+            {			
+                /*calloc pointers in structs for permutation test*/
+                if((stats_iter = (struct stats *)calloc(1,sizeof(struct stats))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+
+                if((stats_iter[0].piw  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].pia  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].piT  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].piant  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].piTnt  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].fst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].piwHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].thetaTHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].piaHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].piTHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].fstHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].fst1all  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].hapw = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].hapa = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].hapT = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].fsth = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].fsth1all = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].Gst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].K  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].KHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                stats_iter[0].freq  = 0;
+                if((stats_iter[0].sv = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].svT = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].nhpop  = (int *)calloc(1*npops,sizeof(int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].freqh  = (long int **)calloc(1*npops,sizeof(long int *))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].tcga  = (double **)calloc(1*npops,sizeof(double *))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((stats_iter[0].length = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].length2 = (double *)calloc(1*npops,sizeof(double))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].lengthamng  = (double **)calloc(npops,sizeof(double *))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                if((stats_iter[0].lengthamng_outg  = (double **)calloc(npops,sizeof(double *))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                for(x=0;x<npops;x++) {
+                    if((stats_iter[0].lengthamng[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
+                        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                        exit(1);
+                    }
+                    if((stats_iter[0].lengthamng_outg[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
+                        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                        exit(1);
+                    }
+                    if((stats_iter[0].tcga [x]  = (double *)calloc(4,sizeof(double))) == 0) {
+                        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                        exit(1);
+                    }
+                    
+                    if((stats_iter[0].freqh[x]  = (long int *)calloc(int_total_nsam,sizeof(long int))) == 0) {
+                        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                        exit(1);
+                    }
+                    
+                    if((stats_iter[0].sv[x]     = (double **)calloc(1*npops,sizeof(double *))) == 0) {
+                        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                        exit(1);
+                    }
+                    if((stats_iter[0].svT[x]     = (double **)calloc(1*npops,sizeof(double *))) == 0) {
+                        fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                        exit(1);
+                    }
+                    
+                    for(y=0;y<npops;y++) {
+                        if((stats_iter[0].sv[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
+                            fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                            exit(1);
+                        }
+                        if((stats_iter[0].svT[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
+                            fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                            exit(1);
+                        }
+                    }
+                    
+                }
+                for(x=0;x<npops;x++) {
+                    for(w=0;w<4;w++) {
+                        stats_iter[0].tcga[x][w] = statistics[0].tcga[x][w];
+                    }
+                }
+                stats_iter[0].total_length = length_al;
+                stats_iter[0].total_svratio = svratio;
+                stats_iter[0].nmhits = nmhits;
+                
+                if((piter = (struct probs *)calloc(1,sizeof(struct probs))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }			
+                
+                if((piter[0].i1  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].ih1 = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].i	  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].ih  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].igh  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                
+                if((piter[0].niteri1  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].niterih1 = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].niteri   = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].niterih  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if((piter[0].niterigh  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                
+                piter[0].iall	    = 0;
+                piter[0].ihall      = 0;
+                piter[0].ighall     = 0;
+                piter[0].niteriall  = 0;
+                piter[0].niterihall = 0;	
+                piter[0].niterighall= 0;
+                
+                if((matrix_perm = (char *)calloc(length_seg*int_total_nsam,sizeof(char))) == 0) {
+                    fzprintf(file_logerr,&file_logerr_gz,"\n  Error allocating memory.");
+                    exit(1);
+                }
+                
+                if(file_output && (output == 0 || output == 10)) {
+                    /*fprintf(file_output,"Calculating permutation tests...\n");*/
+                    fflush(file_output);
+                    /*
+                    fzprintf(file_logerr,&file_logerr_gz,"Calculating permutation test...\n");
+                    fflush(stdout);
+                    */
+                }
+
+                /*permute samples in pops:*/
+                if(npops > 2)
+                {
+                    /* TODO: OJO que necesita inicializar las poblaciones de otra manera, segun ...*/
+                    for(i=0;i<niter;i++) 
+                    {				
+                        /*assign the (2) groups that will be included in permutation test*/
+                        nsam2[0] = vint_perpop_nsam[0];
+                        nsam2[1] = int_total_nsam - vint_perpop_nsam[npops-1] - vint_perpop_nsam[0];
+                        /*nsam2[2] = vint_perpop_nsam[npops-1];*/
+                        
+                        psam2[0] = 0;
+                        psam2[1] = vint_perpop_nsam[0];
+                        /*psam2[2] = psam2[1] + nsam2[1];*/
+                        
+                        if( permute(matrix_pol,length_seg,int_total_nsam,matrix_perm,nsam2,psam2,npops,vint_perpop_nsam[npops-1],int_total_nsam-vint_perpop_nsam[npops-1]) == 0) {
+                            fzprintf(file_logerr,&file_logerr_gz,"\nError in permute function.\n");
+                            exit(1);
+                        }
+                        /*HERE WE ASSUME THAT THE LENGTH SIZE ARE THE SAME THAN FOR ORIGINAL SAMPLES!! (OK FOR NO MISSING)*/
+                        for(x=0;x<npops;x++) {
+                            stats_iter[0].length[x]  = statistics[0].length[x];
+                            stats_iter[0].length2[x] = statistics[0].length2[x];
+                            for(yy=0;yy<npops;yy++) {
+                                stats_iter[0].lengthamng[x][yy] = statistics[0].lengthamng[x][yy];
+                                stats_iter[0].lengthamng_outg[x][yy] = statistics[0].lengthamng_outg[x][yy];
+                            }
+                        }
+
+                        if( calc_piwpiafst(0,0,npops,vint_perpop_nsam,matrix_perm,
+                                           length_seg,stats_iter,matrix_sv,
+                                           outgroup_presence,force_outgroup) == 0) {
+                            fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_piwpiafst function.2.\n");
+                            exit(1);
+                        }
+                        if( ploidy[0] == '1') {
+                            if(calc_hwhafsth(npops,vint_perpop_nsam,matrix_perm,length_seg,stats_iter) == 0) {
+                                fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_hwhafsth function.2.\n");
+                                exit(1);
+                            }
+                        }
+                        
+                        z=0;
+                        for(x=0;x<npops-1;x++) 
+                        {
+                            if(stats_iter[0].fst1all[x] != -10000 && statistics[0].fst1all[x] != -10000) {
+                                if(statistics[0].fst1all[x] <= stats_iter[0].fst1all[x]) 
+                                    piter[0].i1[x]++;
+                                piter[0].niteri1[x]++;
+                                /*fprintf(file_output,"%.3f\t",stats_iter[0].fst1all[x]);*/
+                            }
+                            if(ploidy[0] == '1'){
+                                if(stats_iter[0].fsth1all[x] != -10000 && statistics[0].fsth1all[x] != -10000) {
+                                    if(statistics[0].fsth1all[x] <= stats_iter[0].fsth1all[x]) 
+                                        piter[0].ih1[x]++;
+                                    piter[0].niterih1[x]++;
+                                }
+                            }
+                        }
+                        
+                        /*fprintf(file_output,"\n");*/
+                        if(stats_iter[0].fstALL != -10000 && statistics[0].fstALL != -10000) {
+                            if(statistics[0].fstALL <= stats_iter[0].fstALL) 
+                                piter[0].iall++;
+                            piter[0].niteriall++;
+                        }
+                        
+                        if(ploidy[0] == '1')
+                        {
+                            if(stats_iter[0].fsthALL != -10000 && statistics[0].fsthALL != -10000) {
+                                if(statistics[0].fsthALL <= stats_iter[0].fsthALL) 
+                                    piter[0].ihall++;
+                                piter[0].niterihall++;				
+                            }
+                            if(stats_iter[0].GstALL != -10000 && statistics[0].GstALL != -10000) {
+                                if(statistics[0].GstALL <= stats_iter[0].GstALL) 
+                                    piter[0].ighall++;
+                                piter[0].niterighall++;				
+                            }
+                        }
+                    }
+                    if(file_output && (output == 0 || output == 10)) {
+                         /*fprintf(file_output,"Permutation test one vs all Done.\n");*/
+                         fflush(file_output);
+                         /*
+                         fzprintf(file_logerr,&file_logerr_gz,"Permutation test one vs all Done.\n");
+                         fflush(stdout);
+                         */
+                    }
+                    /* permute pairs of pops */
+                    for(i=0;i<niter;i++)
+                    {
+                        z = 0;
+                        psam2[0] = 0;
+                        psam2[1] = 0;
+                        
+                        for(x=0;x<npops-1;x++)
+                        {
+                            nsam2[0] = vint_perpop_nsam[x];
+                            psam2[1] = psam2[0] + vint_perpop_nsam[x];
+                            for(y=x+1;y<npops-0;y++) {
+                                nsam2[1] = vint_perpop_nsam[y];
+                                psam2[2] = psam2[1] + vint_perpop_nsam[y];
+                                nsam2[2] = vint_perpop_nsam[npops-1];
+                                if( permute(matrix_pol,length_seg,int_total_nsam,matrix_perm,nsam2,psam2,npops,vint_perpop_nsam[npops-1],int_total_nsam-vint_perpop_nsam[npops-1])== 0) {
+                                    fzprintf(file_logerr,&file_logerr_gz,"\nError in permute function.\n");
+                                    exit(1);
+                                }
+                                /*HERE WE ASSUME THAT THE LENGTH SIZE ARE THE SAME THAN FOR ORIGINAL SAMPLES!! (OK FOR NO MISSING)*/
+                                stats_iter[0].length[0]  = statistics[0].length[x];
+                                stats_iter[0].length2[0] = statistics[0].length2[x];
+                                stats_iter[0].length[1]  = statistics[0].length[y];
+                                stats_iter[0].length2[1] = statistics[0].length2[y];
+                                stats_iter[0].lengthamng[0][1] = statistics[0].lengthamng[x][y];
+                                stats_iter[0].lengthamng_outg[0][1] = statistics[0].lengthamng_outg[x][y];
+                                
+                                if( calc_piwpiafst(0,0,2+1/*outg*/,nsam2,matrix_perm,length_seg,stats_iter,matrix_sv,outgroup_presence,force_outgroup) == 0) {
+                                    fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_piwpiafst function.2.\n");
+                                    exit(1);
+                                }
+                                if(int_total_nsam < SAMPLE_LARGE) {
+                                    if( ploidy[0] == '1') {
+                                        if(calc_hwhafsth(2+1,nsam2,matrix_perm,length_seg,stats_iter) == 0) {
+                                            fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_hwhafsth function.2.\n");
+                                            exit(1);
+                                        }
+                                    }
+                                }
+                                if( stats_iter[0].fst[0] != -10000 && statistics[0].fst[z] != -10000) {
+                                    if(statistics[0].fst[z] <= stats_iter[0].fst[0])
+                                        piter[0].i[z]++;
+                                    piter[0].niteri[z]++;
+                                }
+                                if( ploidy[0] == '1' )
+                                {
+                                    if(stats_iter[0].fsth[0] != -10000 && statistics[0].fsth[z] != -10000) {
+                                        if(statistics[0].fsth[z] <= stats_iter[0].fsth[0])
+                                            piter[0].ih[z]++;
+                                        piter[0].niterih[z]++;
+                                    }
+                                    if(stats_iter[0].Gst[0] != -10000 && statistics[0].Gst[z] != -10000) {
+                                        if(statistics[0].Gst[z] <= stats_iter[0].Gst[0])
+                                            piter[0].igh[z]++;
+                                        piter[0].niterigh[z]++;
+                                    }
+                                }
+                                psam2[1] += vint_perpop_nsam[y]; /*!outgroup_presence at loops*/
+                                z++;
+                            }
+                            psam2[0] += vint_perpop_nsam[x];
+                        }
+                    }
+                }
+                if(file_output) {
+                    /*
+                    fprintf(file_output,"Done.\n");
+                    fflush(file_output);
+                    printf("Done.\n");
+                     */
+                    fflush(stdout);
+                }
+            }
+            /*print results*/
+            /* TODO: mas elegante el tema de force_outgroup */
+            if(print_output( argc,npops,vint_perpop_nsam,file_output,&file_output_gz,file_in,file_out,
+                                    gfffiles,file_GFF,subset_positions,code_name,
+                                    genetic_code,length,length_seg,length_al,
+                                    length_al_real,statistics,piter,niter,
+                                    sites_matrix,ploidy,svratio,missratio,
+                                    include_unknown,matrix_pos,jfd,nfd,output,
+                                    H1frq,H0frq,nseed,file_H1f,file_H0f,vector_priors,
+                                    npriors,formatfile, 
+                                    outgroup_presence+force_outgroup, force_outgroup,freq_missing_ms,
+                                    nsites1_pop,nsites1_pop_outg,nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,
+                                    li+1, matrix_pol,r2i_ploidies,matrix_pol_tcga,chr_name) == 0)
+            {
+
+                fzprintf(file_logerr,&file_logerr_gz,"\nSorry. Error in printing function.\n");
+                exit(1);
+            }
+            /* TODO: Check cleaning the house */
+            free(matrix_pol);
+            if(!(formatfile == 1 || formatfile == 2)) free(matrix_pol_tcga);
+            free(matrix_freq);
+            free(matrix_pos);
+            /*free(matrix_GC);*/
+            free(matrix_sv);
+            free(sites_matrix);
+
+            for(x=0;x<npops;x++) {
+                free(jfd[x]);
+                free(nfd[x]);
+            }
+            free(jfd);
+            free(nfd);
+            if(/*include_unknown && */file_mas[0] == '-' && (formatfile==1 || formatfile==2))
+                free(sum_sam_mask);
+            
+            li++;
         }
-		/*print results*/
-		/* TODO: mas elegante el tema de force_outgroup */
-		if(print_output( argc,npops,vint_perpop_nsam,file_output,file_in,file_out,
-								gfffiles,file_GFF,subset_positions,code_name,
-								genetic_code,length,length_seg,length_al,
-								length_al_real,statistics,piter,niter,
-								sites_matrix,ploidy,svratio,missratio,
-								include_unknown,matrix_pos,jfd,nfd,output,
-								H1frq,H0frq,nseed,file_H1f,file_H0f,vector_priors,
-								npriors,formatfile, 
-								outgroup_presence+force_outgroup, force_outgroup,freq_missing_ms,
-								nsites1_pop,nsites1_pop_outg,nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,
-								li+1, matrix_pol,r2i_ploidies,matrix_pol_tcga) == 0)
-		{
-
-			printf("\nSorry. Error in printing function.\n");
-			exit(1);
-		}
-		/* TODO: Check cleaning the house */
-        free(matrix_pol);
-        if(!(formatfile == 1 || formatfile == 2)) free(matrix_pol_tcga);
-		free(matrix_freq);
-		free(matrix_pos);
-		/*free(matrix_GC);*/
-		free(matrix_sv);
-		free(sites_matrix);
-
-		for(x=0;x<npops;x++) {
-			free(jfd[x]);
-			free(nfd[x]);
-		}
-		free(jfd);
-		free(nfd);
-		if(/*include_unknown && */file_mas[0] == '-' && (formatfile==1 || formatfile==2))
-            free(sum_sam_mask);
-		
-		li++;
-	}
+        if(formatfile == 3) {
+            if(file_wcoor) free(wgenes);
+        }
+    }
+    if(file_ws) fzclose(file_ws, &file_ws_gz);
+    
     if(/*include_unknown && */file_mas[0] != '-' && (formatfile==1 || formatfile==2))
         free(sum_sam_mask);
     
@@ -2616,6 +2652,10 @@ int main(int argc, const char * argv[])
     }
 	if(file_output) fclose(file_output);
 	
+    for(x=0;x<nscaffolds;x++)
+        free(chr_name_array[x]);
+    free(chr_name_array);
+    
 	free(sort_nsam);
 	free(nsites1_pop);
 	free(nsites2_pop);
@@ -2726,6 +2766,7 @@ int main(int argc, const char * argv[])
 		free(statistics[0].sv[x]);
 		free(statistics[0].svT[x]);
 	}
+    free(statistics[0].length2);
     free(statistics[0].lengthamng);
     free(statistics[0].lengthamng_outg);
 
@@ -2742,6 +2783,8 @@ int main(int argc, const char * argv[])
 	free(statistics[0].linefreq);
 	free(statistics);
 	free(sum_sam);
+    for( x=0; x<int_total_nsam+(!outgroup_presence); x++)
+        free(tcga[x]);
 	free(tcga);
 	if(!(formatfile == 0 || ( formatfile == 3 && ((slide == 0 && window == 0) && file_Wcoord[0]=='\0')))) {
 		free(matrix_mask);
@@ -2816,9 +2859,11 @@ int main(int argc, const char * argv[])
 	if(r2i_ploidies!=0)
         free(r2i_ploidies);
     
-    if(file_ws) fzclose(file_ws, &file_ws_gz);
     if(file_wcoor) fclose(file_wcoor);
     if(file_es) fclose(file_es);
+    
+    fzprintf(file_logerr,&file_logerr_gz,"\nProgram Ended\n");
+    fzclose(file_logerr, &file_logerr_gz);
 
 	exit(0);
 }
@@ -2838,17 +2883,19 @@ void usage(void)
     printf("                              6 (SNP genotype matrix)\n");
     printf("                             10 (full extended)]\n");
     printf("      -N [#_pops] [#samples_pop1] ... [#samples_popN]\n");
+    printf("      -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]\n");
     printf("   OPTIONAL GENERAL PARAMETERS:\n");
     printf("      -G [outgroup (0/1)] (last population). DEFAULT 0.\n");
     printf("      -u [include unknown positions (0/1)].  DEFAULT 0.\n");
     printf("      -T [path and name of the output file]. DEFAULT stdout.\n");
-    printf("      -a [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)\n");
+    printf("      -A [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)\n");
     printf("          File format: (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,\n");
     printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]\n");
-    printf("      -n [Null Spectrum File (only if -a is defined): null_spectrum for each population (except outg).\n");
+    printf("      -S [Null Spectrum File (only if -a is defined): null_spectrum for each population (except outg).\n");
     printf("          (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,\n");
     printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]. DEFAULT SNM.\n");
-    printf("      -P [Only for Calculation of R2_p: first value is the number of values to include, next are the number of lines to consider. ex: -P 6 1 2 4 8 16 64]\n");
+    printf("      -P [Only for Calculation of R2_p: first value is the number of values to include, \n");
+    printf("                       next are the number of lines to consider. ex: -P 6 1 2 4 8 16 64]\n");
     printf("    Optional Parameters for fasta and tfa input files:\n");
     printf("      -O [#_nsam] [number order of first sample, number 0 is the first sample] [second sample] ...etc. up to nsamples.\n");
     printf("         DEFAULT current order.\n");
@@ -2857,10 +2904,10 @@ void usage(void)
     printf("   PARAMETERS FOR TFASTA INPUT (-f tfa): 'SLIDING WINDOW ANALYSIS OF EMPIRICAL DATA'\n");
     printf("      -w [window size].\n");
     printf("    Optional:\n");
-    printf("      -z [slide size (must be equal or larger than window size)]. DEFAULT window size.\n");
+    printf("      -z [slide size (must be a positive value)]. DEFAULT window size.\n");
     printf("      -Z [first window size displacement [for comparing overlapped windows])]. DEFAULT 0.\n");
     printf("      -Y [define window lengths in 'physical' positions (1) or in 'effective' positions (0)]. DEFAULT 1.\n");
-    printf("      -W [file with the coordinates of each window [init end] (overwrite options -w and -z).\n");
+    printf("      -W [file with the coordinates of each window [init end] (instead options -w and -z).\n");
     printf("         DEFAULT one whole window.\n");
     printf("      -E [input file with weights for positions:\n");
     printf("         include three columns with a header,\n");
@@ -2891,12 +2938,7 @@ void usage(void)
     printf("   HELP:\n");
     printf("      -h [help and exit]\n");
     /*printf("\t-y [in case missing: number of comparisons for approximate calculation of covariance. 0 if rough approach]\n");*//*to eliminate*/
-    /*printf("\t-x [frequency of missing positions (only with -f ms[_e] and -u 1)\n");*//*eliminate*/
-    /*printf("\t-k [kind of length (only for ms format). Except outgroup: 0 All accepted positions even regions with all Ns (default);\n");*/
-    /*printf("\t     [1 Only positions with at least one valid nt; 2 At least two valid nt; 3]\n");*//*valorate to eliminate*/
-    /*printf("\t-M [column location (starting from 1) of the Ratio of missing values (only for ms_e format)]\n");*//*eliminate format ms_e*/
     /*
-     printf("\t-e [input file with weights for variants: include two columns with a header, first the physical positions and second the weight]\n"); WILL NOT USED IN MSTATSPOP
      printf("\t-T [count only transitions (not for ms format)\n"); NOT DONE
      printf("\t-V [count only transversions (not for ms format)\n"); NOT DONE
      printf("\t-G [count only G/C mutations (not for ms format)\n"); NOT DONE

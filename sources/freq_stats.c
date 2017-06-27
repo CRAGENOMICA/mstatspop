@@ -62,7 +62,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
 	int **nx;
 	int *no;
 	
-	static struct covar_ij *Covi1i2;
+	struct covar_ij *Covi1i2;
 	static long int count_cov = 0;	
 	
 	double *mean_freqsptr,mean_S;
@@ -684,6 +684,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
         }
     }
     /*free pointers*/
+    free(Covi1i2);
     for(x=0;x<maxnsam;x++) {
         free(ominx[x]);
         free(eix[x]);
@@ -1097,7 +1098,10 @@ double freqtestn_achaz(int sample_size,long int *fr,int singleton,double *w1,dou
 	}
     Th2 /= sumw2;
 	
-    if(Th1 == 0. && Th2 == 0.) return(-10000);
+    if(Th1 == 0. && Th2 == 0.) {
+        free(ww);
+        return(-10000);
+    }
 	
 	Thw = 0.;
 	sumww = 0.;
@@ -1186,13 +1190,14 @@ double freqtestn_achaz(int sample_size,long int *fr,int singleton,double *w1,dou
         }
     }
 	Thw2 = (Thw*Thw - alfat*Thw)/(1.0 + betat);
-	
-	/*Test*/
+
+    free(ww);
+
+    /*Test*/
     if((sqrt(alfan*Thw + betan*Thw2)) == 0)
         return -10000;
 	Test = (Th1 - Th2)/(sqrt(alfan*Thw + betan*Thw2));
 						
-	free(ww);
 	if (fabs(Test) < 1.0E-15)
 		return 0.0;
 
