@@ -385,8 +385,8 @@ int print_output( int mainargc,int npops,int *nsam,
                 else fprintf(file_out,"Achaz Y[%d]: NA\t",x);
 /**/
                 if(statistics[0].FH[x] > -10000)
-                    fprintf(file_out,"WH[%d]: %f\t",x,statistics[0].FH[x]);
-                else fprintf(file_out,"WH[%d]: NA\t",x);
+                    fprintf(file_out,"Ferretti L[%d]: %f\t",x,statistics[0].FH[x]);
+                else fprintf(file_out,"Ferretti L[%d]: NA\t",x);
 /**/
 				if(ploidy[0] == '1') {
 					/*
@@ -2236,8 +2236,8 @@ int print_output( int mainargc,int npops,int *nsam,
                             else fprintf(file_out,"AchazY[%d]:\tNA\t",x);
 /**/
                             if(statistics[0].FH[x] > -10000)
-                                fprintf(file_out,"WH[%d]:\t%f\t",x,statistics[0].FH[x]);
-                            else fprintf(file_out,"WH[%d]:\tNA\t",x);
+                                fprintf(file_out,"FerrettiL[%d]:\t%f\t",x,statistics[0].FH[x]);
+                            else fprintf(file_out,"FerrettiL[%d]:\tNA\t",x);
 /**/
                             if(ploidy[0] == '1') {
 								/*
