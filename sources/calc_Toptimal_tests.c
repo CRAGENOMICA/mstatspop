@@ -170,7 +170,8 @@ int	calc_Toptimal_tests(int npops,int *nsam,struct stats *statistics)
 		
 		free(omega_test_line->w);
 		free(omega_test_line);
-		
+        
+        free(H0freqsptr);
 	}
 	
 	return 1;

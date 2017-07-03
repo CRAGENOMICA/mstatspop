@@ -51,7 +51,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 	double cod3f,cod3ft[3];
 	int neffsam;
 	
-	int **read_frame;
+	//int **read_frame;
 	
 	int gg;
 	char *pst;
@@ -478,18 +478,19 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		}
 		nrows += 1;
 		
+        /*
 		if(!(read_frame = (int **)calloc(1,sizeof(int *)))) {
 			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.34 \n");
 			free(fieldsgff);
-			return 0; /*error*/
+			return 0; ///error
 		}
 		if(!(read_frame[0] = (int *)calloc(256,sizeof(int)))) {
 			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.341 \n");
 			free(read_frame);
 			free(fieldsgff);
-			return 0; /*error*/
+			return 0; //error
 		}
-		
+		*/
 		/*set to zero all values in matrix_sizepos*/
 		if(strcmp(subset_positions,"noncoding") == 0) for(ii=0;ii<n_site;ii++) matrix_sizepos[ii] = (double)1;
 		else for(ii=0;ii<n_site;ii++) matrix_sizepos[ii] = (double)0;
@@ -1436,7 +1437,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     if(endtrp != ii2) {
                                         if(type_output == 0 || type_output == 10) {
                                             /*if(mainargc > 1)*/ /*printf("\n Excluded codons:  Stop Codon starting at position %ld.",ii+1);*//**/
-                                            if(file_output) fzprintf(file_output,file_output_gz,"\n Excluded codons: Stop Codon starting at position %ld.",ii+1);
+                                            if(file_output) fprintf(file_output,"\n Excluded codons: Stop Codon starting at position %ld.",ii+1);
                                         }
                                     }
                                     stop = 1;
@@ -1563,9 +1564,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 									for(xx=0;xx<i;xx++) {
 										do{
 											ii2 += k;
-										}while(ii2*k <= end*k && cmat[ii2] == (double)0); /*conditional: hf1 < n_samp-nsamoutg*/
+										}while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0)); /*conditional: hf1 < n_samp-nsamoutg*/
 									}
-									matrix_segrpos[ii2] = (double)0; /*reject syn variant but keep position...*/
+									if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject syn variant but keep position...*/
 								}
 							}
                             else {
@@ -1575,9 +1576,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     for(xx=0;xx<i;xx++) {
                                         do{
                                             ii2 += k;
-                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0);
+                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    matrix_segrpos[/*ii+i*k*/ii2] = (double)0; /*reject nsyn variant but keep position...*/
+                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[/*ii+i*k*/ii2] = (double)0; /*reject nsyn variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"0-fold") == 0)) {
@@ -1586,9 +1587,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     for(xx=0;xx<i;xx++) {
                                         do{
                                             ii2 += k;
-                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0);
+                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    matrix_segrpos[ii2] = (double)0; /*reject non 0-fold variant but keep position...*/
+                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 0-fold variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"2-fold") == 0)) {
@@ -1597,9 +1598,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     for(xx=0;xx<i;xx++) {
                                         do{
                                             ii2 += k;
-                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0);
+                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    matrix_segrpos[ii2] = (double)0; /*reject non 2-fold variant but keep position...*/
+                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 2-fold variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"3-fold") == 0)) {
@@ -1608,9 +1609,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     for(xx=0;xx<i;xx++) {
                                         do{
                                             ii2 += k;
-                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0);
+                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    matrix_segrpos[ii2] = (double)0; /*reject non 3-fold variant but keep position...*/
+                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 3-fold variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"4-fold") == 0)) {
@@ -1619,9 +1620,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     for(xx=0;xx<i;xx++) {
                                         do{
                                             ii2 += k;
-                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0);
+                                        }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    matrix_segrpos[ii2] = (double)0; /*reject non 4-fold variant but keep position...*/
+                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 4-fold variant but keep position...*/
                                 }
                             }
                         }

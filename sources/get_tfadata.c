@@ -76,7 +76,7 @@ int get_tfadata(FILE *file_output,
     long int xx;
     /* int c; */
     int n_sam/*,ns*/;
-    long int n_sit;
+    /*long int n_sit;*/
     /* int nseq; */
     /* int maxsam; */
     /* int n_excl; */
@@ -131,7 +131,7 @@ int get_tfadata(FILE *file_output,
     /* count = 0; */
     /* c = 0; */
     n_sam = 0;
-    n_sit = 0;
+    /*n_sit = 0;*/
     /* nseq  = 0; */
     /* maxsam= 128; */
     n_samp= 0;
@@ -409,7 +409,7 @@ int get_tfadata(FILE *file_output,
             }
             /*delete duplicated matr*/
             for(x=0;x<n_samp;x++) free(names2[x]);
-            free(names2);
+            free(names2); names2 = 0;
             free(DNA_matr2);
             
             /*erase lines no used*/
@@ -512,13 +512,13 @@ int get_tfadata(FILE *file_output,
                         nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,
                         anx,bnx,anxo,bnxo,lengthamng,lengthamng_outg,mhitbp,
                         matrix_pol_tcga,(long int)beg) == 0) {
-            for(x=0;x<n_sam;x++) free(names[x]); free(names);
+            for(x=0;x<n_sam;x++) free(names[x]); free(names);names = 0;
             free(wP);free(wPV);free(wV);
             free(DNA_matr);
             /*free(DNA_matr2);*/
-/*            free(matrix_sizepos);
+/*          free(matrix_sizepos);
             free(matrix_segrpos);
-*/            free(mhitbp);
+*/          free(mhitbp);
             return(0);
         }
 		/*free(names2);
@@ -1039,11 +1039,11 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     static long int row_num = -1;  /* fzseek: Set to -1 if you want to search by ID. */
                                     /*Or set NULL to the ID if you want to seach by position..*/
     static char *ID = 0;
-    long int f_num = 0;
+    /*long int f_num = 0;*/
     int y;
     static int count0s,nchstr;
-    static int chr_defined=0;
-    static int position_defined=0;
+    /*static int chr_defined=0;*/
+    /*static int position_defined=0;*/
     
     if ((DNA_matr2 = (char *)calloc(10000,sizeof(char))) == 0) {
         fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_tfadata.23d \n");
@@ -1171,7 +1171,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
         free(DNA_matr2);
         return(0);
     }
-    f_num = position;
+    /*f_num = position;*/
     row_num = -1;
     
     if(fzseekNearest(file_input, file_input_gz,index_input, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
@@ -1180,7 +1180,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
         free(DNA_matr2);
         return(1);
     }
-    f_num = row_num;
+    /*f_num = row_num;*/
 
     /*get scaffold name*/
     *c = fzgetc(file_input, file_input_gz);
@@ -1239,8 +1239,8 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     col = 0;
     count=0;
     while (strcmp(line, chr_name) == 0 && position <= end_position) {
-        chr_defined = 0;
-        position_defined = 0;
+        /*chr_defined = 0;*/
+        /*position_defined = 0;*/
         switch(*c) {
             case 'T':
                 DNA_matr2[(((long long)nseq*(unsigned long)*n_site)+(unsigned long)col)] = '1';
@@ -1464,7 +1464,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                 return(-1);
             }
             line[col] = '\0';
-            chr_defined = 1;
+            /*chr_defined = 1;*/
             if(check_comment(c,file_input,file_input_gz) == 0) {
                 break;
             }
@@ -1486,7 +1486,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                 col2 = 0;
                 position = atol(line2);
                 if(end_site == -1) end_position = position + 1;
-                position_defined = 1;
+                /*position_defined = 1;*/
                 if(check_comment(c,file_input,file_input_gz) == 0) {
                     free(DNA_matr2);
                     return(-1);
@@ -1542,7 +1542,7 @@ int transform_beg_chr(char *ID, char *chr_name,long int beg,int nchstr, int coun
     long int zi=beg;
     double zr;
     int p10/*,p10i*/;
-    int x,nnchstr;
+    int x/*,nnchstr*/;
     char ID2[100];
     
     memset(ID2,0,100);
@@ -1558,12 +1558,12 @@ int transform_beg_chr(char *ID, char *chr_name,long int beg,int nchstr, int coun
         for(x=nchstr-1;x>=p10;x--) {
             ID2[nchstr-1-x] = '0';
         }
-        nnchstr = nchstr;
-    }
+        /*nnchstr = nchstr;*/
+    }/*
     else {
         nnchstr = p10;
     }
-    
+    */
     sprintf(ID2,"%s%ld",ID2,beg);
     
     /*

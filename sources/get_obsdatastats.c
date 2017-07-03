@@ -596,30 +596,30 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 			fzprintf(file_logerr,file_logerr_gz,"\n\nREADING INPUT FILE DATA:\n\n Number of Total Samples (if diploid, doubled): %d\n Valid sites: %.2f\n Multiple hits: %ld\n Polymorphic (biallelic) positions with missing samples: %ld\n Ratio missing/positions: %f\n Ratio trans/transv: %.3f.",nnnsam-!outgroup_presence,_sites,mhits,mv,(double)totalmis/(double)(nnnsam*_sites),(double)transitions/(double)transversions);
 			*/
 			if(*nmhits) {
-                fzprintf(file_output,file_output_gz,"\n Position(s) of the multiple hits ");
+                fprintf(file_output,"\n Position(s) of the multiple hits ");
                 if(include_unknown)
-                    fzprintf(file_output,file_output_gz," (minor frequency not outgroup excluded in the analysis):");
+                    fprintf(file_output," (minor frequency not outgroup excluded in the analysis):");
                 else
-                    fzprintf(file_output,file_output_gz," (excluded from the analysis):");
+                    fprintf(file_output," (excluded from the analysis):");
 				for(x=0;x<*nmhits;x++) {
-					if(formatfile>0) fzprintf(file_output,file_output_gz," %ld",mhitbp[x]+formatfile-1);
-                    else fzprintf(file_output,file_output_gz," %ld",mhitbp[x]);
+					if(formatfile>0) fprintf(file_output," %ld",mhitbp[x]+formatfile-1);
+                    else fprintf(file_output," %ld",mhitbp[x]);
 				}
 			}
 			if(mv) {
-				fzprintf(file_output,file_output_gz,"\n Position(s) of the Variable (converted biallelic if mhits) base with missing samples:");
+				fprintf(file_output,"\n Position(s) of the Variable (converted biallelic if mhits) base with missing samples:");
 				for(x=0;x<mv;x++) {
-					if(formatfile>0) fzprintf(file_output,file_output_gz," %ld",mvbp[x] + formatfile-1);
-                    else fzprintf(file_output,file_output_gz," %ld",mvbp[x]);
+					if(formatfile>0) fprintf(file_output," %ld",mvbp[x] + formatfile-1);
+                    else fprintf(file_output," %ld",mvbp[x]);
 				}
 			}
-			fzprintf(file_output,file_output_gz,"\n\n Names from sample selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/(int)atoi(ploidy));
+			fprintf(file_output,"\n\n Names from sample selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/(int)atoi(ploidy));
 			z = 0;
 			for(y=0;y<npops-!outgroup_presence;y++) {
-				if(y < npops-1 || npops==1) fzprintf(file_output,file_output_gz,"\n\n Population[%d]:\n",y);
-				else fzprintf(file_output,file_output_gz,"\n\n Outgroup: \n");
+				if(y < npops-1 || npops==1) fprintf(file_output,"\n\n Population[%d]:\n",y);
+				else fprintf(file_output,"\n\n Outgroup: \n");
 				for(x=0;x<nsamuser[y]/atoi(ploidy);x++) {
-					fzprintf(file_output,file_output_gz,"\n %s",names[z]);
+					fprintf(file_output,"\n %s",names[z]);
 					z+=atoi(ploidy);
 				}
 			}
@@ -627,7 +627,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
             printf(".\n\nCalculating statistics...\n");
             fflush(stdout);
             */
-            fzprintf(file_output,file_output_gz,".\n\nCalculating statistics...\n");
+            fprintf(file_output,".\n\nCalculating statistics...\n");
             fflush(file_output);
 		}
 	}
@@ -639,29 +639,29 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 			printf("\n\nREADING INPUT FILE DATA:\n\n Number of Total Samples (if diploid, doubled): %d\n Valid sites: %.2f\n Multiple hits: %ld\n Polymorphic (biallelic) positions with missing samples: %ld\n Ratio missing/positions: %f\n Ratio trans/transv: %.3f.",nnnsam-!outgroup_presence,_sites,*nmhits,mv,(double)totalmis/(double)(nnnsam*_sites),(double)transitions/(double)transversions);
 			*/
 			if(*nmhits) {
-                fzprintf(file_output,file_output_gz,"\n Position(s) of the multiple hits ");
+                fprintf(file_output,"\n Position(s) of the multiple hits ");
                 if(include_unknown)
-                    fzprintf(file_output,file_output_gz," (minor frequency not outgroup excluded in the analysis):");
+                    fprintf(file_output," (minor frequency not outgroup excluded in the analysis):");
                 else
-                    fzprintf(file_output,file_output_gz," (excluded from the analysis):");
+                    fprintf(file_output," (excluded from the analysis):");
 				for(x=0;x<*nmhits;x++) {
-					if(formatfile>0) fzprintf(file_output,file_output_gz," %ld",mhitbp[x] + formatfile-1);
-                    else fzprintf(file_output,file_output_gz," %ld",mhitbp[x]);
+					if(formatfile>0) fprintf(file_output," %ld",mhitbp[x] + formatfile-1);
+                    else fprintf(file_output," %ld",mhitbp[x]);
 				}
 			}
 			if(mv) {
-				fzprintf(file_output,file_output_gz,"\n Position(s) of the Variable (biallelic) base with missing samples:");
+				fprintf(file_output,"\n Position(s) of the Variable (biallelic) base with missing samples:");
 				for(x=0;x<mv;x++) {
-					fzprintf(file_output,file_output_gz," %ld",mvbp[x]);
+					fprintf(file_output," %ld",mvbp[x]);
 				}
 			}
-			fzprintf(file_output,file_output_gz,"\n\n Names from samples selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/atoi(ploidy));
+			fprintf(file_output,"\n\n Names from samples selected by the user (the first %d, if diploid is doubled):",(nsamtot-!outgroup_presence)/atoi(ploidy));
 			z = 0;
 			for(y=0;y<npops-!outgroup_presence;y++) {
-				if(y < npops-1 || npops==1) fzprintf(file_output,file_output_gz,"\n\n Population[%d]:\n",y);
-				else fzprintf(file_output,file_output_gz,"\n\n Outgroup: \n");
+				if(y < npops-1 || npops==1) fprintf(file_output,"\n\n Population[%d]:\n",y);
+				else fprintf(file_output,"\n\n Outgroup: \n");
 				for(x=0;x<nsamuser[y]/atoi(ploidy);x++) {
-					fzprintf(file_output,file_output_gz,"\n %s",names[z]);
+					fprintf(file_output,"\n %s",names[z]);
 					z++;
 				}
 			}

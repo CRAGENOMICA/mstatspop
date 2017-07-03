@@ -63,6 +63,9 @@ int print_output( int mainargc,int npops,int *nsam,
 	long int fabsmatsize;
     char nt1[1];
     char nt2[1];
+    
+    nt1[0] = 0;
+    nt2[0] = 0;
 	
 /**< todo: WTF is that LUCA_CRs???? */
 #if LUCA_CRs == 1
@@ -176,7 +179,7 @@ int print_output( int mainargc,int npops,int *nsam,
 			for(x=0;x<np;x++) {
 				if(nsam[x] > 1) {
 					/*
-					fprintf(file_out,"Sw[%d]: %d\t",x,(int)statistics[0].S[x]);
+					fprintf(file_out,"S[%d]: %d\t",x,(int)statistics[0].S[x]);
 					fprintf(file_out,"Thetaw(Wat)[%d]: %f\t",x,statistics[0].thetaS[x]);
 					fprintf(file_out,"Thetaw(Taj)[%d]: %f\t",x,statistics[0].thetaT[x]);
 					*/
@@ -204,9 +207,6 @@ int print_output( int mainargc,int npops,int *nsam,
 					fprintf(file_out,"\n");
 				}
 				else {
-					fprintf(file_out,"Sw[%d]: NA\t",x);
-					fprintf(file_out,"Thetaw(Wat)[%d]: NA\t",x);
-					fprintf(file_out,"Thetaw(Taj)[%d]: NA\t",x);
 					fprintf(file_out,"S[%d]: NA\t",x);
 					fprintf(file_out,"Theta(Wat)[%d]: NA\t",x);
 					fprintf(file_out,"Theta(Taj)[%d]: NA\t",x);
@@ -271,7 +271,7 @@ int print_output( int mainargc,int npops,int *nsam,
 				for(x=0;x<np;x++) {
 					if(nsam[x] > 1) {
 						/*
-						fprintf(file_out,"Sw[%d]: %d\t",x,(int)statistics[0].S[x]);
+						fprintf(file_out,"S[%d]: %d\t",x,(int)statistics[0].S[x]);
 						fprintf(file_out,"Thetaw/nt(Wat)[%d]: %f\t",x,statistics[0].thetaS[x]/(double)nsites2_pop[x]);
 						fprintf(file_out,"Thetaw/nt(Taj)[%d]: %f\t",x,statistics[0].thetaT[x]/(double)nsites2_pop[x]);
 						*/
@@ -2108,7 +2108,7 @@ int print_output( int mainargc,int npops,int *nsam,
 						for(x=0;x<np;x++) {
 							if(nsam[x] > 1) {
 								/*
-								fprintf(file_out,"Sw[%d]:\t%d\t",x,(int)statistics[0].S[x]);
+								fprintf(file_out,"S[%d]:\t%d\t",x,(int)statistics[0].S[x]);
 								fprintf(file_out,"Thetaw(Wat)[%d]:\t%f\t",x,statistics[0].thetaS[x]);
 								fprintf(file_out,"Thetaw(Taj)[%d]:\t%f\t",x,statistics[0].thetaT[x]);
 								*/
@@ -2136,11 +2136,6 @@ int print_output( int mainargc,int npops,int *nsam,
 								}*/
 							}
 							else {
-								/*
-								fprintf(file_out,"Sw[%d]:\tNA\t",x);
-								fprintf(file_out,"Thetaw(Wat)[%d]:\tNA\t",x);
-								fprintf(file_out,"Thetaw(Taj)[%d]:\tNA\t",x);
-								*/
 								fprintf(file_out,"S[%d]:\tNA\t",x);
 								fprintf(file_out,"Theta(Wat)[%d]:\tNA\t",x);
 								fprintf(file_out,"Theta(Taj)[%d]:\tNA\t",x);

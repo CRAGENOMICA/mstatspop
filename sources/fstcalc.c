@@ -20,7 +20,7 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
 	int **freq,**freq1;
 	int sumnsam,*initsq1,inits,max,initso,a0;
 	double pia,piw,piT,*pia1all;
-	double spiw,spiwn,spia,spian;
+	double /*spiw,*/spiwn,spia,spian;
     /*double *mean_nsam,**mean_nsam_amng;*/
     /*long int *n_nsam,**n_nsam_amng;*/
 	int ncw,nca;
@@ -383,7 +383,7 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
     /*Fstall*/
     if(npops > 2) {
         z = 0;
-        spiw = spiwn = spia = spian = 0.;
+        /*spiw = */spiwn = spia = spian = 0.;
         ncw = nca = 0;
         for(pop1=0;pop1<npops-1;pop1++) {
             if(nsam[pop1] > 1 && (double)statistics[0].length2[pop1] > 0) {

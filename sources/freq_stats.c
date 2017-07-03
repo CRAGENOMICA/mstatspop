@@ -978,7 +978,10 @@ double freqtesto_achaz(int sample_size,long int *fr,int singleton,double *w1,dou
 	}
     Th2 /= sumw2;
 	
-    if(Th1 == 0. && Th2 == 0.) return(-10000);
+    if(Th1 == 0. && Th2 == 0.) {
+        free(ww);
+        return(-10000);
+    }
 
 	Thw = 0.;
 	sumww = 0.;
@@ -1057,11 +1060,11 @@ double freqtesto_achaz(int sample_size,long int *fr,int singleton,double *w1,dou
 	Thw2 = (Thw*Thw - alfat*Thw)/(1.0 + betat);
 	
 	/*Test*/
+    free(ww);
     if((sqrt(alfan*Thw + betan*Thw2)) == 0)
         return -10000;
     Test = (Th1 - Th2)/(sqrt(alfan*Thw + betan*Thw2));
 	
-	free(ww);
 	if (fabs(Test) < 1.0E-15)
 		return 0.0;
 
@@ -1932,7 +1935,11 @@ double freqtest_outg_missing(double **ominx,long int **eix,int **nx, int *no, do
 			if(Num0) {llv[ll] = j;ll += 1;}
 		}
 	}
-    if(Num == 0.) return(-10000);
+    if(Num == 0.) {
+        free(llv);
+        free(Denm12);
+        return(-10000);
+    }
 	
 	/*calculate the first term of the variance*/
 	Den = 0.;
@@ -2221,7 +2228,11 @@ double freqtest_noutg_missing(double **ominx,long int **eix,int **nx, double the
 		Num += Num0;
 		if(Num0) {llv[ll] = j;ll += 1;}
 	}
-    if(Num == 0.) return(-10000);
+    if(Num == 0.) {
+        free(llv);
+        free(Denm12);
+        return(-10000);
+    }
 
 #if DEBUG_EMANUELE	
 	/*calculation of Emanuele*/

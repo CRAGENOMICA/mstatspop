@@ -186,7 +186,6 @@ int main(int argc, const char * argv[])
     FILE *file_ws   	= 	0;
     SGZip file_ws_gz;
 
-    FILE *file_es   	= 	0;
 	FILE *file_wcoor    =   0;
     SGZip file_wcoor_gz;
 	
@@ -211,7 +210,8 @@ int main(int argc, const char * argv[])
     
     memset( file_wps,    0, MSP_MAX_FILENAME);
     memset( file_Wcoord, 0, MSP_MAX_FILENAME);
-	
+    memset( c,0,2);
+    
 	/***** DEFAULTS *****/
     formatfile          = 3;/*tfasta format*/
     output              = 1;/*single line statistics per window*/
@@ -1364,7 +1364,8 @@ int main(int argc, const char * argv[])
 					}
 					else {
 						matrix_mask[(unsigned int)(n-1)*(unsigned int)length+(unsigned int)li] = (int)atoi(c) - 1;/*in case not defined file, all values are zero, in case file exist, normal is zero, missing is -1*/
-						if((int)atoi(c) == 0 && include_unknown == 0)
+						if((int)atoi(c) == 0 &&
+                           include_unknown == 0)
                             vector_mask[(unsigned int)li] = 0.; /*not counting missing values when not included*/
 					}
 					while((*c = fgetc(file_mask)) == 32);
@@ -2814,7 +2815,8 @@ int main(int argc, const char * argv[])
 		free(stats_iter[0].Gst);
 		free(stats_iter[0].K);
 		free(stats_iter[0].KHKY);
-		free(stats_iter[0].length);
+        free(stats_iter[0].length);
+        free(stats_iter[0].length2);
 		
 		for(x=0;x<npops;x++) {
 			free(stats_iter[0].freqh[x]);
@@ -2855,12 +2857,7 @@ int main(int argc, const char * argv[])
 		free(piter);
 	}
 	free(f);
-	
-	if(r2i_ploidies!=0)
-        free(r2i_ploidies);
-    
-    if(file_wcoor) fclose(file_wcoor);
-    if(file_es) fclose(file_es);
+    free(r2i_ploidies);
     
     fzprintf(file_logerr,&file_logerr_gz,"\nProgram Ended\n");
     fzclose(file_logerr, &file_logerr_gz);
@@ -2884,10 +2881,10 @@ void usage(void)
     printf("                             10 (full extended)]\n");
     printf("      -N [#_pops] [#samples_pop1] ... [#samples_popN]\n");
     printf("      -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]\n");
+    printf("      -T [path and name of the output file]. DEFAULT stdout.\n");
     printf("   OPTIONAL GENERAL PARAMETERS:\n");
     printf("      -G [outgroup (0/1)] (last population). DEFAULT 0.\n");
     printf("      -u [include unknown positions (0/1)].  DEFAULT 0.\n");
-    printf("      -T [path and name of the output file]. DEFAULT stdout.\n");
     printf("      -A [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)\n");
     printf("          File format: (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,\n");
     printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]\n");

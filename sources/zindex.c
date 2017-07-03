@@ -6,7 +6,7 @@
  *  \brief     zindex.c
  *  \details
  *  \author    Joan Jené
- *  \version   1.9
+ *  \version   1.9.3
  *  \date      May 22, 2017
  *  \pre
  *  \bug
@@ -312,11 +312,11 @@ gz_return fzseek(FILE *file_handle, SGZip *z, struct SGZIndex *idx, const char *
 				/* There is a difference between accessing the first block of data or accessing the others */
 				if (search->position == 0) {
 					/* Accessing the first block of data */
-					CALL_ZLIB(inflateInit2(&((*z).strm), windowBits | ENABLE_ZLIB_GZIP)); /* (windowBits | ENABLE_ZLIB_GZIP) = 47 */
+					CALL_ZLIB(inflateInit2(&((*z).strm), windowBits | ENABLE_ZLIB_GZIP));
 					flush = Z_FULL_FLUSH;
 				} else {
 					/* Accessing the second block of data and others */
-					CALL_ZLIB(inflateInit2(&((*z).strm), -windowBits)); /* windowBits = 15 */
+					CALL_ZLIB(inflateInit2(&((*z).strm), -windowBits));
 					flush = Z_BLOCK;
 				}
 
@@ -377,11 +377,11 @@ gz_return fzseekNearest(FILE *file_handle, SGZip *z, struct SGZIndex *idx, const
 
     /*
      Example:
-     1,1 TTTTTTTTTTTTTTTT
-     1,2 TTTTTTTTTTTTTTTT
-     1,5 TTTTTTTTTTTTTTTT
-     1,6 TTTTTTTTTTTTTTTT
-     2,1 TTTTTTTTTTTTTTTT
+     1:1 TTTTTTTTTTTTTTTT
+     1:2 TTTTTTTTTTTTTTTT
+     1:5 TTTTTTTTTTTTTTTT
+     1:6 TTTTTTTTTTTTTTTT
+     2:1 TTTTTTTTTTTTTTTT
      We are looking for "1:3"
     */
 

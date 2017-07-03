@@ -87,7 +87,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
             }
         }    
         if((DNA_matr = (char *)calloc(10000,sizeof(char))) == 0) {
-			for(x=0;x<128;x++) free(names[x]); free(names);
+            for(x=0;x<128;x++) free(names[x]); free(names); names = 0;
             fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.3 \n");
             return(0);
         }
@@ -119,20 +119,20 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		/*define duplicated matr*/
 		if ((DNA_matr2 = (char *)calloc(n_site*(long long)n_samp,sizeof(char))) == 0) {
 			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23d \n");
-			for(x=0;x<n_samp;x++) free(names[x]); free(names);
+			for(x=0;x<n_samp;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			return(0);
 		}
 		if((names2 = (char **)calloc(n_samp,sizeof(char *))) == 0) {
 			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.1s2 \n");
-			for(x=0;x<n_samp;x++) free(names[x]); free(names);
+			for(x=0;x<n_samp;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			return(0);
 		}
 		for(x=0;x<n_samp;x++) {
 			if((names2[x] = (char *)calloc(50,sizeof(char))) == 0) {
 				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.22 \n");
-				for(x=0;x<n_samp;x++) free(names[x]); free(names);
+				for(x=0;x<n_samp;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				return(0);
 			}
@@ -148,13 +148,13 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 			strncpy(names[x],names2[sort_nsam[x]],50);
 		}
 		/*delete duplicated matr*/
-		for(x=0;x<n_samp;x++) free(names2[x]); free(names2);
+		for(x=0;x<n_samp;x++) free(names2[x]); free(names2); names2 = 0;
 		free(DNA_matr2);
 		
 		/*erase lines no used*/
 		if(nsamuser_eff > n_samp) {
 			fzprintf(file_logerr,file_logerr_gz,"Error: too low samples in the file according to defined in -N flag.\n");
-			for(x=0;x<n_sam;x++) free(names[x]); free(names);
+			for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			return(0);
 		}
@@ -172,13 +172,13 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		if(matrix_sizepos == 0) {
 			if((matrix_sizepos = (double *)malloc(n_site*sizeof(double))) == 0) {
 				fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2"); 
-				for(x=0;x<n_sam;x++) free(names[x]); free(names);
+				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				return(0);
 			}
 			if((matrix_segrpos = (double *)malloc(n_site*sizeof(double))) == 0) {
 				fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2"); 
-				for(x=0;x<n_sam;x++) free(names[x]); free(names);
+				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(matrix_sizepos);
 				return(0);
@@ -189,13 +189,13 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 			if(n_site > maxsites) {
 				if((matrix_sizepos = (double *)realloc(matrix_sizepos,n_site*sizeof(double))) == 0) {
 					fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2b"); 
-					for(x=0;x<n_sam;x++) free(names[x]); free(names);
+					for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 					free(DNA_matr);
 					return(0);
 				}
 				if((matrix_segrpos = (double *)realloc(matrix_segrpos,n_site*sizeof(double))) == 0) {
 					fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2b"); 
-					for(x=0;x<n_sam;x++) free(names[x]); free(names);
+					for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 					free(DNA_matr);
 					free(matrix_sizepos);
 					return(0);
@@ -210,7 +210,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		if(ploidy[0]=='2'){
 			if ((DNA_matr2 = (char *)calloc(n_site*(long long)(nsamuser_eff)*2,sizeof(char))) == 0) {
 				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23 \n");
-				for(x=0;x<n_sam;x++) free(names[x]); free(names);
+				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(matrix_sizepos);
 				free(matrix_segrpos);
@@ -284,7 +284,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		else {
 			if((DNA_matr2 = (char *)calloc((long long)n_site*(nsamuser_eff),sizeof(char))) == 0) {
 				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23 \n");
-				for(x=0;x<n_sam;x++) free(names[x]); free(names);
+				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(matrix_sizepos);
 				free(matrix_segrpos);
@@ -308,7 +308,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		if(outgroup_presence == 0) {
 			if ((DNA_matr2 = (char *)realloc(DNA_matr2,(long long)n_site*(nsamuser_eff+!outgroup_presence)*sizeof(char))) == 0) {
 				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23a \n");
-				for(x=0;x<n_sam;x++) free(names[x]); free(names);
+				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(DNA_matr2);
 				free(matrix_sizepos);
@@ -339,7 +339,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 			if(use_gff(name_fileinputgff,subset_positions,genetic_code,matrix_sizepos,nsamuser_eff,n_site,DNA_matr2,matrix_segrpos,
 					   file_output,file_output_gz,mainargc,file_logerr,file_logerr_gz,include_unknown,criteria_transcript,output,nmhits,mhitbp,outgroup_presence,nsamuser[npops-1],chr_name,first) == 0) {
 				/*if error realloc DNA_matr*/
-				for(x=0;x<n_sam;x++) free(names[x]); free(names);
+				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(DNA_matr2);
 				free(matrix_sizepos);
@@ -353,7 +353,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 						matrix_pol,matrix_freq,matrix_pos,length_al,length_seg,nsamuser,npops,svratio,missratio,include_unknown,
 						sum_sam,tcga,matrix_sv,nmhits,output,ploidy,outgroup_presence,nsites1_pop,nsites1_pop_outg,
 						nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,anx,bnx,anxo,bnxo,lengthamng,lenghtamng_outg,mhitbp,matrix_pol_tcga,0) == 0) {
-			for(x=0;x<n_sam;x++) free(names[x]); free(names);
+			for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			free(DNA_matr2);
 			free(matrix_sizepos);
@@ -362,7 +362,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
             return(0);
         }
 		free(mhitbp);
-        for(x=0;x<n_sam;x++) free(names[x]); free(names);
+        /*for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;*/
 	}
     return(1);
 }
