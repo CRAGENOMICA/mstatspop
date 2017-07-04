@@ -1566,7 +1566,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 											ii2 += k;
 										}while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0)); /*conditional: hf1 < n_samp-nsamoutg*/
 									}
-									if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject syn variant but keep position...*/
+									if(ii2<n_site && ii2 >= 0)
+                                        matrix_segrpos[ii2] = (double)0; /*reject syn variant but keep position...*/
+                                    /*fzprintf(file_logerr,file_logerr_gz,"\nxx=%ld,ii2=%ld,n_site=%ld,subset_positions=%s\n",xx,ii2,n_site,subset_positions);*/
 								}
 							}
                             else {
@@ -1578,7 +1580,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                             ii2 += k;
                                         }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[/*ii+i*k*/ii2] = (double)0; /*reject nsyn variant but keep position...*/
+                                    if(ii2<n_site && ii2 >= 0) matrix_segrpos[/*ii+i*k*/ii2] = (double)0; /*reject nsyn variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"0-fold") == 0)) {
@@ -1589,7 +1591,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                             ii2 += k;
                                         }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 0-fold variant but keep position...*/
+                                    if(ii2<n_site && ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 0-fold variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"2-fold") == 0)) {
@@ -1600,7 +1602,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                             ii2 += k;
                                         }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 2-fold variant but keep position...*/
+                                    if(ii2<n_site && ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 2-fold variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"3-fold") == 0)) {
@@ -1611,7 +1613,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                             ii2 += k;
                                         }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 3-fold variant but keep position...*/
+                                    if(ii2<n_site && ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 3-fold variant but keep position...*/
                                 }
                             }
                             if((strcmp(subset_positions,"4-fold") == 0)) {
@@ -1622,7 +1624,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                             ii2 += k;
                                         }while(ii2*k <= end*k && cmat[ii2] == (double)0 && (ii2 < n_site-1  || ii2 >= 0));
                                     }
-                                    if(ii2<n_site || ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 4-fold variant but keep position...*/
+                                    if(ii2<n_site && ii2 >= 0) matrix_segrpos[ii2] = (double)0; /*reject non 4-fold variant but keep position...*/
                                 }
                             }
                         }
