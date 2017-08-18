@@ -780,7 +780,11 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
         
         row_num = -1;
         if(fzseekNearest(file_ws, file_ws_gz,index_w, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
+<<<<<<< HEAD
             fzprintf(file_logerr,file_logerr_gz,"ID not found in the weights file (or not indexed position): %s\n",ID);
+=======
+            fzprintf(file_logerr,file_logerr_gz,"ID \"%s\" not found in the weights file.\n",ID);
+>>>>>>> 2418bea5f392c7effc32cd76af93a6653ed5ac61
             /*no position found. Assume the file window is finished*/
             free(valn);
             *wlimit_end = init_site;
