@@ -627,7 +627,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
             printf(".\n\nCalculating statistics...\n");
             fflush(stdout);
             */
-            fprintf(file_output,".\n\nCalculating statistics...\n");
+            fprintf(file_output,"\n\nCalculating statistics...\n");
             fflush(file_output);
 		}
 	}

@@ -104,8 +104,8 @@ int print_output( int mainargc,int npops,int *nsam,
 		}
 		/**/
 		if(npriors) {
-            fprintf(file_out,"\nPriors:\n");
             if(formatfile != 3) {
+                fprintf(file_out,"\nPriors:\n");
                 for(x=0;x<npriors;x++) {
                     fprintf(file_out,"prior%02d: %f\t",x,vector_priors[x]);
                 }

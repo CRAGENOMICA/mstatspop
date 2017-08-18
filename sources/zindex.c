@@ -6,8 +6,8 @@
  *  \brief     zindex.c
  *  \details
  *  \author    Joan Jené
- *  \version   1.9.3
- *  \date      May 22, 2017
+ *  \version   1.9.3.1
+ *  \date      July 26, 2017
  *  \pre
  *  \bug
  *  \warning
@@ -388,7 +388,7 @@ gz_return fzseekNearest(FILE *file_handle, SGZip *z, struct SGZIndex *idx, const
     *seq_id_found = -1;
     last_search = idx->last_search; /* store the current last_search position */
 
-    if ((ret = fzseek(file_handle, z, idx, search_id, &row_num, true)) != GZ_OK) {
+    if ((ret = fzseek(file_handle, z, idx, search_id, &row_num, false/*true*/)) != GZ_OK) {
 
         /* "1,3" does not exist. So, this function must return the "1,5" but the index does not store (x:y) in clear text
            so, the function must try "1:3", "1:4", "1:5" until it gets the sequence. */
@@ -414,7 +414,7 @@ gz_return fzseekNearest(FILE *file_handle, SGZip *z, struct SGZIndex *idx, const
                 searched_sequence_id = strtol(second, &ptr, 10);
 
                 i = 0;
-                for (i = searched_sequence_id + 1; ((i < max_search) && (ret != GZ_OK)); i++) {
+                for (i = searched_sequence_id + 1; ((i < searched_sequence_id + max_search) && (ret != GZ_OK)); i++) {
                     idx->last_search = last_search; /* restore the last_search position in order to start searching from this position (through the index) */
 
                     strcpy(new_search_id, first);

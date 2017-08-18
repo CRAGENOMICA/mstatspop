@@ -481,7 +481,12 @@ int get_tfadata(FILE *file_output,
                 return(0);
             }
             /*we forced the invented outgroup without gaps or uncertainties, if possible*/
-            strncpy(DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff),DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff-1),n_site);
+            for(xx=0;xx<n_site;xx++) {
+                int ns = 0;
+                while(ns < nsamuser_eff-1 && DNA_matr[(long long)n_site*(unsigned long)ns+xx] > '4') ns++;
+                DNA_matr[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = DNA_matr[(unsigned long)n_site*(unsigned long)ns+xx];
+            }
+            /*strncpy(DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff),DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff-1),n_site);*/
             nsamuser_eff += 1;
         }
         
@@ -759,7 +764,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                 position = atol(line2);
             }
             else {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,row_num);
+                fzprintf(file_logerr,file_logerr_gz,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
                 free(valn);
                 return(0);
             }
@@ -775,7 +780,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
         
         row_num = -1;
         if(fzseekNearest(file_ws, file_ws_gz,index_w, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
-            fzprintf(file_logerr,file_logerr_gz,"ID not found in the weights file: %s\n",ID);
+            fzprintf(file_logerr,file_logerr_gz,"ID not found in the weights file (or not indexed position): %s\n",ID);
             /*no position found. Assume the file window is finished*/
             free(valn);
             *wlimit_end = init_site;
@@ -826,7 +831,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
             position = atol(line2);
         }
         else {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,row_num);
+            fzprintf(file_logerr,file_logerr_gz,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
             free(valn);
             return(0);
         }
@@ -907,7 +912,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
             if(*c < 0 || *c==10 || *c==13 || *c == -1 || *c == 0) {
                 if(check_comment(c,file_ws,file_ws_gz) == 0) {
                     free(valn);
-                    *wlimit_end = init_site + xx - 1;
+                    *wlimit_end = init_site + xx/* - 1*/;
                     *window_size = curr_window;
                     *n_sitesw = xx-1;
                     return(1);
@@ -1175,7 +1180,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     row_num = -1;
     
     if(fzseekNearest(file_input, file_input_gz,index_input, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
-        fzprintf(file_logerr,file_logerr_gz,"ID not found in the tfa file: %s\n",ID);
+        fzprintf(file_logerr,file_logerr_gz,"ID not found in the tfa file (or not indexed position): %s\n",ID);
         /*no position found. Assume the file window is finished*/
         free(DNA_matr2);
         return(1);
@@ -1458,11 +1463,6 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                 col++;
                 *c = fzgetc(file_input, file_input_gz);
             }
-            if(col > *n_sam) {
-                fzprintf(file_logerr,file_logerr_gz,"Register too large: position %ld, size %d\n",position+1,col);
-                free(DNA_matr2);
-                return(-1);
-            }
             line[col] = '\0';
             /*chr_defined = 1;*/
             if(check_comment(c,file_input,file_input_gz) == 0) {
@@ -1476,11 +1476,6 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                     line2[col2] = *c;
                     col2++;
                     *c = fzgetc(file_input, file_input_gz);
-                }
-                if(col2 > *n_sam) {
-                    fzprintf(file_logerr,file_logerr_gz,"Register too large: position %ld, size %d\n",position+1,col2);
-                    free(DNA_matr2);
-                    return(-1);
                 }
                 line2[col2] = '\0';
                 col2 = 0;
@@ -1503,12 +1498,13 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
             }
         }
     }
-    /*
+    /**n_site += 1;*/
+    /**/
     if(*c==0 || *c==-1 || *c =='\xff' || *c=='\xfe') {
         if(col == *n_sam || col == 0) *n_site += 1;
         else return(-1);
     }
-    */
+    /**/
     /*return n_site,n_sam,DNA matrix and names in pointers*/
     /*
     if ((*DNA_matr = (char *)realloc((char *) *DNA_matr,n_site[0]*(long long)n_sam[0]*sizeof(char))) == 0) {
@@ -1531,6 +1527,9 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     }
     free(DNA_matr2);
     
+    if(check_comment(c,file_input,file_input_gz) == 0) {
+        return(-1);
+    }
     return(1);
 }
 
