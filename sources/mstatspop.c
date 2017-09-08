@@ -559,7 +559,7 @@ int main(int argc, const char * argv[])
                     arg++;
                     first_slide = (long int)atol(argv[arg]);
                     break;					
-                case 'n' : /* name of the scaffold to analyze*/
+                case 'n' : /* name of the scaffold(s) to analyze*/
                     arg++;
                     strcpy( chr_name_all, argv[arg] );
                     break;
@@ -2869,7 +2869,7 @@ void usage(void)
 {
     printf(MSTATSPOP);
     printf("Flags:\n");
-    printf("      -f [input format file: fasta, tfa, ms]\n");
+    printf("      -f [input format file: ms, fasta OR tfa (gz file indexed)]\n");
     printf("      -i [path and name of the input file]\n");
     printf("      -o [output format file: 0 (extended),\n");
     printf("                              1 (single line/window),\n");

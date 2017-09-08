@@ -104,8 +104,8 @@ int print_output( int mainargc,int npops,int *nsam,
 		}
 		/**/
 		if(npriors) {
-            fprintf(file_out,"\nPriors:\n");
             if(formatfile != 3) {
+                fprintf(file_out,"\nPriors:\n");
                 for(x=0;x<npriors;x++) {
                     fprintf(file_out,"prior%02d: %f\t",x,vector_priors[x]);
                 }
@@ -166,7 +166,7 @@ int print_output( int mainargc,int npops,int *nsam,
 			fprintf(file_out,"\n\nEffective length for each population (with at least one sequence, two or three sequences per pop) and excluding or including outgroup (if defined):");
 			for(x=0;x<npops-1;x++) {
                 /*if(outgroup_presence==1) {fprintf(file_out,"\nEff_length1_pop[%d]: %.2f\tEff_length2_pop[%d]: %.2f\tEff_length3_pop[%d]: %.2f\tEff_length1_pop_outg[%d]: %.2f\tEff_length2_pop_outg[%d]: %.2f\tEff_length3_pop_outg[%d]: %.2f",x,(double)nsites1_pop[x],x,(double)nsites2_pop[x],x,(double)nsites3_pop[x],x,(double)nsites1_pop_outg[x],x,(double)nsites2_pop_outg[x],x,(double)nsites3_pop_outg[x]);}*/
-                if(outgroup_presence + force_outgroup==1) {fprintf(file_out,"\nEff_length1_pop_outg[%d]: %.2f\tEff_length2_pop_outg[%d]: %.2f\tEff_length3_pop_outg[%d]: %.2f",x,(double)nsites1_pop_outg[x],x,(double)nsites2_pop_outg[x],x,(double)nsites3_pop_outg[x]);}
+                if(outgroup_presence + force_outgroup) {fprintf(file_out,"\nEff_length1_pop_outg[%d]: %.2f\tEff_length2_pop_outg[%d]: %.2f\tEff_length3_pop_outg[%d]: %.2f",x,(double)nsites1_pop_outg[x],x,(double)nsites2_pop_outg[x],x,(double)nsites3_pop_outg[x]);}
 				if(outgroup_presence + force_outgroup==0) {fprintf(file_out,"\nEff_length1_pop[%d]: %.2f\tEff_length2_pop[%d]: %.2f\tEff_length3_pop[%d]: %.2f",x,(double)nsites1_pop[x],x,(double)nsites2_pop[x],x,(double)nsites3_pop[x]);}
 			}
 		/*}*/
@@ -174,7 +174,7 @@ int print_output( int mainargc,int npops,int *nsam,
 		fprintf(file_out,"\n\nSTATISTICS:\n");
 		
 		fprintf(file_out,"\nEstimates of variability for each population (an and bn for the variant positions):\n");
-		if(outgroup_presence + force_outgroup == 1) {
+		if(outgroup_presence + force_outgroup) {
 			np = npops-1;
 			for(x=0;x<np;x++) {
 				if(nsam[x] > 1) {
@@ -837,17 +837,17 @@ int print_output( int mainargc,int npops,int *nsam,
 				for(x=0;x<npops-1;x++) {
 					for(y=x+1;y<npops-0;y++) {
 						if(y==npops-1) {z++;continue;}
-                        if(outgroup_presence+force_outgroup == 1) {
+                        if(outgroup_presence+force_outgroup) {
                             if(statistics[0].piant[z] > -10000) {
                                 fprintf(file_out,"PiA[%d,%d]: %f\tPiA/nt[%d,%d]: %f\tPiT[%d,%d]: %f\tPiT/nt[%d,%d]: %f\tlen[%d,%d]:",x,y,statistics[0].pia[z],x,y,statistics[0].piant[z],x,y,statistics[0].piT[z],x,y,statistics[0].piTnt[z],x,y);
-                                if(outgroup_presence+force_outgroup == 1)
+                                if(outgroup_presence+force_outgroup)
                                     fprintf(file_out," %f\t",statistics[0].lengthamng_outg[x][y]);
                                 else
                                     fprintf(file_out," %f\t",statistics[0].lengthamng[x][y]);
                             }
                             else {
                                 fprintf(file_out,"PiA[%d,%d]: %f\tPiA/nt[%d,%d]: NA\tPiT[%d,%d]: %f\tPiT/nt[%d,%d]: NA\tlen[%d,%d]:",x,y,statistics[0].pia[z],x,y,x,y,statistics[0].piT[z],x,y,x,y);
-                                if(outgroup_presence+force_outgroup == 1)
+                                if(outgroup_presence+force_outgroup)
                                     fprintf(file_out," %f\t",statistics[0].lengthamng_outg[x][y]);
                                 else
                                     fprintf(file_out," %f\t",statistics[0].lengthamng[x][y]);
@@ -856,14 +856,14 @@ int print_output( int mainargc,int npops,int *nsam,
                         else {
                             if(statistics[0].piant[z] > -10000) {
                                 fprintf(file_out,"PiA[%d,%d]: %f\tPiA/nt[%d,%d]: %f\tPiT[%d,%d]: %f\tPiT/nt[%d,%d]: %f\tlen[%d,%d]:",x,y,statistics[0].pia[z],x,y,statistics[0].piant[z],x,y,statistics[0].piT[z],x,y,statistics[0].piTnt[z],x,y);
-                                if(outgroup_presence+force_outgroup == 1)
+                                if(outgroup_presence+force_outgroup)
                                     fprintf(file_out," %f\t",statistics[0].lengthamng_outg[x][y]);
                                 else
                                     fprintf(file_out," %f\t",statistics[0].lengthamng[x][y]);
                             }
                             else {
                                 fprintf(file_out,"PiA[%d,%d]: %f\tPiA/nt[%d,%d]: NA\tPiT[%d,%d]: %f\tPiT/nt[%d,%d]: NA\tlen[%d,%d]:",x,y,statistics[0].pia[z],x,y,x,y,statistics[0].piT[z],x,y,x,y);
-                                if(outgroup_presence+force_outgroup == 1)
+                                if(outgroup_presence+force_outgroup)
                                     fprintf(file_out," %f\t",statistics[0].lengthamng_outg[x][y]);
                                 else
                                     fprintf(file_out," %f\t",statistics[0].lengthamng[x][y]);
@@ -2103,7 +2103,7 @@ int print_output( int mainargc,int npops,int *nsam,
 						}
 					}
 					*//**/
-					if(outgroup_presence + force_outgroup == 1) {
+					if(outgroup_presence + force_outgroup) {
 						np = npops-1;
 						for(x=0;x<np;x++) {
 							if(nsam[x] > 1) {
@@ -2601,7 +2601,7 @@ int print_output( int mainargc,int npops,int *nsam,
                             for(x=0;x<npops-1;x++) {
                                 for(y=x+1;y<npops-0;y++) {
                                     if(y==npops-1) {continue;}
-                                    if(outgroup_presence+force_outgroup == 1)
+                                    if(outgroup_presence+force_outgroup)
                                         fprintf(file_out,"len[%d,%d]:\t%f\t",x,y,statistics[0].lengthamng_outg[x][y]);
                                     else
                                         fprintf(file_out,"len[%d,%d]:\t%f\t",x,y,statistics[0].lengthamng[x][y]);
