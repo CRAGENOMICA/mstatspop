@@ -2904,7 +2904,7 @@ void usage(void)
     printf("      -z [slide size (must be a positive value)]. DEFAULT window size.\n");
     printf("      -Z [first window size displacement [for comparing overlapped windows])]. DEFAULT 0.\n");
     printf("      -Y [define window lengths in 'physical' positions (1) or in 'effective' positions (0)]. DEFAULT 1.\n");
-    printf("      -W [file with the coordinates of each window [init end] (instead options -w and -z).\n");
+    printf("      -W [file with the coordinates of each window [scaffold init end] (instead options -w and -z).\n");
     printf("         DEFAULT one whole window.\n");
     printf("      -E [input file with weights for positions:\n");
     printf("         include three columns with a header,\n");
