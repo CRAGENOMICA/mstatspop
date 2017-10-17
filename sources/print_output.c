@@ -1310,9 +1310,9 @@ int print_output( int mainargc,int npops,int *nsam,
 	else { /*single stdout line*/		
         if(output == 7) { /* SweepFinder Format */
             /*only print the first population (and outgroup if present)*/
-            fprintf(file_out,"Position\t");
-            fprintf(file_out,"freq\t");
-            fprintf(file_out,"nsam\t");
+            fprintf(file_out,"position\t");
+            fprintf(file_out,"x\t");
+            fprintf(file_out,"n\t");
             fprintf(file_out,"folded\n");
             /*table*/
             for(zz=0;zz<length_seg;zz++) {
