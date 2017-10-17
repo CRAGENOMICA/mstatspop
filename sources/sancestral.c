@@ -28,8 +28,8 @@ int calc_sxsfss(int npops, int *nsam, char *matrix_pol,long int *matrix_pos,
     }
     if(length==0) return 1;
     
-        initsq1 = (int *)calloc(npops,sizeof(int));
-        initsq2 = (int *)calloc(npops,sizeof(int));
+    initsq1 = (int *)calloc(npops,sizeof(int));
+    initsq2 = (int *)calloc(npops,sizeof(int));
     initsq1a= (int *)calloc(npops,sizeof(int));
     polqa   = (int *)calloc(npops,sizeof(int));
     polqb   = (int *)calloc(npops,sizeof(int));
@@ -67,8 +67,7 @@ int calc_sxsfss(int npops, int *nsam, char *matrix_pol,long int *matrix_pos,
             if(initso >= sumnsam) {
                 polc = -1;
             }
-            else
-            {
+            else {
                 for(popo=initso+1;popo<sumnsam;popo++) {
                     while((a1 = matrix_pol[j*sumnsam+popo]) == '-' && popo < sumnsam) popo++;
                     if(popo >= sumnsam) {
@@ -190,7 +189,7 @@ int calc_sxsfss(int npops, int *nsam, char *matrix_pol,long int *matrix_pos,
             npo=npops-2;
             while(npo > 0 && (polqa[npo] == -1 || polqb[npo] == -1)) npo--;
             if(polc == 1) {
-                if(npops > 1) {
+                if(npops-!(outgroup_presence+force_outgroup) > 1) {
                     if(polqa[npo] == 0 && polqb[npo] == 0) {
                         if((npops == 2) || matrix_pol[j*sumnsam+initsb] == matrix_pol[j*sumnsam+initsq1a[npo]]) {
                             statistics[0].Sanc[(npops-1)*4+0] += 1;/*Sxo*/

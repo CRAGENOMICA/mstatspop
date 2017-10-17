@@ -1358,7 +1358,8 @@ int main(int argc, const char * argv[])
 							vli++;
 							vvm[vli] = *c;
 						}
-						vvm[vli+1] = (char)0; vector_mask[(unsigned int)li] = (float)atof(vvm); /*value of the position, usually 1 except for noncounting values or Syn/Nsyn (between 0 and 1)*/
+						vvm[vli+1] = (char)0;
+                        vector_mask[(unsigned int)li] = (float)atof(vvm); /*value of the position, usually 1 except for noncounting values or Syn/Nsyn (between 0 and 1)*/
  						for(vli=0;vli<10;vli++) vvm[vli] = (char)0;
 						vli = 0;
 					}
@@ -1368,7 +1369,9 @@ int main(int argc, const char * argv[])
                            include_unknown == 0)
                             vector_mask[(unsigned int)li] = 0.; /*not counting missing values when not included*/
 					}
-					while((*c = fgetc(file_mask)) == 32);
+					if(*c == 10 || *c == 13 || *c == 0 || *c == -1)
+                        break;
+                    while((*c = fgetc(file_mask)) == 32);
 					li++;
 				}
 				if(*c == 10 || *c == 13 || li > length) {
@@ -2137,7 +2140,7 @@ int main(int argc, const char * argv[])
             /* Calculate statistics for haplotypes */
             if(int_total_nsam < SAMPLE_LARGE) {
                 /*if(include_unknown==0) {*/
-                if(calc_mismatch(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy) == 0) {
+                if(calc_mismatch(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy,outgroup_presence+force_outgroup) == 0) {
                     fzprintf(file_logerr,&file_logerr_gz,"\nError in calc_mismatch function.1.\n");
                     exit(1);
                 }
@@ -2878,6 +2881,7 @@ void usage(void)
     printf("                              4 (single line pairwise distribution)\n");
     printf("                              5 (single line freq. variant per line/window)\n");
     printf("                              6 (SNP genotype matrix)\n");
+    printf("                              7 (SweepFiinder format -only first pop-)\n");
     printf("                             10 (full extended)]\n");
     printf("      -N [#_pops] [#samples_pop1] ... [#samples_popN]\n");
     printf("      -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]\n");

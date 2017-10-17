@@ -9,7 +9,7 @@
 #include "mismatch.h"
 #include "sancestral.h"
 
-int calc_mismatch(int npops, int *nsam, char *matrix_pol,long int length, struct stats *statistics, char *ploidy)
+int calc_mismatch(int npops, int *nsam, char *matrix_pol,long int length, struct stats *statistics, char *ploidy, int outgroup_presence)
 {
 	/*
 		Error: using missing values the weight (comb) is not correctly calculated. Do it for each position independently...
@@ -46,8 +46,12 @@ int calc_mismatch(int npops, int *nsam, char *matrix_pol,long int length, struct
 	
 	for(pop1=0;pop1<npops-1;pop1++)
 	{
-		if(ploidy[0] == '1') 
-			thetaT = statistics[0].thetaTo[pop1];
+        if(ploidy[0] == '1') {
+			if(outgroup_presence)
+                thetaT = statistics[0].thetaTo[pop1];
+            else
+                thetaT = statistics[0].thetaT[pop1];
+        }
 		if(ploidy[0] == '2') {
 			thetaT = 0.;
 			w = 0.;

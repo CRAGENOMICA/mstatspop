@@ -316,11 +316,63 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 				return(0);
 			}
 			/*we forced the invented outgroup without gaps or uncertainties, if possible*/
+            /*eliminate the mhits from the outgroup, take the highest frequency nucleotide*/
 			/*strncpy(DNA_matr2+(unsigned long)n_site*(unsigned long)(n_samp),DNA_matr2+(unsigned long)n_site*(unsigned long)(n_samp-1),n_site);*/
-			for(xx=0;xx<n_site;xx++) {
-				ns = 0;
-				while(ns < nsamuser_eff-1 && DNA_matr2[(long long)n_site*(unsigned long)ns+xx] > '4') ns++;
-				DNA_matr2[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = DNA_matr2[(unsigned long)n_site*(unsigned long)ns+xx];
+            int f1,f2,f3,f4,f0;
+            int nf1,nf2,nf3,nf4,nfm,nf0,countf;
+            for(xx=0;xx<n_site;xx++) {
+                /*define f1 for a given nt*/
+                ns = nfm=0;
+                while(ns < nsamuser_eff-1 && DNA_matr2[(long long)n_site*(unsigned long)ns+xx] > '4') {ns++;nfm++;}
+                if(ns<nsamuser_eff-1) {
+                    f1 = (int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx]; nf1 = 1;
+                    /*count the freqs of all nt*/
+                    nf2=nf3=nf4=0;
+                    f2=f3=f4=0;
+                    while(ns < nsamuser_eff-1)
+                    {ns++;
+                        if((int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx]==f1) nf1 += 1;
+                        if(DNA_matr2[(long long)n_site*(unsigned long)ns+xx]>'4') nfm += 1;
+                        if((int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx]!=f1 &&
+                           DNA_matr2[(long long)n_site*(unsigned long)ns+xx]<'5') {
+                            if(f2==0 || (int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx]==f2) {
+                                f2 = (int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx];
+                                nf2 +=1;
+                            }
+                            else {
+                                if(f3==0 || (int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx]==f3) {
+                                    f3 = (int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx];
+                                    nf3 +=1;
+                                }
+                                else {
+                                    if(f4==0 || (int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx]==f4) {
+                                        f4 = (int)DNA_matr2[(long long)n_site*(unsigned long)ns+xx];
+                                        nf4 +=1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    /*choose one of the two highest frequencies, not the lowest if more than 2 equal (give '5')*/
+                    countf = 1;
+                    f0 = f1; nf0 = nf1;
+                    if(nf0 == nf2) {countf += 1;}
+                    if(nf0  < nf2) {f0 = f2; nf0 = nf2; countf = 1;}
+                    if(nf0 == nf3) {countf += 1;}
+                    if(nf0  < nf3) {f0 = f3; nf0 = nf3; countf = 1;}
+                    if(nf0 == nf4) {countf += 1;}
+                    if(nf0  < nf4) {f0 = f4; nf0 = nf4; countf = 1;}
+
+                    if(countf < 3) DNA_matr2[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = (char)f0;
+                    else
+                        DNA_matr2[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = '5';
+                }
+                else {
+                    DNA_matr2[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = '5';
+                }
+                //ns = 0;
+				//while(ns < nsamuser_eff-1 && DNA_matr2[(long long)n_site*(unsigned long)ns+xx] > '4') ns++;
+				//DNA_matr2[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = DNA_matr2[(unsigned long)n_site*(unsigned long)ns+xx];
 			}
             nsamuser_eff += 1;
 		}
@@ -336,8 +388,11 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 			/*include**name_fileinputgff,*subset_positions,ifgencode,*codename,*genetic_code,*matrix_sizepos,n_samp,n_site,*DNA_matr*/
 			/*the function read the gff file and cut the DNA_matr, also gives the number of positions in matrix_sizepos and count the total in n_site*/
 			/*only modify values in matrix_sizepos*/
-			if(use_gff(name_fileinputgff,subset_positions,genetic_code,matrix_sizepos,nsamuser_eff,n_site,DNA_matr2,matrix_segrpos,
-					   file_output,file_output_gz,mainargc,file_logerr,file_logerr_gz,include_unknown,criteria_transcript,output,nmhits,mhitbp,outgroup_presence,nsamuser[npops-1],chr_name,first) == 0) {
+			if(use_gff(name_fileinputgff,subset_positions,genetic_code,matrix_sizepos,
+                       nsamuser_eff,n_site,DNA_matr2,matrix_segrpos,
+					   file_output,file_output_gz,mainargc,file_logerr,file_logerr_gz,
+                       include_unknown,criteria_transcript,output,nmhits,mhitbp,
+                       outgroup_presence,nsamuser[npops-1],chr_name,first) == 0) {
 				/*if error realloc DNA_matr*/
 				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
@@ -349,10 +404,12 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 			}
 		}
         /*function to analyze all data*/
-        if(get_obsstats(file_output,file_output_gz,file_mask,file_logerr,file_logerr_gz,nsamuser_eff,n_site,length_al_real,names2,DNA_matr2,matrix_sizepos,matrix_segrpos,
-						matrix_pol,matrix_freq,matrix_pos,length_al,length_seg,nsamuser,npops,svratio,missratio,include_unknown,
-						sum_sam,tcga,matrix_sv,nmhits,output,ploidy,outgroup_presence,nsites1_pop,nsites1_pop_outg,
-						nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,anx,bnx,anxo,bnxo,lengthamng,lenghtamng_outg,mhitbp,matrix_pol_tcga,0) == 0) {
+        if(get_obsstats(file_output,file_output_gz,file_mask,file_logerr,file_logerr_gz,
+                        nsamuser_eff,n_site,length_al_real,names2,DNA_matr2,matrix_sizepos,matrix_segrpos,
+						matrix_pol,matrix_freq,matrix_pos,length_al,length_seg,nsamuser,npops,svratio,missratio,
+                        include_unknown,sum_sam,tcga,matrix_sv,nmhits,output,ploidy,outgroup_presence,
+                        nsites1_pop,nsites1_pop_outg,nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,
+                        anx,bnx,anxo,bnxo,lengthamng,lenghtamng_outg,mhitbp,matrix_pol_tcga,0) == 0) {
 			for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			free(DNA_matr2);

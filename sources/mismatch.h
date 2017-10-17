@@ -14,7 +14,7 @@
 extern "C" {
 #endif
 
-int calc_mismatch(int npops, int *nsam, char *matrix_pol,long int length, struct stats *statistics, char *ploidy);
+int calc_mismatch(int npops, int *nsam, char *matrix_pol,long int length, struct stats *statistics, char *ploidy, int outgroup_presence);
 
 #ifdef	__cplusplus
 }

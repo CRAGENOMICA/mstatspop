@@ -223,7 +223,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
         } while(z==0 && y < nsamtot/*n_samp*/);
         
 		/* mhit position */
-        if(z==0 /*valid position*/ && v == 1/*no mhit*/ && miso < nsamuser[npops-1]/*outgroup present*/) {
+        if(z==0 /*valid position*/ && v == 1/* 0 is no mhit*/ && miso < nsamuser[npops-1]/*outgroup present*/) {
             mhitbp[*nmhits] = xx+1;
             nmhits[0] = nmhits[0] + 1;
             /*keeping mhits by taking all variants as new biallelic independent sites */
@@ -357,9 +357,9 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
                         }
                     }
                     /*Loop adding the number of bialsites (2 or 3) at this position*/
-                    for(y=0;y<(int)(fal2>0)+(int)(fal3>0)+(int)(fal4>0);y++) {
+                    for(y=0;y<(int)(fal2>0)/*+(int)(fal3>0)+(int)(fal4>0)*/;y++) {
                         if(matrix_segrpos[xx]/*to eliminate biallelic syn/nsyn not desired*/) {
-                            k_0 = al1+48+1;
+                            k_0 = *(DNA_matr+(((long long)n_site*(unsigned long)(nsamtot-1)+(unsigned long)xx)))/*al1+48+1*/;
                             if(y==0) m_0 = al2+48+1;
                             if(y==1) m_0 = al3+48+1;
                             if(y==2) m_0 = al4+48+1;

@@ -480,14 +480,72 @@ int get_tfadata(FILE *file_output,
 //                free(matrix_segrpos);
                 return(0);
             }
-            /*we forced the invented outgroup without gaps or uncertainties, if possible*/
+            int ns;
+            int f1,f2,f3,f4,f0;
+            int nf1,nf2,nf3,nf4,nfm,nf0,countf;
             for(xx=0;xx<n_site;xx++) {
-                int ns = 0;
-                while(ns < nsamuser_eff-1 && DNA_matr[(long long)n_site*(unsigned long)ns+xx] > '4') ns++;
-                DNA_matr[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = DNA_matr[(unsigned long)n_site*(unsigned long)ns+xx];
+                /*define f1 for a given nt*/
+                ns=nfm=0;
+                while(ns < nsamuser_eff-1 && DNA_matr[(long long)n_site*(unsigned long)ns+xx] > '4') {ns++;nfm++;}
+                if(ns<nsamuser_eff-1) {
+                    f1 = (int)DNA_matr[(long long)n_site*(unsigned long)ns+xx]; nf1 = 1;
+                    /*count the freqs of all nt*/
+                    nf2=nf3=nf4=0;
+                    f2=f3=f4=0;
+                    while(ns < nsamuser_eff-1)
+                    {ns++;
+                        if((int)DNA_matr[(long long)n_site*(unsigned long)ns+xx]==f1) nf1 += 1;
+                        if(DNA_matr[(long long)n_site*(unsigned long)ns+xx]>'4') nfm += 1;
+                        if((int)DNA_matr[(long long)n_site*(unsigned long)ns+xx]!=f1 &&
+                           DNA_matr[(long long)n_site*(unsigned long)ns+xx]<'5') {
+                            if(f2==0 || (int)DNA_matr[(long long)n_site*(unsigned long)ns+xx]==f2) {
+                                f2 = (int)DNA_matr[(long long)n_site*(unsigned long)ns+xx];
+                                nf2 +=1;
+                            }
+                            else {
+                                if(f3==0 || (int)DNA_matr[(long long)n_site*(unsigned long)ns+xx]==f3) {
+                                    f3 = (int)DNA_matr[(long long)n_site*(unsigned long)ns+xx];
+                                    nf3 +=1;
+                                }
+                                else {
+                                    if(f4==0 || (int)DNA_matr[(long long)n_site*(unsigned long)ns+xx]==f4) {
+                                        f4 = (int)DNA_matr[(long long)n_site*(unsigned long)ns+xx];
+                                        nf4 +=1;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    /*choose one of the two highest frequencies, not the lowest if more than 2 (give '5')*/
+                    countf = 1;
+                    f0 = f1; nf0 = nf1;
+                    if(nf0 == nf2) {countf += 1;}
+                    if(nf0  < nf2) {f0 = f2; nf0 = nf2; countf = 1;}
+                    if(nf0 == nf3) {countf += 1;}
+                    if(nf0  < nf3) {f0 = f3; nf0 = nf3; countf = 1;}
+                    if(nf0 == nf4) {countf += 1;}
+                    if(nf0  < nf4) {f0 = f4; nf0 = nf4; countf = 1;}
+                    
+                    if(countf < 3) DNA_matr[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = (char)f0;
+                    else
+                        DNA_matr[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = '5';
+                }
+                else {
+                    DNA_matr[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = '5';
+                }
+                //ns = 0;
+                //while(ns < nsamuser_eff-1 && DNA_matr[(long long)n_site*(unsigned long)ns+xx] > '4') ns++;
+                //DNA_matr[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = DNA_matr[(unsigned long)n_site*(unsigned long)ns+xx];
             }
-            /*strncpy(DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff),DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff-1),n_site);*/
             nsamuser_eff += 1;
+            /*we forced the invented outgroup without gaps or uncertainties, if possible*/
+            //for(xx=0;xx<n_site;xx++) {
+            //    int ns = 0;
+            //    while(ns < nsamuser_eff-1 && DNA_matr[(long long)n_site*(unsigned long)ns+xx] > '4') ns++;
+            //    DNA_matr[(unsigned long)n_site*(long long)(nsamuser_eff)+xx] = DNA_matr[(unsigned long)n_site*(unsigned long)ns+xx];
+            //}
+            /*strncpy(DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff),DNA_matr+(unsigned long)n_site*(unsigned long)(nsamuser_eff-1),n_site);*/
+            //nsamuser_eff += 1;
         }
         
 //        if(wP!=0) {

@@ -1,9 +1,4 @@
-#mstatspop v.0.1beta (20170818)
-
-git clone https://github.com/CRAGENOMICA/mstatspop.git 
-cd mstatspop
-
-# A) Compiling in a Desktop Linux
+#mstatspop v.0.1beta (20170224)
 
 #zlib 1.2.8 installation (dependency)
 #
@@ -33,7 +28,3 @@ cd mstatspop
 gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -L/usr/local/lib -I/usr/local/include /usr/local/lib/libgsl.a -lz
 #for linux:
 #gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz
-
-# B) Compiling in a CRAG's cluster
-module load zlib
-gcc ./sources/*.c -lgsl -lgslcblas -lm -lz -o ./bin/mstatspop -Wall -DinGSL=1 -O3

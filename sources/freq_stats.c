@@ -498,21 +498,23 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                         if(matrix_pol[j*sumnsam+y] == '1') {freq[2] += 1;freq[0] += 1;nx[y-inits][j] = 1;}
                         if(matrix_pol[j*sumnsam+y] == '-') {freq[3] += 1;nx[y-inits][j] = 0;}
                     }
-                    if(freq[0]) {
-                        if(freq[2]>0 && freq[2]<freq[0]) {
+                    if(freq[0] > 1) {
+                        if(freq[2] && freq[1]) {
                             S += 1;
                             sfreq[pop1][freq[2]] += (int)1; /*no mhits allowed!*/
+                            //if(matrix_pol[j*sumnsam+max]== '-')
+                            //    printf("Error!");
                         }
                         /*else sfreq[pop1][freq[0]+freq[3]] += (int)1; *//*no mhits allowed!*/
                     }
                     /*FOR MISSING VALUES!!!*//**/
-                    if(freq[0]) {
-                        if(freq[2]>0 && freq[2]<freq[0]) {
+                    if(freq[0] > 1) {
+                        if(freq[2] && freq[1]) {
                             an = 0.; for(x=1;x<freq[0];x++) an += 1./(double)x;
                             any += an;
                         }
                     }
-                    if(freq[2]>0 && freq[2]<freq[0]) {
+                    if(freq[2]>0 && freq[1]>0) {
                         /*an = 0.; for(x=1;x<freq[0];x++) an += 1./(double)x;*/
                         bn = 0.; for(x=1;x<freq[0];x++) bn += 1./((double)x*x);
                         anx += an;

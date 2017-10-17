@@ -1,5 +1,5 @@
 
-mstatspop v.0.1beta (20170907)
+mstatspop v.0.1beta (20171016)
 Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 Flags:
@@ -12,6 +12,7 @@ Flags:
                               4 (single line pairwise distribution)
                               5 (single line freq. variant per line/window)
                               6 (SNP genotype matrix)
+                              7 (SweepFiinder format -only first pop-)
                              10 (full extended)]
       -N [#_pops] [#samples_pop1] ... [#samples_popN]
       -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]
@@ -38,7 +39,7 @@ Flags:
       -z [slide size (must be a positive value)]. DEFAULT window size.
       -Z [first window size displacement [for comparing overlapped windows])]. DEFAULT 0.
       -Y [define window lengths in 'physical' positions (1) or in 'effective' positions (0)]. DEFAULT 1.
-      -W [file with the coordinates of each window [init end] (instead options -w and -z).
+      -W [file with the coordinates of each window [scaffold init end] (instead options -w and -z).
          DEFAULT one whole window.
       -E [input file with weights for positions:
          include three columns with a header,
