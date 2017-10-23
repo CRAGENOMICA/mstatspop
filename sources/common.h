@@ -22,7 +22,7 @@ extern "C" {
 #include "zindex.h"
 
 
-#define MSTATSPOP "\nmstatspop v.0.1beta (20171017)\n" \
+#define MSTATSPOP "\nmstatspop v.0.1beta (20171023)\n" \
 		   "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera\n" \
 		   "Variability Analyses of multiple populations: " \
 		   "Calculation and estimation of statistics and neutrality tests.\n"

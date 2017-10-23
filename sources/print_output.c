@@ -1324,9 +1324,9 @@ int print_output( int mainargc,int npops,int *nsam,
                     fprintf(file_out,"%d",nfd[0][zz]);
                     fprintf(file_out,"\t");
                     if(outgroup_presence)
-                        fprintf(file_out, "1");
-                    else
                         fprintf(file_out, "0");
+                    else
+                        fprintf(file_out, "1");
                     fprintf(file_out,"\n");
                 }
             }
