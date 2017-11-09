@@ -388,7 +388,7 @@ gz_return fzseekNearest(FILE *file_handle, SGZip *z, struct SGZIndex *idx, const
     *seq_id_found = -1;
     last_search = idx->last_search; /* store the current last_search position */
 
-    if ((ret = fzseek(file_handle, z, idx, search_id, &row_num, true)) != GZ_OK) {
+    if ((ret = fzseek(file_handle, z, idx, search_id, &row_num, false /*true*/)) != GZ_OK) {
 
         /* "1,3" does not exist. So, this function must return the "1,5" but the index does not store (x:y) in clear text
            so, the function must try "1:3", "1:4", "1:5" until it gets the sequence. */
@@ -423,7 +423,7 @@ gz_return fzseekNearest(FILE *file_handle, SGZip *z, struct SGZIndex *idx, const
                     strcat(new_search_id, buffer);
 
                     row_num = -1;
-                    ret = fzseek(file_handle, z, idx, new_search_id, &row_num, true);
+                    ret = fzseek(file_handle, z, idx, new_search_id, &row_num, false /*true*/);
 
                     if (ret == GZ_OK) {
                         *seq_id_found = i;
