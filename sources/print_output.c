@@ -1058,7 +1058,8 @@ int print_output( int mainargc,int npops,int *nsam,
                 }
                 else fprintf(file_out,"\nSNP[%ld]",matrix_pos[zz]);
 				for(x=0;x<npops-oo;x++) {
-					fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                    else fprintf(file_out,"\tNA");
 				}
 			}
 		}
@@ -1168,10 +1169,16 @@ int print_output( int mainargc,int npops,int *nsam,
 					else fprintf(file_out, "---\t");
 					/*Allele1*/
 					fprintf(file_out, "%c\t",nt1[0]);
-					for(x=0;x<npops-oo;x++) fprintf(file_out,"%.0f\t",(jfd[x][zz])*nfd[x][zz]);
+                    for(x=0;x<npops-oo;x++) {
+                        if(nfd[x][zz]) fprintf(file_out,"%.0f\t",(jfd[x][zz])*nfd[x][zz]);
+                        else fprintf(file_out,"NA\t");
+                    }
 					/*Allele2*/
 					fprintf(file_out, "%c\t",nt2[0]);
-					for(x=0;x<npops-oo;x++) fprintf(file_out,"%.0f\t",(1.0-jfd[x][zz])*nfd[x][zz]);
+                    for(x=0;x<npops-oo;x++) {
+                        if(nfd[x][zz]) fprintf(file_out,"%.0f\t",(1.0-jfd[x][zz])*nfd[x][zz]);
+                        else fprintf(file_out,"NA\t");
+                    }
 					/*position*/
 					if(formatfile==3) fprintf(file_out,"%ld",labs(matrix_pos[zz])+(long int)vector_priors[0]-1);
                     else fprintf(file_out,"%ld",labs(matrix_pos[zz]));
@@ -1471,10 +1478,16 @@ int print_output( int mainargc,int npops,int *nsam,
                             else fprintf(file_out, "---\t");
                             /*Allele1*/
                             fprintf(file_out, "%c\t",nt1[0]);
-                            for(x=0;x<npops-oo;x++) fprintf(file_out,"%.0f\t",(jfd[x][zz])*nfd[x][zz]);
+                            for(x=0;x<npops-oo;x++) {
+                                if(nfd[x][zz]>0) fprintf(file_out,"%.0f\t",(jfd[x][zz])*nfd[x][zz]);
+                                else fprintf(file_out,"NA\t");
+                            }
                             /*Allele2*/
                             fprintf(file_out, "%c\t",nt2[0]);
-                            for(x=0;x<npops-oo;x++) fprintf(file_out,"%.0f\t",(1.0-jfd[x][zz])*nfd[x][zz]);
+                            for(x=0;x<npops-oo;x++) {
+                                if(nfd[x][zz]>0) fprintf(file_out,"%.0f\t",(1.0-jfd[x][zz])*nfd[x][zz]);
+                                else fprintf(file_out,"NA\t");
+                            }
                             /*position*/
                             fprintf(file_out,"%ld",labs(matrix_pos[zz]));
                             if(*file_input) fprintf(file_out,"%s",file_input);
@@ -2024,7 +2037,10 @@ int print_output( int mainargc,int npops,int *nsam,
                             ss=0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz];}
                             if(ss) {
                                 fprintf(file_out,"\tSNP[%ld]",matrix_pos[zz]);
-                                for(x=0;x<npops-oo;x++) fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                                for(x=0;x<npops-oo;x++) {
+                                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                                    else fprintf(file_out,"\tNA");
+                                }
                                 if(missratio > 0.) {for(x=0;x<npops-oo;x++) fprintf(file_out,"\t%d",nfd[x][zz]);}
                             }
                         }
