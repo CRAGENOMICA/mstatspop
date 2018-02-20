@@ -87,12 +87,12 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
     
     /*printf("\nReading GTF file...");*/
     fflush(stdout);
-    fzprintf(file_logerr,file_logerr_gz,"\nReading GTF file...");
+    fprintf(file_logerr,"\nReading GTF file...");
 
     /*calculate the degeneration of each triplet and position:*/
     if(function_do_nfold_triplets(n_fold,genetic_code,tripletsN) == 0)
     {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: It is not possible to define degenerated positions. use_gff.c\n");
+        fprintf(file_logerr,"\nError: It is not possible to define degenerated positions. use_gff.c\n");
         return(0);
     }
 
@@ -108,22 +108,22 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 
 	if((file_gff = fzopen (name_fileinputgff,"r",&file_gff_gz)) == 0)
 	{
-		fzprintf(file_logerr,file_logerr_gz,"\n  It is not possible to open the file %s",name_fileinputgff);
+		fprintf(file_logerr,"\n  It is not possible to open the file %s",name_fileinputgff);
 		return 0; /*error*/
 	}
 
 	if(file_gff) {
 		/*init*/
 		if( !(f = (char *) malloc( BUFSIZ ))) { /**< TODO: Check que BUFSIZ es el de stdio */
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.1 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.1 \n");
 			return 0; /*error*/
 		}
 		if(!(row = (char *)malloc(1024*sizeof(char)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.2 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.2 \n");
 			return 0; /*error*/
 		}
 		if(!(fieldsgff = (struct valuesgff *)calloc(1,sizeof(struct valuesgff)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.3 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3 \n");
 			return 0; /*error*/
 		}
 		setbuf(file_gff, f);
@@ -383,20 +383,20 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
             if(fieldsgff[nrows].start < (long int)1 &&
                fieldsgff[nrows].strand[0] != '\0')  {
 				if(type_output == 0 || type_output == 10) {
-					if(file_output) fzprintf(file_logerr,file_logerr_gz,"GFF file Warning: start (%ld) is lower than 1. Row %ld not analyzed. ",fieldsgff[nrows].start,ncountrow);
+					if(file_output) fprintf(file_logerr,"GFF file Warning: start (%ld) is lower than 1. Row %ld not analyzed. ",fieldsgff[nrows].start,ncountrow);
 				}
 				continue;
 			}
 			if(fieldsgff[nrows].end > (long int)n_site &&
                fieldsgff[nrows].strand[0] != '\0')  {
 				if(type_output == 0 || type_output == 10) {
-					if(file_output) fzprintf(file_logerr,file_logerr_gz,"GFF file Warning: end (%ld) is larger than number of total sites (%ld). Row %ld not analyzed.\n ",fieldsgff[nrows].end,n_site,ncountrow);
+					if(file_output) fprintf(file_logerr,"GFF file Warning: end (%ld) is larger than number of total sites (%ld). Row %ld not analyzed.\n ",fieldsgff[nrows].end,n_site,ncountrow);
 				}
 				continue;
 			}
 			if(fieldsgff[nrows].start > fieldsgff[nrows].end && fieldsgff[nrows].strand[0] != '\0') {
 				if(type_output == 0 || type_output == 10) {
-					if(file_output) fzprintf(file_logerr,file_logerr_gz,"GFF file Warning: start (%ld) is larger than end (%ld). Row %ld not analyzed. ",fieldsgff[nrows].start,fieldsgff[nrows].end,ncountrow);
+					if(file_output) fprintf(file_logerr,"GFF file Warning: start (%ld) is larger than end (%ld). Row %ld not analyzed. ",fieldsgff[nrows].start,fieldsgff[nrows].end,ncountrow);
 				}
 				continue;
 			}
@@ -422,7 +422,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 			/*if row accepted*/
 			nrows += 1;
 			if(!(fieldsgff = (struct valuesgff *)realloc(fieldsgff,(nrows+1)*sizeof(struct valuesgff)))) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.3 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3 \n");
 				free(row);
 				free(f);
 				free(fieldsgff);
@@ -436,7 +436,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		fzclose(file_gff,&file_gff_gz);
         
         if(chr_name_pass == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: %s name of the scaffold not found. Exit.\n",chr_name);
+            fprintf(file_logerr,"\nError: %s name of the scaffold not found. Exit.\n",chr_name);
             exit(0);
         }
 
@@ -480,12 +480,12 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		
         /*
 		if(!(read_frame = (int **)calloc(1,sizeof(int *)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.34 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.34 \n");
 			free(fieldsgff);
 			return 0; ///error
 		}
 		if(!(read_frame[0] = (int *)calloc(256,sizeof(int)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.341 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.341 \n");
 			free(read_frame);
 			free(fieldsgff);
 			return 0; //error
@@ -496,26 +496,26 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		else for(ii=0;ii<n_site;ii++) matrix_sizepos[ii] = (double)0;
 		/*init a current matrix_sizepos for each seqname/gene_id*/
 		if((cmat = (double *)calloc((unsigned long)n_site,sizeof(double))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.4 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.4 \n");
 			return 0; /*error*/
 		}
 		if((cmatnc = (double *)calloc((unsigned long)n_site,sizeof(double))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.4b \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.4b \n");
 			return 0; /*error*/
 		}
 		if((cmatsil = (double *)calloc((unsigned long)n_site,sizeof(double))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.4c \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.4c \n");
 			return 0; /*error*/
 		}
 		for(ii=0;ii<n_site;ii++) cmatsil[ii] = (double)1;
 		/*init a 3*n_samp matrix for syn/nsyn triplets*/
 		if(strcmp(subset_positions,"synonymous") == 0 || strcmp(subset_positions,"nonsynonymous") == 0 || strcmp(subset_positions,"silent") == 0 || strcmp(subset_positions,"silent") == 0 || strcmp(subset_positions,"0-fold") == 0 || strcmp(subset_positions,"2-fold") == 0 || strcmp(subset_positions,"3-fold") == 0 || strcmp(subset_positions,"4-fold") == 0) {
 			if((cod3n = (char *)calloc((unsigned long)(3*(n_samp+1)),sizeof(char))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.5 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. use_gff.5 \n");
 				return 0; /*error*/
 			}
 			if((cod3put = (char *)calloc((unsigned long)3,sizeof(char))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.5 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. use_gff.5 \n");
 				return 0; /*error*/
 			}
 		}
@@ -537,7 +537,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		
 		/*create a new struct and copy all rows*/
 		if(!(fieldsgff2 = (struct valuesgff *)calloc(nrows,sizeof(struct valuesgff)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.3b \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3b \n");
 			return 0; /*error*/
 		}
 		/*sort the struct by gene_id(first), start and transcript_id*/
@@ -565,13 +565,13 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 				cstrand[0] = fieldsgff[j].strand[0];
 				cframe[0]  = fieldsgff[j].frame[0];
 				if(cstrand[0] == '.' && j==n) { /*j row is undefined*/
-					fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons with undefined sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
+					fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons with undefined sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
 					strcpy(fieldsgff[j].feature,"CDS_EXCLUDED\0");
 					for(ii=j+1;ii<m;ii++) if(strcmp(fieldsgff[m].gene_id,seqid) == 0 && strcmp(fieldsgff[ii].feature,"CDS") == 0) {strcpy(fieldsgff[ii].feature,"CDS_EXCLUDED\0");}
 					continue;
 				}
 				if(cframe[0] == '.' && cstrand[0] == '+' && j==n) {
-					fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons with undefined coding frames (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
+					fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons with undefined coding frames (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
 					strcpy(fieldsgff[j].feature,"CDS_EXCLUDED\0");
 					for(ii=j+1;ii<m;ii++) if(strcmp(fieldsgff[m].gene_id,seqid) == 0 && strcmp(fieldsgff[ii].feature,"CDS") == 0) {strcpy(fieldsgff[ii].feature,"CDS_EXCLUDED\0");}
 					continue;
@@ -586,7 +586,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 					while(l<k && strcmp(fieldsgff[l].feature,"CDS") != 0) {l++;} /*look for CDS rows*/
 					if(l==k) break;
 					if(cstrand[0] != fieldsgff[l].strand[0] && fieldsgff[l].strand[0] != '.') {
-						fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons with different sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
+						fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons with different sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
 						strcpy(fieldsgff[j].feature,"CDS_EXCLUDED\0");
 						for(ii=j+1;ii<k;ii++) {
 							if(strcmp(fieldsgff[ii].transcript_id,seqid) == 0 && strcmp(fieldsgff[ii].feature,"CDS") == 0) {
@@ -619,7 +619,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 				cstrand[0] = fieldsgff[j].strand[0];
 				cframe[0]  = fieldsgff[j].frame[0];
 				if(cstrand[0] == '.' && j==m-1) { /*j row is undefined*/
-					fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons with undefined sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
+					fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons with undefined sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
 					strcpy(fieldsgff[j].feature,"CDS_EXCLUDED\0");
 					for(ii=j-1;ii>=n;ii--)
 						if(strcmp(fieldsgff[m].gene_id,seqid) == 0 && strcmp(fieldsgff[ii].feature,"CDS") == 0) {
@@ -628,7 +628,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 					continue;
 				}
 				if(cframe[0] == '.' && cstrand[0] == '-' && j==m-1) {
-					fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons with undefined coding frames (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
+					fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons with undefined coding frames (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
 					strcpy(fieldsgff[j].feature,"CDS_EXCLUDED\0");
 					for(ii=j-1;ii>=n;ii--) 
 						if(strcmp(fieldsgff[m].gene_id,seqid) == 0 && strcmp(fieldsgff[ii].feature,"CDS") == 0) {
@@ -646,7 +646,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 					while(l>=j && strcmp(fieldsgff[l].feature,"CDS") != 0) {l--;} /*look for CDS rows*/
 					if(l<j) break;
 					if(cstrand[0] != fieldsgff[l].strand[0] && fieldsgff[l].strand[0] != '.') {
-						fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons with different sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
+						fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons with different sense strand (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
 						strcpy(fieldsgff[j].feature,"CDS_EXCLUDED\0");
 						for(ii=k;ii>=j;ii--) {
 							if(strcmp(fieldsgff[ii].transcript_id,seqid) == 0 && strcmp(fieldsgff[ii].feature,"CDS") == 0) {
@@ -678,7 +678,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 				/*
 				if(nrows2 >= nrows) {
 					if(!(fieldsgff2 = (struct valuesgff *)realloc(fieldsgff2,(nrows2+1)*sizeof(struct valuesgff)))) {
-						fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.3b \n");
+						fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3b \n");
 						return 0;
 					}
 				}
@@ -721,13 +721,13 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 				}
 			}
 			if(!(matrix_coding = (char **)calloc(ntransc+1,sizeof(char *)))) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.23b \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. use_gff.23b \n");
 				return 0; /*error*/
 			}
 			j=n;
 			for(i=0;i<ntransc;i++) {
 				if(!(matrix_coding[i] = (char *)calloc((end - start + 2),sizeof(char)))) { /*the last is 0 just to jump in some loops*/
-					fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.23c \n");
+					fprintf(file_logerr,"\nError: memory not reallocated. use_gff.23c \n");
 					return 0; /*error*/
 				}
 				while(j<m && strcmp(fieldsgff[j].feature,"CDS")!=0) {j++;}
@@ -739,7 +739,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 					l = ibeg;
 					while(l<=iend && matrix_coding[i][l]==0) {l++;}
 					if(l<=iend) {
-						fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons overlapped for the same transcript (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
+						fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons overlapped for the same transcript (gene_id = %s, transcript_id = %s). TRANSCRIPT NOT CONSIDERED.",fieldsgff[j].gene_id,fieldsgff[j].transcript_id);
 						memset(matrix_coding[i],'\0',(end - start + 2)); /*reset the transcript to 0*/
 						j=n;
 						while(j<m) {
@@ -789,7 +789,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                 }
             }
 			if(overlap_nf==1) {
-				fzprintf(file_logerr,file_logerr_gz,"\nWarning:\n Reading GTF file: CDS exons with different reading frames or sense strand (gene_id = %s). GENE NOT CONSIDERED.",fieldsgff[j].gene_id);
+				fprintf(file_logerr,"\nWarning:\n Reading GTF file: CDS exons with different reading frames or sense strand (gene_id = %s). GENE NOT CONSIDERED.",fieldsgff[j].gene_id);
 				seqid = fieldsgff[n].gene_id;
 				j=n;
 				while(j<m) {
@@ -802,7 +802,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 				/*use the max and min criteria to define fieldsgff2*/
 				/*first define the final transcript in the row 'ntransc'*/
 				if(!(matrix_coding[ntransc] = (char *)calloc((end - start + 2),sizeof(char)))) {
-					fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.23b \n");
+					fprintf(file_logerr,"\nError: memory not reallocated. use_gff.23b \n");
 					return 0; /*error*/
 				}
 				
@@ -869,7 +869,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 						/*
 						if(nrows2 >= nrows) {
 							if(!(fieldsgff2 = (struct valuesgff *)realloc(fieldsgff2,(nrows2+1)*sizeof(struct valuesgff)))) {
-								fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.3b \n");
+								fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3b \n");
 								return 0; 
 							}
 						}
@@ -888,7 +888,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 					/*
 					if(nrows2 >= nrows) {
 						if(!(fieldsgff2 = (struct valuesgff *)realloc(fieldsgff2,(nrows2+1)*sizeof(struct valuesgff)))) {
-							fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.3b \n");
+							fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3b \n");
 							return 0; 
 						}
 					}
@@ -907,13 +907,13 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		nrows = nrows2/*-1*/;
 		/*reallocate rows for fieldsgff2*/
 		if(!(fieldsgff2 = (struct valuesgff *)realloc(fieldsgff2,nrows*sizeof(struct valuesgff)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.3b \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3b \n");
 			return 0; /*error*/
 		}
 		
 		/*create a vector for erasing overlapped regions in different coding frame */
 		if(!(vector_erase_overlapped = (int *)calloc(n_site,sizeof(int)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.23 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.23 \n");
 			return 0; /*error*/
 		}
 		/*sort the struct by start to be fast in the comparison*/
@@ -997,7 +997,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 						fieldsgff2[n].end = fieldsgff2[n].end <= fieldsgff2[m].end ? ibeg-1:fieldsgff2[n].end;
 						
 						for(ii=ibeg;ii<iend;ii++) vector_erase_overlapped[ii] = 1;
-						fzprintf(file_logerr,file_logerr_gz,"\n Reading GTF file: Overlapping CDS regions with different reading frame (gene_id = %s vs gene_id = %s). OVERLAPPED REGION (from %ld to %ld) NOT CONSIDERED",fieldsgff2[m].gene_id,fieldsgff2[n].gene_id,ibeg+1,iend+1);
+						fprintf(file_logerr,"\n Reading GTF file: Overlapping CDS regions with different reading frame (gene_id = %s vs gene_id = %s). OVERLAPPED REGION (from %ld to %ld) NOT CONSIDERED",fieldsgff2[m].gene_id,fieldsgff2[n].gene_id,ibeg+1,iend+1);
 							
 					}
 				}
@@ -1028,14 +1028,14 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		
         if(first == 0) {
             if((file_gff2 = fzopen(name_fileinputgff2,"w",&file_gff2_gz)) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\n  It is not possible to create the file %s",name_fileinputgff);
+                fprintf(file_logerr,"\n  It is not possible to create the file %s",name_fileinputgff);
                 return 0; 
             }
             fzprintf(file_gff2,&file_gff2_gz,"#seqname\tsource\tfeature\tstart\tend\tscore\tstrand\tframe\tattributes\n");
         }
         else {
             if((file_gff2 = fzopen(name_fileinputgff2,"a",&file_gff2_gz)) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\n  It is not possible to create the file %s",name_fileinputgff);
+                fprintf(file_logerr,"\n  It is not possible to create the file %s",name_fileinputgff);
                 return 0;
             }
         }
@@ -1080,7 +1080,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 		
 		/*counting frames already in annotation*/
 		if(!(cframe_pos = (char *)calloc(n_site,sizeof(char)))) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. use_gff.343 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. use_gff.343 \n");
 			free(fieldsgff);
 			return 0; /*error*/
 		}
@@ -1197,7 +1197,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 				/*look at strand and frame fields*/
 				if(cstrand[0] == '*') {
 					if(strcmp(fieldsgff2[n].feature,"CDS") == 0) {
-						fzprintf(file_logerr,file_logerr_gz,"\n Error in GFF-format: annotation in %s is not considered. ",seqid);
+						fprintf(file_logerr,"\n Error in GFF-format: annotation in %s is not considered. ",seqid);
 					}
 					continue;
 				}
@@ -1568,7 +1568,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 									}
 									if(ii2<n_site && ii2 >= 0)
                                         matrix_segrpos[ii2] = (double)0; /*reject syn variant but keep position...*/
-                                    /*fzprintf(file_logerr,file_logerr_gz,"\nxx=%ld,ii2=%ld,n_site=%ld,subset_positions=%s\n",xx,ii2,n_site,subset_positions);*/
+                                    /*fprintf(file_logerr,"\nxx=%ld,ii2=%ld,n_site=%ld,subset_positions=%s\n",xx,ii2,n_site,subset_positions);*/
 								}
 							}
                             else {
@@ -1787,16 +1787,16 @@ int tripletnsamp(char *cod3n,char *DNA_matr,char strand,double *cmat,
 		 if no outgroup keep the two more frequent triplet
 		*/
 		if((freq_codons = (int *)calloc(n_samp,sizeof(int))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError assigning memory: tripletnsamp.1a. Exit.\n");
+			fprintf(file_logerr,"\nError assigning memory: tripletnsamp.1a. Exit.\n");
 			exit(0);
 		} 
 		if((codons_sam = (char **)calloc(n_samp,sizeof(char *))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError assigning memory: tripletnsamp.1b. Exit.\n");
+			fprintf(file_logerr,"\nError assigning memory: tripletnsamp.1b. Exit.\n");
 			exit(0);
 		} 
 		for(j=0;j<n_samp;j++) {
 			if((codons_sam[j] = (char *)calloc(3,sizeof(char))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError assigning memory: tripletnsamp.1c. Exit.\n");
+				fprintf(file_logerr,"\nError assigning memory: tripletnsamp.1c. Exit.\n");
 				exit(0);
 			} 
 		}
@@ -1968,7 +1968,7 @@ int tripletnsamp(char *cod3n,char *DNA_matr,char strand,double *cmat,
 							continue; /*in case accepting missing values, a complete gap can be accepted*/
 						else {
                             if(type_output == 0)
-								fzprintf(file_logerr,file_logerr_gz,"\n Excluded codons:  Gap/Uncertainty starting at position %ld.",ii+1);
+								fprintf(file_logerr,"\n Excluded codons:  Gap/Uncertainty starting at position %ld.",ii+1);
 						}
 					}
 					return 0;
@@ -2002,7 +2002,7 @@ int tripletnsamp(char *cod3n,char *DNA_matr,char strand,double *cmat,
 									nmhits[0] = nmhits[0] + 1;
 									if(type_output == 0 || type_output == 10) {
 										/*printf("\n Excluded codons: Multiple Mutations starting at position %ld.",ii+1);*/
-										if(file_output) fzprintf(file_logerr,file_logerr_gz,"\n Excluded codons: Multiple Mutations starting at position %ld.",ii+1);
+										if(file_output) fprintf(file_logerr,"\n Excluded codons: Multiple Mutations starting at position %ld.",ii+1);
 									}
 									return 0;
 								/*}*/
@@ -2021,7 +2021,7 @@ int tripletnsamp(char *cod3n,char *DNA_matr,char strand,double *cmat,
 								nmhits[0] = nmhits[0] + 1;
 								if(type_output == 0 || type_output == 10) {
 									/*if(mainargc > 1)*/ /*printf("\n Excluded codons: Multiple Mutations starting at position %ld.",ii+1);*/
-									if(file_output) fzprintf(file_logerr,file_logerr_gz,"\n Excluded codons: Multiple Mutations starting at position %ld.",ii+1);
+									if(file_output) fprintf(file_logerr,"\n Excluded codons: Multiple Mutations starting at position %ld.",ii+1);
 								}
 								return 0;
 							/*}*/

@@ -114,15 +114,15 @@ int get_tfadata(FILE *file_output,
     int weight_window;
     
     if((wP = (double *)calloc(1000,sizeof(double))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.14 \n");
+        fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.14 \n");
         return(0);
     }
     if((wPV = (double *)calloc(1000,sizeof(double))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.25 \n");
+        fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.25 \n");
         return(0);
     }
     if((wV = (double *)calloc(1000,sizeof(double))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23 \n");
+        fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23 \n");
         return(0);
     }
     
@@ -146,20 +146,20 @@ int get_tfadata(FILE *file_output,
     
     if(names == 0) { /* only initialize once. Check */
         if((names = (char **)calloc(128,sizeof(char *))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.1 \n");
+            fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.1 \n");
             free(wP);free(wPV);free(wV);
             return(0);
         }
         for(x=0;x<128;x++) {
             if((names[x] = (char *)calloc(50,sizeof(char))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.2 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.2 \n");
                 free(wP);free(wPV);free(wV);
                 return(0);
             }
         }
         if((DNA_matr = (char *)calloc(10000,sizeof(char))) == 0) {
             for(x=0;x<128;x++) free(names[x]); free(names);
-            fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.3 \n");
+            fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.3 \n");
             free(wP);free(wPV);free(wV);
             return(0);
         }
@@ -187,7 +187,7 @@ int get_tfadata(FILE *file_output,
                                                &wP,&wPV,&wV,&wlimit_end,
                                                beg,&window_size,&n_sitesw,weight_window,
                                                chr_name,first) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"Error processing weighting file %s\n", file_wps);
+                    fprintf(file_logerr,"Error processing weighting file %s\n", file_wps);
                     free(wP);free(wPV);free(wV);
                     exit(1);
                 }
@@ -195,17 +195,17 @@ int get_tfadata(FILE *file_output,
             else {
                 n_sitesw = end-beg+1+1; /*the position 0 does not count: we translate 1 right*/
                 if((wP = (double *)realloc((double *)wP,n_sitesw*sizeof(double))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.14 \n");
+                    fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.14 \n");
                     free(wP);free(wPV);free(wV);
                     return(0);
                 }
                 if((wPV = (double *)realloc((double *)wPV,n_sitesw*sizeof(double))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.25 \n");
+                    fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.25 \n");
                     free(wP);free(wPV);free(wV);
                     return(0);
                 }
                 if((wV = (double *)realloc((double *)wV,n_sitesw*sizeof(double))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23 \n");
+                    fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23 \n");
                     free(wP);free(wPV);free(wV);
                     return(0);
                 }
@@ -219,7 +219,7 @@ int get_tfadata(FILE *file_output,
             window_size = (double)window;
 			beg = init_site;/*the initial position of the window*/
             if(file_ws == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"Error: no weights file\n");
+                fprintf(file_logerr,"Error: no weights file\n");
                 free(wP);free(wPV);free(wV);
                 exit(1);
             }
@@ -228,7 +228,7 @@ int get_tfadata(FILE *file_output,
                                            &wP,&wPV,&wV,&wlimit_end,
                                            beg,&window_size,&n_sitesw,weight_window,
                                            chr_name,first) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"Error processing weights file\n");
+                fprintf(file_logerr,"Error processing weights file\n");
                 free(wP);free(wPV);free(wV);
                 exit(1);
             }
@@ -255,7 +255,7 @@ int get_tfadata(FILE *file_output,
                                                    &wP,&wPV,&wV,&wlimit_end,
                                                    init_site,&window_size,&n_sitesw,weight_window,
                                                    chr_name,first) == 0) {
-                        fzprintf(file_logerr,file_logerr_gz,"Error processing weights file\n");
+                        fprintf(file_logerr,"Error processing weights file\n");
                         free(wP);free(wPV);free(wV);
                         exit(1);
                     }
@@ -275,7 +275,7 @@ int get_tfadata(FILE *file_output,
                                            &wP,&wPV,&wV,&wlimit_end,
                                            beg,&window_size,&n_sitesw,weight_window,
                                            chr_name,first) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"Error processing weights file\n");
+                fprintf(file_logerr,"Error processing weights file\n");
                 free(wP);free(wPV);free(wV);
                 exit(1);
             }
@@ -283,17 +283,17 @@ int get_tfadata(FILE *file_output,
         else {
             n_sitesw = end-beg+1+1; /*the position 0 does not count: we translate 1 right*/
             if((wP = (double *)realloc((double *)wP,n_sitesw*sizeof(double))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.14 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.14 \n");
                 free(wP);free(wPV);free(wV);
                 return(0);
             }
             if((wPV = (double *)realloc((double *)wPV,n_sitesw*sizeof(double))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.25 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.25 \n");
                 free(wP);free(wPV);free(wV);
                 return(0);
             }
             if((wV = (double *)realloc((double *)wV,n_sitesw*sizeof(double))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23 \n");
                 free(wP);free(wPV);free(wV);
                 return(0);
             }
@@ -306,7 +306,7 @@ int get_tfadata(FILE *file_output,
     if(*vector_priors==0) {
         *npriors = 2;
         if((*vector_priors = (double *)calloc((long int)*npriors,sizeof(double)))==0) {
-            fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_tfadata.01");
+            fprintf(file_logerr,"Error: memory not allocated. get_tfadata.01");
             free(wP);free(wPV);free(wV);
             return(0);
         }
@@ -319,7 +319,7 @@ int get_tfadata(FILE *file_output,
 	/*detect the end of the file! (*li=0,otherwise *li=-1)*/
 	
     if((x=function_read_tfasta(file_input,input_gz,index_input,file_logerr,file_logerr_gz,beg,end,&n_sam,&n_site,&names,&DNA_matr,matrix_pol_tcga,chr_name,first))==0) {
-        fzprintf(file_logerr,file_logerr_gz,"Unable reading tfasta file\n");
+        fprintf(file_logerr,"Unable reading tfasta file\n");
         for(x=0;x<n_sam;x++) free(names[x]); free(names);
         free(wP);free(wPV);free(wV);
         free(DNA_matr);
@@ -375,14 +375,14 @@ int get_tfadata(FILE *file_output,
         if(flag_change_sort == 1) {
             /*define duplicated matr*/
             if ((DNA_matr2 = (char *)calloc(n_site*(long long)n_samp,sizeof(char))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23d \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23d \n");
                 for(x=0;x<n_samp;x++) free(names[x]); free(names);
                 free(wP);free(wPV);free(wV);
                 free(DNA_matr);
                 return(0);
             }
             if((names2 = (char **)calloc(n_samp,sizeof(char *))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.1s2 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.1s2 \n");
                 for(x=0;x<n_samp;x++) free(names[x]); free(names);
                 free(wP);free(wPV);free(wV);
                 free(DNA_matr);
@@ -390,7 +390,7 @@ int get_tfadata(FILE *file_output,
             }
             for(x=0;x<n_samp;x++) {
                 if((names2[x] = (char *)calloc(50,sizeof(char))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.22 \n");
+                    fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.22 \n");
                     for(x=0;x<n_samp;x++) free(names[x]); free(names);
                     free(wP);free(wPV);free(wV);
                     free(DNA_matr);
@@ -400,6 +400,9 @@ int get_tfadata(FILE *file_output,
                 strncpy(names2[x],names[x],50);
             }
             strncpy(DNA_matr2+(long long)n_site*(long long)0,DNA_matr+(long long)n_site*(long long)0,(long long)n_site*n_samp);
+            //for(x=0;x<n_samp;x++) {
+            //    strncpy(DNA_matr2+(long long)n_site*(long long)x,DNA_matr+(long long)n_site*(long long)x,n_site);
+            //}
             /*end define and duplicate*/
             
             /*include data in *DNA_matr and in *names[] in the correct order*/
@@ -414,7 +417,7 @@ int get_tfadata(FILE *file_output,
             
             /*erase lines no used*/
             if(nsamuser_eff > n_samp) {
-                fzprintf(file_logerr,file_logerr_gz,"Error: too low samples in the file according to defined in -N flag.\n");
+                fprintf(file_logerr,"Error: too low samples in the file according to defined in -N flag.\n");
                 for(x=0;x<n_sam;x++) free(names[x]); free(names);
                 free(wP);free(wPV);free(wV);
                 free(DNA_matr);
@@ -423,7 +426,7 @@ int get_tfadata(FILE *file_output,
         }
         /*end option flag O*/
         if(nsamuser_eff > 32167) {
-            fzprintf(file_logerr,file_logerr_gz,"Error: too much samples. Only 32167 samples per loci are allowed.\n");
+            fprintf(file_logerr,"Error: too much samples. Only 32167 samples per loci are allowed.\n");
             for(x=0;x<n_sam;x++) free(names[x]); free(names);
             free(wP);free(wPV);free(wV);
             free(DNA_matr);
@@ -433,13 +436,13 @@ int get_tfadata(FILE *file_output,
 /*
         if(matrix_sizepos == 0) {
             if((matrix_sizepos = (double *)malloc(n_site*sizeof(double))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2");
+                fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2");
                 for(x=0;x<n_samp;x++) free(names[x]); free(names);
                 free(DNA_matr);
                 return(0);
             }
             if((matrix_segrpos = (double *)malloc(n_site*sizeof(double))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2");
+                fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2");
                 for(x=0;x<n_samp;x++) free(names[x]); free(names);
                 free(DNA_matr);
                 free(matrix_sizepos);
@@ -450,13 +453,13 @@ int get_tfadata(FILE *file_output,
         else{
             if(n_site > maxsites) {
                 if((matrix_sizepos = (double *)realloc(matrix_sizepos,n_site*sizeof(double))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2b");
+                    fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2b");
                     for(x=0;x<n_samp;x++) free(names[x]); free(names);
                     free(DNA_matr);
                     return(0);
                 }
                 if((matrix_segrpos = (double *)realloc(matrix_segrpos,n_site*sizeof(double))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2b");
+                    fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2b");
                     for(x=0;x<n_samp;x++) free(names[x]); free(names);
                     free(DNA_matr);
                     free(matrix_sizepos);
@@ -472,7 +475,7 @@ int get_tfadata(FILE *file_output,
 */
         if(outgroup_presence == 0) {
             if ((DNA_matr = (char *)realloc(DNA_matr,(long long)n_site*(nsamuser_eff+!outgroup_presence)*sizeof(char))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23a \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23a \n");
                 for(x=0;x<n_samp;x++) free(names[x]); free(names);
                 free(wP);free(wPV);free(wV);
                 free(DNA_matr);
@@ -558,7 +561,7 @@ int get_tfadata(FILE *file_output,
         /*define variables for mhits*/
         *nmhits = 0;
         if((mhitbp = (long int *) calloc (n_site, sizeof(long int))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.6");
+            fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.6");
             for(x=0;x<n_sam;x++) free(names[x]); free(names);
             free(wP);free(wPV);free(wV);
             free(DNA_matr);
@@ -608,14 +611,14 @@ int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, 
     
     /*printf("\nReading coordinates file...");*/
     fflush(stdout);
-    fzprintf(file_logerr,file_logerr_gz,"\nReading coordinates file...");
+    fprintf(file_logerr,"\nReading coordinates file...");
     
     if((valn = (char *)calloc(100,sizeof(char))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. read_coordinates.00 \n");
+        fprintf(file_logerr,"\nError: memory not reallocated. read_coordinates.00 \n");
         return(0);
     }
     if((*wgenes = (long int *)calloc(10000,sizeof(long int))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. read_coordinates.0 \n");
+        fprintf(file_logerr,"\nError: memory not reallocated. read_coordinates.0 \n");
         free(valn);
         return(0);
     }
@@ -624,14 +627,14 @@ int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, 
     c = fzgetc(file_wcoor, file_wcoor_gz);
     
     if(check_comment(&c,file_wcoor,file_wcoor_gz) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nWarning: no coordinates assigned. \n");
+        fprintf(file_logerr,"\nWarning: no coordinates assigned. \n");
         free(valn);
         return(0);
     }
     inside_chr = 0;
     /*
      if(c==0 || c==-1 || c < 1 || c=='\xff' || c=='\xfe') {
-     fzprintf(file_logerr,file_logerr_gz,"\nWarning: no coordinates assigned. \n");
+     fprintf(file_logerr,"\nWarning: no coordinates assigned. \n");
      free(*wgenes);
      file_wcoor=0;
      return(0);
@@ -732,7 +735,7 @@ int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, 
         }
     }
     if(xx == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: no coordinates assigned, read_coordinates.2 \n");
+        fprintf(file_logerr,"\nError: no coordinates assigned, read_coordinates.2 \n");
         /*free(*wgenes);
          file_wcoor=0;*/
         return(0);
@@ -768,12 +771,12 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
     /*keep wP, wPV, wV (not used yet) for all positions, do not need to keep positions: all are correlative*/
     if(file_ws != 0) {
         if((valn = (char *)calloc(100,sizeof(char))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.34 \n");
+            fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.34 \n");
             return(0);
         }
         if(ID==0) {
             if((ID = (char *)calloc(100,sizeof(char))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.34 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.34 \n");
                 free(valn);
                 return(0);
             }
@@ -790,7 +793,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                 *c = fzgetc(file_ws, file_ws_gz);
             }
             if(*c == 0 || *c==-1  || *c=='\xff' || *c=='\xfe') {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: no weights assigned for %s scaffold \n",chr_name);
+                fprintf(file_logerr,"\nError: no weights assigned for %s scaffold \n",chr_name);
                 free(valn);
                 return(0);
             }
@@ -814,7 +817,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                 nchstr = y+count0s; /*the number of characters in the string*/
                 
                 if(*c == 0 || *c==-1  || *c=='\xff' || *c=='\xfe') {
-                    fzprintf(file_logerr,file_logerr_gz,"\nError: no weights assigned for %s scaffold \n",chr_name);
+                    fprintf(file_logerr,"\nError: no weights assigned for %s scaffold \n",chr_name);
                     free(valn);
                     return(0);
                 }
@@ -822,7 +825,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                 position = atol(line2);
             }
             else {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
+                fprintf(file_logerr,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
                 free(valn);
                 return(0);
             }
@@ -831,14 +834,14 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
         /*Search for the value beg into ID: it is transformed to a string with the scaffold name */
         /* and perhaps zeros at left if count0s > 0*/
         if(transform_beg_chr(ID,chr_name,init_site,nchstr,count0s) != 1) {
-            fzprintf(file_logerr,file_logerr_gz,"Error transforming beg into string.\n");
+            fprintf(file_logerr,"Error transforming beg into string.\n");
             free(valn);
             return(0);
         }
         
         row_num = -1;
         if(fzseekNearest(file_ws, file_ws_gz,index_w, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
-            fzprintf(file_logerr,file_logerr_gz,"ID not found in the weights file (or not indexed position): %s\n",ID);
+            fprintf(file_logerr,"ID not found in the weights file (or not indexed position): %s\n",ID);
             /*no position found. Assume the file window is finished*/
             free(valn);
             *wlimit_end = init_site;
@@ -857,7 +860,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
             *c = fzgetc(file_ws, file_ws_gz);
         }
         if(*c == 0 || *c==-1  || *c=='\xff' || *c=='\xfe') {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: no weights assigned for %s scaffold \n",chr_name);
+            fprintf(file_logerr,"\nError: no weights assigned for %s scaffold \n",chr_name);
             free(valn);
             return(0);
         }
@@ -881,7 +884,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
             nchstr = y+count0s; /*the number of characters in the string*/
             
             if(*c == 0 || *c==-1  || *c=='\xff' || *c=='\xfe') {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: no weights assigned for %s scaffold \n",chr_name);
+                fprintf(file_logerr,"\nError: no weights assigned for %s scaffold \n",chr_name);
                 free(valn);
                 return(0);
             }
@@ -889,7 +892,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
             position = atol(line2);
         }
         else {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
+            fprintf(file_logerr,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
             free(valn);
             return(0);
         }
@@ -980,7 +983,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                     *c = fzgetc(file_ws, file_ws_gz);
                     col++;
                     if(col >= MSP_MAX_COL_LINE) {
-                        fzprintf(file_logerr,file_logerr_gz,"Register too large: position after %s:%ld, size %d\n ",chr_name,position,col);
+                        fprintf(file_logerr,"Register too large: position after %s:%ld, size %d\n ",chr_name,position,col);
                         free(valn);
                         *wlimit_end = init_site + xx - 1;
                         *window_size = curr_window;
@@ -1004,7 +1007,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                     *c = fzgetc(file_ws,file_ws_gz);
                 }
                 if(col >= MSP_MAX_COL_LINE) {
-                    fzprintf(file_logerr,file_logerr_gz,"Register too large: position after %s:%ld, size %d \n",chr_name,position,col);
+                    fprintf(file_logerr,"Register too large: position after %s:%ld, size %d \n",chr_name,position,col);
                     free(valn);
                     *wlimit_end = init_site + xx - 1;
                     *window_size = curr_window;
@@ -1028,7 +1031,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                         *c = fzgetc(file_ws,file_ws_gz);
                     }
                     if(col2 >= MSP_MAX_COL_LINE) {
-                        fzprintf(file_logerr,file_logerr_gz,"Register too large: position after %s:%ld, size %d\n ",chr_name,position,col2);
+                        fprintf(file_logerr,"Register too large: position after %s:%ld, size %d\n ",chr_name,position,col2);
                         free(valn);
                         *wlimit_end = init_site + xx - 1;
                         *window_size = curr_window;
@@ -1053,21 +1056,21 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                     file_ws=0;*wP=0;*wPV=0;*wV=0;
                     free(*wP);free(*wPV);free(*wV);
                     free(valn);
-                    fzprintf(file_logerr,file_logerr_gz,"Error: realloc error get_obsdata.11\n");
+                    fprintf(file_logerr,"Error: realloc error get_obsdata.11\n");
                     return(0);
                 }
                 if((*wPV = realloc(wPV[0],((long int)(dd+1)*(long int)1000*sizeof(double)))) == 0) {
                     file_ws=0;*wP=0;*wPV=0;*wV=0;
                     free(*wP);free(*wPV);free(*wV);
                     free(valn);
-                    fzprintf(file_logerr,file_logerr_gz,"Error: realloc error get_obsdata.11\n");
+                    fprintf(file_logerr,"Error: realloc error get_obsdata.11\n");
                     return(0);
                 }
                 if((*wV = realloc(wV[0],((long int)(dd+1)*(long int)1000*sizeof(double)))) == 0) {
                     file_ws=0;*wP=0;*wPV=0;*wV=0;
                     free(*wP);free(*wPV);free(*wV);
                     free(valn);
-                    fzprintf(file_logerr,file_logerr_gz,"Error: realloc error get_obsdata.11\n");
+                    fprintf(file_logerr,"Error: realloc error get_obsdata.11\n");
                     return(0);
                 }
             }
@@ -1108,14 +1111,14 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     /*static int chr_defined=0;*/
     /*static int position_defined=0;*/
     
-    if ((DNA_matr2 = (char *)calloc(10000,sizeof(char))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_tfadata.23d \n");
+    if ((DNA_matr2 = (char *)calloc(1e6,sizeof(char))) == 0) {
+        fprintf(file_logerr,"\nError: memory not reallocated. get_tfadata.23d \n");
         free(DNA_matr2);
         return(0);
     }
     if(ID==0) {
         if((ID = (char *)calloc(100,sizeof(char))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.34 \n");
+            fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.34 \n");
             free(DNA_matr2);
             return(0);
         }
@@ -1127,7 +1130,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
         while(*c == 9 || *c == 10 || *c == 13)
             *c = fzgetc(file_input, file_input_gz);
         if((*c == -1 || *c == 0 || *c=='\xff' || *c=='\xfe')) {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: no sequence assigned for %s scaffold \n",chr_name);
+            fprintf(file_logerr,"\nError: no sequence assigned for %s scaffold \n",chr_name);
             free(DNA_matr2);
             return 0;
         }
@@ -1154,18 +1157,18 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                         if(nseq == maxsam) {
                             maxsam += 128;
                             if(maxsam > 32767) {
-                                fzprintf(file_logerr,file_logerr_gz,"\n Sorry, no more than 32767 samples are allowed.");
+                                fprintf(file_logerr,"\n Sorry, no more than 32767 samples are allowed.");
                                 free(DNA_matr2);
                                 return 0;
                             }
                             if ((*names = (char **)realloc(*names,maxsam*sizeof(char *))) == 0) {
-                                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. assigna.1 \n");
+                                fprintf(file_logerr,"\nError: memory not reallocated. assigna.1 \n");
                                 free(DNA_matr2);
                                 return(0);
                             }
                             for(x=nseq;x<maxsam;x++) {
                                 if ((names[0][x] = (char *)calloc(50,sizeof(char))) == 0) {
-                                    fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. assigna.2 \n");
+                                    fprintf(file_logerr,"\nError: memory not reallocated. assigna.2 \n");
                                     free(DNA_matr2);
                                     return(0);
                                 }
@@ -1230,7 +1233,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     /*Search for the value beg into ID: it is transformed to a string with the scaffold name */
     /* and perhaps zeros at left if count0s > 0*/
     if(transform_beg_chr(ID,chr_name,init_site,nchstr,count0s) != 1) {
-        fzprintf(file_logerr,file_logerr_gz,"Error transforming beg into string.\n");
+        fprintf(file_logerr,"Error transforming beg into string.\n");
         free(DNA_matr2);
         return(0);
     }
@@ -1238,7 +1241,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     row_num = -1;
     
     if(fzseekNearest(file_input, file_input_gz,index_input, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
-        fzprintf(file_logerr,file_logerr_gz,"ID not found in the tfa file (or not indexed position): %s\n",ID);
+        fprintf(file_logerr,"ID not found in the tfa file (or not indexed position): %s\n",ID);
         /*no position found. Assume the file window is finished*/
         free(DNA_matr2);
         return(1);
@@ -1254,7 +1257,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
         *c = fzgetc(file_input, file_input_gz);
     }
     if(*c == 0 || *c==-1  || *c=='\xff' || *c=='\xfe') {
-        /*fzprintf(file_logerr,file_logerr_gz,"\nError: no sequence assigned for %s scaffold \n",chr_name);*/
+        /*fprintf(file_logerr,"\nError: no sequence assigned for %s scaffold \n",chr_name);*/
         free(DNA_matr2);
         return(-1);
     }
@@ -1278,7 +1281,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
         nchstr = y+count0s; /*the number of characters in the string*/
         
         if(*c == 0 || *c==-1  || *c=='\xff' || *c=='\xfe') {
-            /*fzprintf(file_logerr,file_logerr_gz,"\nError: no sequence assigned for %s scaffold \n",chr_name);*/
+            /*fprintf(file_logerr,"\nError: no sequence assigned for %s scaffold \n",chr_name);*/
             free(DNA_matr2);
             return(-1);
         }
@@ -1286,7 +1289,7 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
         position = atol(line2);
     }
     else {
-        /*fzprintf(file_logerr,file_logerr_gz,"\nError: no position assigned for %s scaffold at row %ld \n",chr_name,row_num);*/
+        /*fprintf(file_logerr,"\nError: no position assigned for %s scaffold at row %ld \n",chr_name,row_num);*/
         free(DNA_matr2);
         return(-1);
     }
@@ -1489,8 +1492,8 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                 count += 1;
                 break;
             default:
-                fzprintf(file_logerr,file_logerr_gz,"Unexpected value in tfa file: position %ld, sample %d \n ",position,col);
-                fzprintf(file_logerr,file_logerr_gz,"%c\n",*c);
+                fprintf(file_logerr,"Unexpected value in tfa file: position %ld, sample %d \n ",position,col);
+                fprintf(file_logerr,"%c\n",*c);
                 free(DNA_matr2);
                 return(-1);
                 break;
@@ -1547,11 +1550,11 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
             }
         }
         /*realloc DNAmatr if nnecessary*/
-        dd = (long int)floor((double)count/(double)10000);
-        ee = (double)count/(double)10000;
+        dd = (long int)floor((double)count/(double)1e6);
+        ee = (double)count/(double)1e6;
         if((double)dd == ee) {
-            if((DNA_matr2 = (char *)realloc((char *) DNA_matr2,((long int)dd+(long int)1)*(long int)10000*sizeof(char))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"Error: realloc error varchar.1\n");
+            if((DNA_matr2 = (char *)realloc((char *) DNA_matr2,((long int)dd+(long int)1)*(long int)1e6*sizeof(char))) == 0) {
+                fprintf(file_logerr,"Error: realloc error varchar.1\n");
                 return(0);
             }
         }
@@ -1566,14 +1569,14 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     /*return n_site,n_sam,DNA matrix and names in pointers*/
     /*
     if ((*DNA_matr = (char *)realloc((char *) *DNA_matr,n_site[0]*(long long)n_sam[0]*sizeof(char))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_tfadata.23d \n");
+        fprintf(file_logerr,"\nError: memory not reallocated. get_tfadata.23d \n");
         free(DNA_matr2);
         return(0);
     }
     */
     free(*DNA_matr);
     if((*DNA_matr = (char *)calloc(n_site[0]*(long long)n_sam[0],sizeof(char))) == 0) {
-        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_tfadata.23d2 \n");
+        fprintf(file_logerr,"\nError: memory not reallocated. get_tfadata.23d2 \n");
         free(DNA_matr2);
         return(0);
     }

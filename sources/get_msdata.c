@@ -71,7 +71,7 @@ int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_l
 		/*Read priors or other parameters*/
 		if(*vector_priors==0) {
 			if((*vector_priors = (double *)calloc((long int)1,sizeof(double)))==0) {
-				fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_msdata.01"); 
+				fprintf(file_logerr,"Error: memory not allocated. get_msdata.01"); 
 				return(1);
 			}
 			ft = 1;
@@ -91,7 +91,7 @@ int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_l
 			*npriors += 1;
 			if(ft) {
 				if((*vector_priors = (double *)realloc(*vector_priors,(long int)(*npriors+1)*sizeof(double)))==0) {
-					fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_msdata.02"); 
+					fprintf(file_logerr,"Error: memory not allocated. get_msdata.02"); 
 					return(1);
 				}
 			}
@@ -229,19 +229,19 @@ int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_l
 		
 		/*allocate memory*/
         if((*matrix_pol = (char *) calloc (((long int)nsamtot*(max_biasites+1)),sizeof(char))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_msdata.3");
+            fprintf(file_logerr,"Error: memory not allocated. get_msdata.3");
             return(1);
         }
 		if((*matrix_freq = (long int *) calloc (max_biasites+1,sizeof(long int))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_msdata.5"); 
+			fprintf(file_logerr,"Error: memory not allocated. get_msdata.5"); 
 			return(1);
 		}
 		if((*matrix_pos = (long int *) calloc (max_biasites+1,sizeof(long int))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_msdata.4"); 
+			fprintf(file_logerr,"Error: memory not allocated. get_msdata.4"); 
 			return(1);
 		}
 		if((*matrix_sv = (long int *) calloc((long int)max_biasites+1,sizeof(long int)))==0) {
-			fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_msdata.00"); 
+			fprintf(file_logerr,"Error: memory not allocated. get_msdata.00"); 
 			return(1);
 		}
         if(max_biasites == 0)
@@ -251,21 +251,21 @@ int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_l
 		}
 		
 		if((mhitbp = (long int *) calloc (length+1, sizeof(long int))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_msdata.13"); 
+			fprintf(file_logerr,"Error: memory not reallocated. get_msdata.13"); 
 			return(0);
 		}
 #if TOCONSIDER == 0
         if((discarded = (long int *) calloc (max_biasites+1, sizeof(long int))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_msdata.13");
+            fprintf(file_logerr,"Error: memory not reallocated. get_msdata.13");
             return(0);
         }
 #else
         if((matrix_phys = (long int *) calloc (max_biasites+1,sizeof(long int))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"Error: memory not allocated. get_msdata.4");
+            fprintf(file_logerr,"Error: memory not allocated. get_msdata.4");
             return(1);
         }
 		if((discarded = (long int *) calloc (max_biasites+1, sizeof(long int))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_msdata.13"); 
+			fprintf(file_logerr,"Error: memory not reallocated. get_msdata.13"); 
 			return(0);
 		}
 #endif
@@ -770,7 +770,7 @@ int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_l
 		return 0;
 	}
 	else {
-		fzprintf(file_logerr,file_logerr_gz,"\nError: ms file finished abruptely.\n");
+		fprintf(file_logerr,"\nError: ms file finished abruptely.\n");
 		exit(1);
 	}
 	

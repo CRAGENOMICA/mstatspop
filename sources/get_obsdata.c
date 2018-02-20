@@ -77,18 +77,18 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 	
     if(names == 0) { /* only initialize once. Check */
         if((names = (char **)calloc(128,sizeof(char *))) == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.1 \n");
+            fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.1 \n");
             return(0);
         }
         for(x=0;x<128;x++) {
             if((names[x] = (char *)calloc(50,sizeof(char))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.2 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.2 \n");
                 return(0);
             }
         }    
         if((DNA_matr = (char *)calloc(10000,sizeof(char))) == 0) {
             for(x=0;x<128;x++) free(names[x]); free(names); names = 0;
-            fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.3 \n");
+            fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.3 \n");
             return(0);
         }
     }
@@ -100,7 +100,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
         if(!(var_char(file_input,input_gz,file_logerr,file_logerr_gz,&count,&c,&n_sam,&n_sit,&nseq,&maxsam,&names,&DNA_matr,&n_site,excludelines,name_excluded,&n_excl,includelines,name_ingroups,name_outgroup,outgroup,nsamuser_eff,ploidy)))
             return 0;
         if(n_sam == 32767) {
-            fzprintf(file_logerr,file_logerr_gz,"Only 32167 samples per loci are allowed.\n");
+            fprintf(file_logerr,"Only 32167 samples per loci are allowed.\n");
             break;
         }
     }
@@ -118,20 +118,20 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 	if(flag_change_sort == 1) {
 		/*define duplicated matr*/
 		if ((DNA_matr2 = (char *)calloc(n_site*(long long)n_samp,sizeof(char))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23d \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23d \n");
 			for(x=0;x<n_samp;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			return(0);
 		}
 		if((names2 = (char **)calloc(n_samp,sizeof(char *))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.1s2 \n");
+			fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.1s2 \n");
 			for(x=0;x<n_samp;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			return(0);
 		}
 		for(x=0;x<n_samp;x++) {
 			if((names2[x] = (char *)calloc(50,sizeof(char))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.22 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.22 \n");
 				for(x=0;x<n_samp;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				return(0);
@@ -153,7 +153,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		
 		/*erase lines no used*/
 		if(nsamuser_eff > n_samp) {
-			fzprintf(file_logerr,file_logerr_gz,"Error: too low samples in the file according to defined in -N flag.\n");
+			fprintf(file_logerr,"Error: too low samples in the file according to defined in -N flag.\n");
 			for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 			free(DNA_matr);
 			return(0);
@@ -165,19 +165,19 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
     if(n_samp == 0 || n_site == 0) return(0);
     else {
         if(nsamuser_eff > 32767) {
-            fzprintf(file_logerr,file_logerr_gz,"Error: too much samples. Only 32767 samples per loci are allowed.\n");
+            fprintf(file_logerr,"Error: too much samples. Only 32767 samples per loci are allowed.\n");
             return(0);
         }
 		/*init matrix_sizepos*/
 		if(matrix_sizepos == 0) {
 			if((matrix_sizepos = (double *)malloc(n_site*sizeof(double))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2"); 
+				fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2"); 
 				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				return(0);
 			}
 			if((matrix_segrpos = (double *)malloc(n_site*sizeof(double))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2"); 
+				fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2"); 
 				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(matrix_sizepos);
@@ -188,13 +188,13 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		else{
 			if(n_site > maxsites) {
 				if((matrix_sizepos = (double *)realloc(matrix_sizepos,n_site*sizeof(double))) == 0) {
-					fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2b"); 
+					fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2b"); 
 					for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 					free(DNA_matr);
 					return(0);
 				}
 				if((matrix_segrpos = (double *)realloc(matrix_segrpos,n_site*sizeof(double))) == 0) {
-					fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.2b"); 
+					fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.2b"); 
 					for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 					free(DNA_matr);
 					free(matrix_sizepos);
@@ -209,7 +209,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		}
 		if(ploidy[0]=='2'){
 			if ((DNA_matr2 = (char *)calloc(n_site*(long long)(nsamuser_eff)*2,sizeof(char))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23 \n");
 				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(matrix_sizepos);
@@ -217,12 +217,12 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 				return(0);
 			}
 			if((names2 = (char **)calloc((nsamuser_eff)*2,sizeof(char *))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.12 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.12 \n");
 				return(0);
 			}
 			for(x=0;x<(nsamuser_eff)*2;x++) {
 				if((names2[x] = (char *)calloc(50,sizeof(char))) == 0) {
-					fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.22 \n");
+					fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.22 \n");
 					return(0);
 				}
 			}
@@ -283,7 +283,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		}
 		else {
 			if((DNA_matr2 = (char *)calloc((long long)n_site*(nsamuser_eff),sizeof(char))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23 \n");
 				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(matrix_sizepos);
@@ -291,12 +291,12 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 				return(0);
 			}
 			if((names2 = (char **)calloc((nsamuser_eff)*1,sizeof(char *))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.12 \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.12 \n");
 				return(0);
 			}
 			for(x=0;x<(nsamuser_eff)*1;x++) {
 				if((names2[x] = (char *)calloc(50,sizeof(char))) == 0) {
-					fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.22 \n");
+					fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.22 \n");
 					return(0);
 				}
 			}
@@ -307,7 +307,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		}
 		if(outgroup_presence == 0) {
 			if ((DNA_matr2 = (char *)realloc(DNA_matr2,(long long)n_site*(nsamuser_eff+!outgroup_presence)*sizeof(char))) == 0) {
-				fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. get_obsdata.23a \n");
+				fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23a \n");
 				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
 				free(DNA_matr);
 				free(DNA_matr2);
@@ -380,7 +380,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		/*define variables for mhits*/
 		*nmhits = 0;
 		if((mhitbp = (long int *) calloc (n_site, sizeof(long int))) == 0) {
-			fzprintf(file_logerr,file_logerr_gz,"Error: memory not reallocated. get_obsstat.6"); 
+			fprintf(file_logerr,"Error: memory not reallocated. get_obsstat.6"); 
 			return(0);
 		}
 		/*here include a function to filter positions: to read gff files (if necessary)*/
@@ -491,12 +491,12 @@ int var_char(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loge
             if(dd == ee) {
 				/*
                 if((t=(((long int)dd+(long int)1)*(long int)10000)) > 2147483647) {
-                    fzprintf(file_logerr,file_logerr_gz,"Error: too much positions.\n");
+                    fprintf(file_logerr,"Error: too much positions.\n");
                     return(0);
                 }
 				*/
                 if((*DNA_matr = realloc(*DNA_matr,((long long)dd+(long long)1)*(long long)10000*sizeof(char))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"Error: realloc error varchar.1\n");
+                    fprintf(file_logerr,"Error: realloc error varchar.1\n");
                     return(0);
                 }    
             }
@@ -701,7 +701,7 @@ int var_char(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loge
                     *n_sit += 1;
                     break;
 				default:
-                    fzprintf(file_logerr,file_logerr_gz,"Unexpected value in file");
+                    fprintf(file_logerr,"Unexpected value in file");
                     printf("%d",*c);
                     return(0);
                     break;
@@ -711,7 +711,7 @@ int var_char(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loge
         *n_sam += 1;
         if(*n_site == 0) *n_site = *n_sit;
         else if(*n_site != *n_sit) {
-            fzprintf(file_logerr,file_logerr_gz,"The number of sites are not equal in all lines in the alignment.");
+            fprintf(file_logerr,"The number of sites are not equal in all lines in the alignment.");
             return(0);
         }
     }
@@ -761,16 +761,16 @@ int assigna(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loger
         if(*nseq == *maxsam) {
             *maxsam += 32;
             if(*maxsam > 32767) {
-                fzprintf(file_logerr,file_logerr_gz,"\n Sorry, no more samples are allowed.");
+                fprintf(file_logerr,"\n Sorry, no more samples are allowed.");
                     return 0;
             }
             if ((*names = (char **)realloc(*names,*maxsam*sizeof(char *))) == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. assigna.1 \n");
+                fprintf(file_logerr,"\nError: memory not reallocated. assigna.1 \n");
                 return(0);
             }
             for(x=*nseq;x<*maxsam;x++) {
                 if ((names[0][x] = (char *)calloc(50,sizeof(char))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. assigna.2 \n");
+                    fprintf(file_logerr,"\nError: memory not reallocated. assigna.2 \n");
                     return(0);
                 }
             }
@@ -785,14 +785,14 @@ int assigna(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loger
         while(*c != 10 && *c != 13 && *c != -1 && c != 0) 
             *c = fzgetc(file_input, input_gz);
         if(*c == -1 || *c == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"\n Unexpected end of file");
+            fprintf(file_logerr,"\n Unexpected end of file");
             return(0);
         }
         c0 = *c;
         *c = fzgetc(file_input, input_gz);
         if(c0 == 13 && *c == 10) *c = fzgetc(file_input, input_gz);
         if(*c == -1 || *c == 0) {
-            fzprintf(file_logerr,file_logerr_gz,"\n Unexpected end of file");
+            fprintf(file_logerr,"\n Unexpected end of file");
             return(0);
         }
         /*use unix or macos or dos format. end*/
@@ -814,16 +814,16 @@ int assigna(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loger
             if(*nseq == *maxsam) {
                 *maxsam += 32;
                 if(*maxsam > 32767) {
-                    fzprintf(file_logerr,file_logerr_gz,"\n Sorry, no more samples are allowed.");
+                    fprintf(file_logerr,"\n Sorry, no more samples are allowed.");
                         return 0;
                 }
                 if ((*names = (char **)realloc(*names,*maxsam*sizeof(char *))) == 0) {
-                    fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. assigna.1 \n");
+                    fprintf(file_logerr,"\nError: memory not reallocated. assigna.1 \n");
                     return(0);
                 }
                 for(x=*nseq;x<*maxsam;x++) {
                     if ((names[0][x] = (char *)calloc(50,sizeof(char))) == 0) {
-                        fzprintf(file_logerr,file_logerr_gz,"\nError: memory not reallocated. assigna.2 \n");
+                        fprintf(file_logerr,"\nError: memory not reallocated. assigna.2 \n");
                         return(0);
                     }
                 }
@@ -836,7 +836,7 @@ int assigna(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loger
             *c = fzgetc(file_input, input_gz);
             if(c0 == 13 && *c == 10) *c = fzgetc(file_input, input_gz);
             if(*c == -1 || *c == 0) {
-                fzprintf(file_logerr,file_logerr_gz,"\n Unexpected end of file");
+                fprintf(file_logerr,"\n Unexpected end of file");
                 return 0;
             }
             /*use unix or macos or dos format. end*/
