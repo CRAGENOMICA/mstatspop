@@ -825,7 +825,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
                 position = atol(line2);
             }
             else {
-                fprintf(file_logerr,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
+                fprintf(file_logerr,"\nError: no position assigned for %s scaffold at position %ld \nHave you included additional comments?\n",chr_name,init_site);
                 free(valn);
                 return(0);
             }
@@ -892,7 +892,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
             position = atol(line2);
         }
         else {
-            fprintf(file_logerr,"\nError: no position assigned for %s scaffold at position %ld \n",chr_name,init_site);
+            fprintf(file_logerr,"\nError: no position assigned for %s scaffold at position %ld \nHave you included additional comments?\n",chr_name,init_site);
             free(valn);
             return(0);
         }
