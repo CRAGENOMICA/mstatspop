@@ -406,19 +406,19 @@ int print_output( int mainargc,int npops,int *nsam,
 					else fprintf(file_out,"R2d[%d]: NA\t",x);	
 				}
 				*/
-				for(xx=0;xx<r2i_ploidies[0];xx++) {
-					if(statistics[0].R2p[xx][x] > -10000) {
-						if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: %f\t",x,statistics[0].R2p[xx][x]);
-						if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: %f\t",x,statistics[0].R2p[xx][x]);
-						if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: %f\t",r2i_ploidies[xx+1],x,statistics[0].R2p[xx][x]);
-					} else {
-						if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: NA\t",x);
-						if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: NA\t",x);
-						if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: NA\t",r2i_ploidies[xx+1],x);
-						
-					}
-				}
-				
+                for(xx=0;xx<r2i_ploidies[0];xx++) {
+                    if(statistics[0].R2p[xx][x] > -10000) {
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: %f\t",x,statistics[0].R2p[xx][x]);
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: %f\t",x,statistics[0].R2p[xx][x]);
+                        if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: %f\t",r2i_ploidies[xx+1],x,statistics[0].R2p[xx][x]);
+                    } else {
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: NA\t",x);
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: NA\t",x);
+                        if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: NA\t",r2i_ploidies[xx+1],x);
+                        
+                    }
+                }
+ 				
 				/*fprintf(file_out,"Fay&WuH[%d]:\t%f\t",x,statistics[0].thetaT[x]-statistics[0].thetaFW[x]);*/
 				/*fprintf(file_out,"Fay&WuH2[%d]:\t%f\t",x,2.*(statistics[0].thetaT[x]-statistics[0].thetaL[x]));*/
 				fprintf(file_out,"\n");
@@ -456,19 +456,20 @@ int print_output( int mainargc,int npops,int *nsam,
 						fprintf(file_out,"R2d[%d]: %f\t",x,statistics[0].R2[x]);
 					else fprintf(file_out,"R2d[%d]: NA\t",x);					
 				}*/
-				for(xx=0;xx<r2i_ploidies[0];xx++) {
-					if(statistics[0].R2p[xx][x] > -10000) {
-						if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: %f\t",x,statistics[0].R2p[xx][x]);
-						if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: %f\t",x,statistics[0].R2p[xx][x]);
-						if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: %f\t",r2i_ploidies[xx+1],x,statistics[0].R2p[xx][x]);
-					} else {
-						if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: NA\t",x);
-						if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: NA\t",x);
-						if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: NA\t",r2i_ploidies[xx+1],x);
-						
-					}
-				}
-
+                /**/
+                for(xx=0;xx<r2i_ploidies[0];xx++) {
+                    if(statistics[0].R2p[xx][x] > -10000) {
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: %f\t",x,statistics[0].R2p[xx][x]);
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: %f\t",x,statistics[0].R2p[xx][x]);
+                        if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: %f\t",r2i_ploidies[xx+1],x,statistics[0].R2p[xx][x]);
+                    } else {
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]: NA\t",x);
+                        if(r2i_ploidies[0]==1 && ploidy[0] == '2') fprintf(file_out,"R2d[%d]: NA\t",x);
+                        if(r2i_ploidies[0]!=1) fprintf(file_out,"R2p%d[%d]: NA\t",r2i_ploidies[xx+1],x);
+                 
+                    }
+                }
+                /**/
 				fprintf(file_out,"\n");
 			}
 		}
@@ -2345,6 +2346,7 @@ int print_output( int mainargc,int npops,int *nsam,
                                         fprintf(file_out,"R2d[%d]:\t%f\t",x,statistics[0].R2[x]);
                                     else fprintf(file_out,"R2d[%d]:\tNA\t",x);
                                 }*/
+                                /**/
                                 for(xx=0;xx<r2i_ploidies[0];xx++) {
                                     if(statistics[0].R2p[xx][x] > -10000) {
                                         if(r2i_ploidies[0]==1 && ploidy[0] == '1') fprintf(file_out,"R2[%d]:\t%f\t",x,statistics[0].R2p[xx][x]);
@@ -2357,6 +2359,7 @@ int print_output( int mainargc,int npops,int *nsam,
                                         
                                     }
                                 }
+                                /**/
                             }
                         }
                         

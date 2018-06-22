@@ -342,7 +342,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
                     /*algsites -= (double)1 - matrix_sizepos[xx];*/
                     /*CALCULATE the length of each sample considering the outgroup*/
                     d = 0;
-                    for(y2=n_samp-nsamuser[npops-1];y2>n_samp;y2++) {
+                    for(y2=n_samp-nsamuser[npops-1];y2<n_samp;y2++) {
                         if(*(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx)) != 48+5 &&
                            *(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx)) != 48+6) /*6 added*/ {
                             d = 1;
@@ -450,7 +450,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 			/*algsites -= (double)1 - matrix_sizepos[xx];*/
             /*CALCULATE the length of each sample considering the outgroup*/
             d = 0;
-            for(y2=n_samp-nsamuser[npops-1];y2>n_samp;y2++) {
+            for(y2=n_samp-nsamuser[npops-1];y2<n_samp;y2++) {
                 if(*(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx)) != 48+5 &&
                    *(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx)) != 48+6) /*6 added*/ {
                     d = 1;

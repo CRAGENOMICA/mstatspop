@@ -39,7 +39,7 @@ int calcR2(int npops, int *nsam, char *matrix_pol, long int length, struct stats
  */
 double R2(long int *unic,double pi,int sample_size,long int S);
 
-int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stats *statistics, double *sum_sam, int *r2i_ploidies);
+int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stats *statistics, double *sum_sam, int *r2i_ploidies,int outgroup);
 double R2p(long int *unic,double pi,int sample_size,long int S, double *efflength_sam, double efflength, int ploidy);
 
 #ifdef	__cplusplus

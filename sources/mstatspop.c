@@ -2126,16 +2126,14 @@ int main(int argc, const char * argv[])
                     exit(1);
                 }
             }
-            
             if(calcR2(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy)==0) {
                 fprintf(file_logerr,"\nError in calc_R2 function.1.\n");
                 exit(1);
             }	
-            
-            if(calcR2p(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,sum_sam,r2i_ploidies)==0) {
+            if(calcR2p(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,sum_sam,r2i_ploidies,outgroup_presence+force_outgroup)==0) {
                 fprintf(file_logerr,"\nError in calc_R2 function.1.\n");
                 exit(1);
-            }	
+            }
             
             /* Calculate statistics for haplotypes */
             if(int_total_nsam < SAMPLE_LARGE) {

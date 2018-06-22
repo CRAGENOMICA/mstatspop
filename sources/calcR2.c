@@ -113,7 +113,7 @@ double R2(long int *unic,double pi,int sample_size,long int S)
 }
 
 
-int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stats *statistics, double *sum_sam, int *r2i_ploidies)
+int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stats *statistics, double *sum_sam, int *r2i_ploidies,int outgroup)
 {
 	
     int *initsq1;
@@ -122,11 +122,11 @@ int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stat
     int freq[4];
     int freqo[4];
     long int j;
-	double efflength;
+	double efflength,efflength_p;
 	
     /*init*/
     for( pop1=0;pop1<npops;pop1++ ) {
-        statistics[0].R2[pop1] = -10000;
+        /*statistics[0].R2[pop1] = -10000;*/
         for(x=0;x<r2i_ploidies[0];x++) {
             statistics[0].R2p[x][pop1] = -10000;
         }
@@ -152,7 +152,7 @@ int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stat
 			inits   = initsq1[pop1];
 			max     = initsq1[pop1]+nsam[pop1];
             
-			for(j=0;j<length;j++)
+            for(j=0;j<length;j++)
             {
                 /*eliminate those positions with no outgroup*/
                 freqo[0]=freqo[1]=freqo[2]=freqo[3]=0;
@@ -199,17 +199,29 @@ int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stat
 				efflength += sum_sam[y];
             
             /**calculate sum_sam considering the otgroup!!!!!*/
-			
-			for(x=0;x<r2i_ploidies[0];x++) {
-				statistics[0].R2p[x][pop1] = R2p(unic+initsq1[pop1],
-												statistics[0].thetaTo[pop1],
-												floor(nsam[pop1]/(double)r2i_ploidies[x+1]),
-												(int)statistics[0].So[pop1],sum_sam+initsq1[pop1],efflength,r2i_ploidies[x+1]);
-				/*
-				if(x==1 && ploidy[0] == '1') statistics[0].R2[pop1] = statistics[0].R2p[x][pop1];
-				if(x==2 && ploidy[0] == '2') statistics[0].R2[pop1] = statistics[0].R2p[x][pop1];
-				*/
-			}
+            for(x=0;x<r2i_ploidies[0];x++) {
+                efflength_p = efflength / ((double)max/(double)r2i_ploidies[x+1]);
+                if(outgroup) {
+                    statistics[0].R2p[x][pop1] = R2p(unic+initsq1[pop1],
+                                                    statistics[0].thetaTo[pop1],
+                                                    floor(nsam[pop1]/(double)r2i_ploidies[x+1]),
+                                                    (int)statistics[0].So[pop1],sum_sam+initsq1[pop1],efflength_p,r2i_ploidies[x+1]);
+                    /*
+                    if(x==1 && ploidy[0] == '1') statistics[0].R2[pop1] = statistics[0].R2p[x][pop1];
+                    if(x==2 && ploidy[0] == '2') statistics[0].R2[pop1] = statistics[0].R2p[x][pop1];
+                    */
+                }
+                else {
+                    statistics[0].R2p[x][pop1] = R2p(unic+initsq1[pop1],
+                                                     statistics[0].thetaT[pop1],
+                                                     floor(nsam[pop1]/(double)r2i_ploidies[x+1]),
+                                                     (int)statistics[0].S[pop1],sum_sam+initsq1[pop1],efflength_p,r2i_ploidies[x+1]);
+                    /*
+                    if(x==1 && ploidy[0] == '1') statistics[0].R2[pop1] = statistics[0].R2p[x][pop1];
+                    if(x==2 && ploidy[0] == '2') statistics[0].R2[pop1] = statistics[0].R2p[x][pop1];
+                    */
+                }
+            }
         }
 		else {
 			statistics[0].R2[pop1] = -10000;
@@ -242,10 +254,10 @@ double R2p(long int *unic,double pi,int sample_size,long int S, double *efflengt
 			unicp += unic[j];
 			effposi += (double)efflength_sam[j];
         }
-		sm2 += ((double)unicp - effposi/((double)efflength) * pi/2.0*(double)ploidy) * 
-			   ((double)unicp - effposi/((double)efflength) * pi/2.0*(double)ploidy);
+		sm2 += ((double)unicp -  pi/2.0 * (double)effposi/((double)efflength)) *
+			   ((double)unicp -  pi/2.0 * (double)effposi/((double)efflength));
     }
-    sm2 = sqrt(sm2) / (double)S;
+    sm2 = sqrt(sm2/((double)sample_size/(double)ploidy)) / (double)S;
 	
     if( fabs(sm2) < 1.0E-15 )
 		sm2 = 0.0;
