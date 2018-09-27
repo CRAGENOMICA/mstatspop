@@ -165,20 +165,20 @@ int fzgetc(FILE * file_handle, SGZip *z) {
 		}
 
 		if ((*z).bytes_read == 0) {
-			inflateEnd(&((*z).strm));
+			private_setEnd(file_handle, z);
 			ret = GZ_EOF;
 		} else {
-            /*int aux=99;*/
             if ((*z).have > 0) { /* If the last inflated compressed block has uncompressed chars, then: */
                 /* Return the current char */
                 ret = (*z).out[(*z).pointer];
                 /* Increment the pointer for the next call to this function */
                 (*z).pointer++;
+
             } else {
-                /* the last inflated uncompressed block has 0 uncompressed chars */
-                ret = GZ_EOF; /*assumed is the last block of uncompressed data*/
-                (*z).strm.avail_in = 0;
-                /*aux = fzeof(file_handle, z);*/
+                /* the last inflated uncompressed block has 0 uncompressed chars. */
+            	/* Assumed is the last block of uncompressed data. */
+            	private_setEnd(file_handle, z);
+                ret = GZ_EOF;
             }
                 
 			if ((*z).pointer >= (*z).have) {
@@ -459,14 +459,24 @@ int fzeof(FILE * file_handle, SGZip *z) {
 			  ((*z).strm.avail_out != 0) &&  there is no more input data to uncompress and
 			  ((*z).pointer >= (*z).have))) == 1) { there is no more chars in the buffer*/
 
-			inflateEnd(&((*z).strm));
-
-			/* Initialize first time to true */
-			(*z).first_time = 1;
+			private_setEnd(file_handle, z);
 		}
 	}
 
 	return ret;
+}
+
+void private_setEnd(FILE * file_handle, SGZip *z) {
+	/* End inflate */
+	inflateEnd(&((*z).strm));
+
+	/* Initialize first time to true */
+	(*z).first_time = 1;
+
+	/* fzeof conditions to be EOF */
+	(*z).strm.avail_in = 0;
+	(*z).pointer       = 0;
+	(*z).have          = 0;
 }
 
 gz_return save_index_to_file(const char *file_name, struct SGZIndex *idx);
@@ -474,39 +484,44 @@ gz_return unload_all_index_positions(struct SGZIndex *idx);
 
 void fzclose(FILE * file_handle, SGZip *z) {
 	if ((file_handle != 0) && (z != 0) && ((*z).reading != -1)) {
-		if (((*z).file_compressed == 0) || ((*z).reading == 1)) {
+		/*if (((*z).file_compressed == 0) || ((*z).reading == 1)) {*/
+		if ((*z).file_compressed == 0) { 
 		} else {
-			if (((*z).file_compressed == 1) && ((*z).reading == 0)) {
+			if ((*z).reading == 1) {
+				private_setEnd(file_handle, z);
+			}
+			else {
+				if (((*z).file_compressed == 1) && ((*z).reading == 0)) {
+					if ((*z).index != NULL) {
+						/* ************************************************************************* */
+						/* * This is the fzclose WITH Index Version                                * */
+						/* * It generates Index files and it enables applications to access        * */
+						/* * GZ files randomly (faster)                                            * */
+						/* * Let's create the index positions for this last piece of output data   * */
+						/* ************************************************************************* */
 
-				if ((*z).index != NULL) {
-					/* ************************************************************************* */
-					/* * This is the fzclose WITH Index Version                                * */
-					/* * It generates Index files and it enables applications to access        * */
-					/* * GZ files randomly (faster)                                            * */
-					/* * Let's create the index positions for this last piece of output data   * */
-					/* ************************************************************************* */
+						long int gz_block_starting_pos = 0;
+						long int i = 0;
 
-					long int gz_block_starting_pos = 0;
-					long int i = 0;
+						/* Scan the data for IDs */
+						gz_block_starting_pos = (*z).compressed_bytes_written;
 
-					/* Scan the data for IDs */
-					gz_block_starting_pos = (*z).compressed_bytes_written;
-
-					for (i = 0; i < (*z).strm.avail_in; i++) {
-						private_scan_deflated_for_create_index_positions((*z).in[i], i, (*z).index, gz_block_starting_pos);
+						for (i = 0; i < (*z).strm.avail_in; i++) {
+							private_scan_deflated_for_create_index_positions((*z).in[i], i, (*z).index, gz_block_starting_pos);
+						}
 					}
+
+					/* Deflate the z.in buffer into the z.out buffer (if there are chars) */
+					do {
+						(*z).strm.avail_out = CHUNK;
+						(*z).strm.next_out = (*z).out;
+						CALL_ZLIB(deflate(&((*z).strm), Z_FINISH));
+						(*z).have = CHUNK - (*z).strm.avail_out;
+						fwrite((*z).out, sizeof(char), (*z).have, file_handle);
+					} while ((*z).strm.avail_out == 0);
+
+					CALL_ZLIB(deflateEnd(&((*z).strm)));
 				}
-
-				/* Deflate the z.in buffer into the z.out buffer (if there are chars) */
-				do {
-					(*z).strm.avail_out = CHUNK;
-					(*z).strm.next_out = (*z).out;
-					CALL_ZLIB(deflate(&((*z).strm), Z_FINISH));
-					(*z).have = CHUNK - (*z).strm.avail_out;
-					fwrite((*z).out, sizeof(char), (*z).have, file_handle);
-				} while ((*z).strm.avail_out == 0);
-
-				CALL_ZLIB(deflateEnd(&((*z).strm)));
 			}
 		}
 		fclose(file_handle);
