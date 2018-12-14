@@ -186,7 +186,7 @@ int get_tfadata(FILE *file_output,
                                                file_logerr,file_logerr_gz,
                                                &wP,&wPV,&wV,&wlimit_end,
                                                beg,&window_size,&n_sitesw,weight_window,
-                                               chr_name,first) == 0) {
+                                               chr_name,first,*length) == 0) {
                     fprintf(file_logerr,"Error processing weighting file %s\n", file_wps);
                     free(wP);free(wPV);free(wV);
                     exit(1);
@@ -227,7 +227,7 @@ int get_tfadata(FILE *file_output,
                                            file_logerr,file_logerr_gz,
                                            &wP,&wPV,&wV,&wlimit_end,
                                            beg,&window_size,&n_sitesw,weight_window,
-                                           chr_name,first) == 0) {
+                                           chr_name,first,*length) == 0) {
                 fprintf(file_logerr,"Error processing weights file\n");
                 free(wP);free(wPV);free(wV);
                 exit(1);
@@ -254,7 +254,7 @@ int get_tfadata(FILE *file_output,
                                                    file_logerr,file_logerr_gz,
                                                    &wP,&wPV,&wV,&wlimit_end,
                                                    init_site,&window_size,&n_sitesw,weight_window,
-                                                   chr_name,first) == 0) {
+                                                   chr_name,first,*length) == 0) {
                         fprintf(file_logerr,"Error processing weights file\n");
                         free(wP);free(wPV);free(wV);
                         exit(1);
@@ -274,7 +274,7 @@ int get_tfadata(FILE *file_output,
                                            file_logerr,file_logerr_gz,
                                            &wP,&wPV,&wV,&wlimit_end,
                                            beg,&window_size,&n_sitesw,weight_window,
-                                           chr_name,first) == 0) {
+                                           chr_name,first,*length) == 0) {
                 fprintf(file_logerr,"Error processing weights file\n");
                 free(wP);free(wPV);free(wV);
                 exit(1);
@@ -318,7 +318,7 @@ int get_tfadata(FILE *file_output,
 	/*define the init and the end site first! use slide and window if necessary: use also the weights if necessary*/	
 	/*detect the end of the file! (*li=0,otherwise *li=-1)*/
 	
-    if((x=function_read_tfasta(file_input,input_gz,index_input,file_logerr,file_logerr_gz,beg,end,&n_sam,&n_site,&names,&DNA_matr,matrix_pol_tcga,chr_name,first))==0) {
+    if((x=function_read_tfasta(file_input,input_gz,index_input,file_logerr,file_logerr_gz,beg, end,&n_sam,&n_site,&names,&DNA_matr,matrix_pol_tcga,chr_name,first,*length))==0) {
         fprintf(file_logerr,"Unable reading tfasta file\n");
         for(x=0;x<n_sam;x++) free(names[x]); free(names);
         free(wP);free(wPV);free(wV);
@@ -599,6 +599,7 @@ int get_tfadata(FILE *file_output,
     return(1);
 }
 
+/*very careful!!!!!. The coordinates file is very strict in shape: name \t start \t end \n !!!!!!!!*/
 int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, SGZip *file_output_gz, FILE *file_logerr, SGZip *file_logerr_gz, long int **wgenes, long int *nwindows,char *chr_name) {
     
     char *valn=0;
@@ -746,7 +747,7 @@ int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, 
     return 1;
 }
 
-int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZIndex *index_w,FILE *file_logerr,SGZip *file_logerr_gz, double **wP, double **wPV, double **wV, long int *wlimit_end,long int init_site, double *window_size, long int *n_sitesw, int weight_window, char *chr_name,int first) {
+int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZIndex *index_w,FILE *file_logerr,SGZip *file_logerr_gz, double **wP, double **wPV, double **wV, long int *wlimit_end,long int init_site, double *window_size, long int *n_sitesw, int weight_window, char *chr_name,int first, long int length) {
     
     double curr_window=0;
     char *valn=0;
@@ -841,7 +842,8 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
         
         row_num = -1;
         if(fzseekNearest(file_ws, file_ws_gz,index_w, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
-            fprintf(file_logerr,"ID not found in the weights file (or not indexed position): %s\n",ID);
+            if(init_site <= length)
+                fprintf(file_logerr,"ID not found in the weights file (or not indexed position): %s\n",ID);
             /*no position found. Assume the file window is finished*/
             free(valn);
             *wlimit_end = init_site;
@@ -1086,7 +1088,7 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
     return(1);
 }
 
-int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *index_input,FILE *file_logerr,SGZip *file_logerr_gz,long int init_site,long int end_site,int *n_sam, long int *n_site, char ***names, char **DNA_matr,char **matrix_pol_tcga,char *chr_name,int first)
+int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *index_input,FILE *file_logerr,SGZip *file_logerr_gz,long int init_site,long int end_site,int *n_sam, long int *n_site, char ***names, char **DNA_matr,char **matrix_pol_tcga,char *chr_name,int first, long int length)
 {
     static char c[1];
     char *cc;
@@ -1241,7 +1243,8 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
     row_num = -1;
     
     if(fzseekNearest(file_input, file_input_gz,index_input, ID, MAXLEN, &row_num) != GZ_OK) { //==GZ_ERROR_DATA_FILE?
-        fprintf(file_logerr,"ID not found in the tfa file (or not indexed position): %s\n",ID);
+        if(init_site <= length)
+            fprintf(file_logerr,"ID not found in the tfa file (or not indexed position): %s\n",ID);
         /*no position found. Assume the file window is finished*/
         free(DNA_matr2);
         return(1);
@@ -1250,6 +1253,11 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
 
     /*get scaffold name*/
     *c = fzgetc(file_input, file_input_gz);
+    while(*c=='#') {
+        while(*c != 0 && *c!=-1 && *c!=10 && *c!=13 && *c!='\xff' && *c!='\xfe')
+            *c = fzgetc(file_input, file_input_gz);
+        *c = fzgetc(file_input, file_input_gz);
+    }
     col = 0;
     while(*c != 0 && *c!=-1 && *c!=10 && *c!=13 && *c != 9 && *c != 32 && *c != 58 && *c!='\xff' && *c!='\xfe') {
         line[col] = *c;
@@ -1508,7 +1516,9 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                     *n_site += 1;
                     break;
                 }
-                else {free(DNA_matr2); return(-1);}
+                else {
+                    free(DNA_matr2);
+                    return(-1);}
             }
             while(*c==10 || *c==13)
                 *c = fzgetc(file_input, file_input_gz);
@@ -1516,6 +1526,10 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                 break;
             }
             *n_site += 1;
+            /*if(position != *n_site) {
+                printf("check here");
+            }*/
+            /*read new line*/
             col = 0;
             while(*c != 0 && *c!=-1 && *c!=10 && *c!=13 && *c != 9 && *c != 32 \
                   && *c!='\xff' && *c!='\xfe' && *c != 58 \
@@ -1548,6 +1562,9 @@ int function_read_tfasta(FILE *file_input,SGZip *file_input_gz,struct SGZIndex *
                     return(-1);
                 }
             }
+            /*else {
+                printf("\nError: Problem reading line %s:%ld\n",line,position);
+            }*/
         }
         /*realloc DNAmatr if nnecessary*/
         dd = (long int)floor((double)count/(double)1e6);

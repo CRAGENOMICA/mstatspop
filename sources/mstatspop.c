@@ -195,11 +195,12 @@ int main(int argc, const char * argv[])
     int Physical_length=1;
     int mask_print;
     
-    int nscaffolds;
+    unsigned long nscaffolds;
+    char file_chr_name_all[ MSP_MAX_NAME];
     char *chr_name = 0;
     char chr_name_all[ MSP_MAX_NAME];
     char **chr_name_array;
-    int j,k;
+    char **chr_length_array;
     int first = 0;
     
     memset( chr_name_all, 0, MSP_MAX_NAME);
@@ -310,7 +311,7 @@ int main(int argc, const char * argv[])
 				case 'o' : /* o Output type, from 0 to 11 - TODO: define*/
 					arg++;
 					output = (int)atoi( argv[arg] );
-					if(output < 0 || output > 10) {
+					if(output < 0 || output > 100) {
 						printf("\n Error in -o argument: only values between 0 and 10 are allowed.");
 						usage();
 						exit(1);
@@ -559,9 +560,10 @@ int main(int argc, const char * argv[])
                     arg++;
                     first_slide = (long int)atol(argv[arg]);
                     break;					
-                case 'n' : /* name of the scaffold(s) to analyze*/
+                case 'n' : /* name of the file with scaffold(s) and total lengths to analyze*/
                     arg++;
-                    strcpy( chr_name_all, argv[arg] );
+                    strcpy( file_chr_name_all, argv[arg] );
+                    //strcpy( chr_name_all, argv[arg] );
                     break;
 				case 'h' : /* h HEEEEEEEEEEELPPPPPPPPPPPPPP!!! */
 					usage();
@@ -594,10 +596,11 @@ int main(int argc, const char * argv[])
             fprintf(file_logerr,"\nError. The value at option -Z (first slide) must be larger than or equal to 0.\n");
             exit(1);
         }
+        /*
         if(length == 0 && formatfile == 1) {
             fprintf(file_logerr,"\nError. length (-l option) must be defined with ms input file.\n");
             exit(1);
-        }
+        }*/
         if(formatfile == 0 && niterdata > 1) {
             fprintf(file_logerr,"\nError. The option ");
             exit(1);
@@ -605,8 +608,8 @@ int main(int argc, const char * argv[])
         if(include_unknown == 1)
             niter = 0;
 		
-        if(strcmp(chr_name_all,"") == 0) {
-               fprintf(file_logerr,"\nError: the name of the scaffold (option -n) must be defined\n");
+        if(strcmp(file_chr_name_all,"") == 0) {
+               fprintf(file_logerr,"\nError: the file name containing the scaffold(s) (option -n) must be defined\n");
                exit(1);
         }
         /*
@@ -645,7 +648,21 @@ int main(int argc, const char * argv[])
 		setbuf(file_input,f);
 				
         /*separate all values of the list chr_name_all in chr_name_array: */
+        if(read_index_file(file_chr_name_all,&nscaffolds,&chr_name_array,&chr_length_array)) {
+            printf("\nError reading the index file %s",file_chr_name_all);
+            exit(1);
+        }
+
+        if(formatfile != 3 && nscaffolds > 1) {
+            printf("Error: it only possible to read one scaffold with option -f fasta or -f ms.\n");
+            exit(1);
+        }
+        if(length==0) {
+            length = atol(chr_length_array[0]);/*for ms files*/
+        }
+        /*separate all values of the list chr_name_all in chr_name_array: */
         /* Only do the list if input and output is tfa*/
+        /*
         nscaffolds = 1;
         if(formatfile == 3) {
             chr_name_array = (char **)calloc(nscaffolds,sizeof(char *));
@@ -670,7 +687,7 @@ int main(int argc, const char * argv[])
             chr_name_array[0] = (char *)calloc(1,sizeof(MSP_MAX_NAME));
             strcpy(chr_name_array[0],chr_name_all);
         }
-                
+        */
         /*if( (formatfile == 1 || formatfile == 2) && output == 0 && niter > 1) output = 1;*/
         /*if( (formatfile == 1 || formatfile == 2)) length_al = length;*/
 		if( formatfile == 0) strcpy(file_mas,file_in);		
@@ -1283,6 +1300,7 @@ int main(int argc, const char * argv[])
 	{
 		/*data from fasta*/
         chr_name = chr_name_array[0];
+        if(length == 0) length = atol(chr_length_array[0]);
         first = 0;
         
 		if (get_obsdata(file_output,&file_output_gz,
@@ -1897,6 +1915,7 @@ int main(int argc, const char * argv[])
     for(first=0;first<nscaffolds;first++) {
         if(formatfile == 3) {
             chr_name = chr_name_array[first];
+            length = atol(chr_length_array[first]);
             wgenes = 0;
             nwindows = 0;
             /*read the file for weigth for positions, if included*/
@@ -2603,8 +2622,7 @@ int main(int argc, const char * argv[])
                 }
             }
             /*print results*/
-            /* TODO: mas elegante el tema de force_outgroup */
-            if(print_output( argc,npops,vint_perpop_nsam,file_output,&file_output_gz,file_in,file_out,
+            /* TODO: mas elegante el tema de force_outgroup */            if(print_output( argc,npops,vint_perpop_nsam,file_output,&file_output_gz,file_in,file_out,
                                     gfffiles,file_GFF,subset_positions,code_name,
                                     genetic_code,length,length_seg,length_al,
                                     length_al_real,statistics,piter,niter,
@@ -2654,9 +2672,12 @@ int main(int argc, const char * argv[])
     }
 	if(file_output) fclose(file_output);
 	
-    for(x=0;x<nscaffolds;x++)
+    for(x=0;x<nscaffolds;x++) {
         free(chr_name_array[x]);
+        free(chr_length_array[x]);
+    }
     free(chr_name_array);
+    free(chr_length_array);
     
 	free(sort_nsam);
 	free(nsites1_pop);
@@ -2882,7 +2903,8 @@ void usage(void)
     printf("                              7 (SweepFiinder format -only first pop-)\n");
     printf("                             10 (full extended)]\n");
     printf("      -N [#_pops] [#samples_pop1] ... [#samples_popN]\n");
-    printf("      -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]\n");
+    //printf("      -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]\n");
+    printf("      -n [name of the file containing the name(s) of scaffold(s) and their length (separated by a tab), one per line (ex. fai file)]\n");
     printf("      -T [path and name of the output file]. DEFAULT stdout.\n");
     printf("   OPTIONAL GENERAL PARAMETERS:\n");
     printf("      -G [outgroup (0/1)] (last population). DEFAULT 0.\n");
@@ -2890,11 +2912,11 @@ void usage(void)
     printf("      -A [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)\n");
     printf("          File format: (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,\n");
     printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]\n");
-    printf("      -S [Null Spectrum File (only if -a is defined): null_spectrum for each population (except outg).\n");
+    printf("      -S [Null Spectrum File (only if -A is defined): null_spectrum for each population (except outg).\n");
     printf("          (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,\n");
     printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]. DEFAULT SNM.\n");
-    printf("      -P [Only for Calculation of R2_p: first value is the number of values to include, \n");
-    printf("                       next are the number of lines to consider. ex: -P 6 1 2 4 8 16 64]\n");
+    //printf("      -P [Only for Calculation of R2_p: first value is the number of values to include, \n");
+    //printf("                       next are the number of lines to consider. ex: -P 6 1 2 4 8 16 64]\n");
     printf("    Optional Parameters for fasta and tfa input files:\n");
     printf("      -O [#_nsam] [number order of first sample, number 0 is the first sample] [second sample] ...etc. up to nsamples.\n");
     printf("         DEFAULT current order.\n");
@@ -2902,12 +2924,13 @@ void usage(void)
     printf("      -s [seed]. DEFAULT 123456.\n");
     printf("   PARAMETERS FOR TFASTA INPUT (-f tfa): 'SLIDING WINDOW ANALYSIS OF EMPIRICAL DATA'\n");
     printf("      -w [window size].\n");
+    printf("        OR\n");
+    printf("      -W [file with the coordinates of each window [scaffold init end] (instead options -w and -z).\n");
+    printf("         DEFAULT one whole window.\n");
     printf("    Optional:\n");
     printf("      -z [slide size (must be a positive value)]. DEFAULT window size.\n");
     printf("      -Z [first window size displacement [for comparing overlapped windows])]. DEFAULT 0.\n");
     printf("      -Y [define window lengths in 'physical' positions (1) or in 'effective' positions (0)]. DEFAULT 1.\n");
-    printf("      -W [file with the coordinates of each window [scaffold init end] (instead options -w and -z).\n");
-    printf("         DEFAULT one whole window.\n");
     printf("      -E [input file with weights for positions:\n");
     printf("         include three columns with a header,\n");
     printf("         first the physical positions (1...end),\n");
@@ -2915,7 +2938,7 @@ void usage(void)
     printf("         third a boolean weight for the variant (eg. syn variant in nsyn counts is 0.000)].\n");
     printf("         DEFAULT all 1.000\n");
     printf("   PARAMETERS FOR MS INPUT (-f ms):'SIMULATION ANALYSIS OF A SINGLE REGION'\n");
-    printf("      -l [length]\n");
+    printf("      -l [length]\n");//to eliminate!!
     printf("    Optional:\n");
     printf("      -r [# ms iterations]. DEFAULT 1.\n");
     printf("      -m [include mask_filename] DEFAULT -1 (all positions included).\n");
@@ -2944,3 +2967,74 @@ void usage(void)
      printf("\t-A [count only A/T mutations (not for ms format)\n"); NOT DONE
      */
 }
+
+int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_name_array,char ***chr_length_array) {
+    
+    FILE *file_scaffolds;
+    char *buf;
+    int c;
+    int k;
+    
+    *nscaffolds = 1;
+    chr_name_array[0] = (char **)calloc(*nscaffolds,sizeof(char *));
+    chr_name_array[0][0] = (char *)calloc(MSP_MAX_NAME,sizeof(char));
+    chr_length_array[0] = (char **)calloc(*nscaffolds,sizeof(char *));
+    chr_length_array[0][0] = (char *)calloc(MSP_MAX_NAME,sizeof(char));
+    
+    if (!(file_scaffolds = fopen(chr_name_all,"r"))) {
+        printf("Error reading the input file %s\n",chr_name_all);
+        return(1);
+    }
+    if(!(buf = (char *)malloc(BUFSIZ))) {
+        puts("\nError: Not enough memory to read  the input file.\n");
+        return(1);
+    }
+    setbuf(file_scaffolds,buf);
+    c=fgetc(file_scaffolds);
+    while(c != EOF) {
+        k=0;
+        chr_name_array[0][*nscaffolds-1][k] = c; k++;
+        while((c=fgetc(file_scaffolds))!= 9 && c!= 10 && c!=13 && c!=-1 && c!=0 && k<MSP_MAX_NAME-1) {
+            chr_name_array[0][*nscaffolds-1][k] = c; k++;
+        }
+        chr_name_array[0][*nscaffolds-1][k] = '\0';
+        if(c!= 9 && c!= 32) {
+            printf("Error reading the input file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+            return(1);
+        }
+        do {
+            c=fgetc(file_scaffolds);
+        }while(!(c!= 9 && c!= 32 && c!= 10 && c!=13 && c!=-1 && c!=EOF));
+        if(c==EOF) {
+            printf("Error reading the input file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+            return(1);
+        }
+        k=0;
+        chr_length_array[0][*nscaffolds-1][k] = c; k++;
+        while((c=fgetc(file_scaffolds)) != 9 && c != 32 && c!= 10 && c!=13 && c!=-1 && c!=0 && k<MSP_MAX_NAME-1) {
+            chr_length_array[0][*nscaffolds-1][k] = c; k++;
+        }
+        chr_length_array[0][*nscaffolds-1][k] = '\0';
+        /*check next line, if exist*/
+        if(c==32 || c==9) {
+            do {
+                c=fgetc(file_scaffolds);
+            }while(c!=10 && c!= 13 && c!=EOF);
+        }
+        while(c==10 || c==13) {
+            c=fgetc(file_scaffolds);
+        }
+        if(c==EOF)
+            break;
+        /*if exist, prepare new row in arrays*/
+        *nscaffolds += 1;
+        chr_name_array[0] = (char **)realloc(chr_name_array[0],*nscaffolds*sizeof(char *));
+        chr_name_array[0][*nscaffolds-1] = (char *)calloc(MSP_MAX_NAME,sizeof(char));
+        chr_length_array[0] = (char **)realloc(chr_length_array[0],*nscaffolds*sizeof(char *));
+        chr_length_array[0][*nscaffolds-1] = (char *)calloc(MSP_MAX_NAME,sizeof(char));
+    }
+    fclose(file_scaffolds);
+    
+    return(0);
+}
+

@@ -124,7 +124,8 @@ int get_tfadata(FILE *file_output,
     int first
 );
 void usage(void);
-
+int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_name_array,char ***chr_length_array);
+    
 #ifdef	__cplusplus
 }
 #endif

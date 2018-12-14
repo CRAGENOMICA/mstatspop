@@ -9,6 +9,7 @@
 #define USEGFF_H_
 
 #include "common.h"
+#define SIZE_ROW 10000
 
 #ifdef	__cplusplus
 extern "C" {

@@ -89,8 +89,7 @@ int print_output( int mainargc,int npops,int *nsam,
 		initsq1[x] = sumnsam;
 		sumnsam += nsam[x];
 	}
-
-	
+    	
 	if(output == 0 || output == 10) {
 		if(file_out == 0) file_out = stdout;
 		fprintf(file_out,"\nInput file: %s",file_input);
@@ -1054,10 +1053,10 @@ int print_output( int mainargc,int npops,int *nsam,
 			ss=0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz];}
 			if(ss) {
                 if(formatfile ==3) {
-                    if(matrix_pos[zz] < 0) fprintf(file_out,"\nSNP[%ld]",matrix_pos[zz]-(long int)vector_priors[0]+1);
-                    else fprintf(file_out,"\nSNP[%ld]",matrix_pos[zz]+(long int)vector_priors[0]-1);
+                    if(matrix_pos[zz] < 0) fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]-(long int)vector_priors[0]+1);
+                    else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]+(long int)vector_priors[0]-1);
                 }
-                else fprintf(file_out,"\nSNP[%ld]",matrix_pos[zz]);
+                else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]);
 				for(x=0;x<npops-oo;x++) {
                     if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
                     else fprintf(file_out,"\tNA");
@@ -1073,10 +1072,10 @@ int print_output( int mainargc,int npops,int *nsam,
 				ss=0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz];}
 				if(ss) {
                     if(formatfile ==3) {
-                        if(matrix_pos[zz] < 0) fprintf(file_out,"\nSNP[%ld]",matrix_pos[zz]-(long int)vector_priors[0]+1);
-                        else fprintf(file_out,"\nSNP[%ld]",matrix_pos[zz]+(long int)vector_priors[0]-1);
+                        if(matrix_pos[zz] < 0) fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]-(long int)vector_priors[0]+1);
+                        else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]+(long int)vector_priors[0]-1);
                     }
-                    else fprintf(file_out,"\nSNP[%ld]",matrix_pos[zz]);
+                    else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]);
 					for(x=0;x<npops-oo;x++) {
 						fprintf(file_out,"\t%d",nfd[x][zz]);
 					}
@@ -1316,7 +1315,27 @@ int print_output( int mainargc,int npops,int *nsam,
 		*/fflush(file_out);
 	}
 	else { /*single stdout line*/		
-        if(output == 7) { /* SweepFinder Format */
+        if(output == 12) {
+            oo = 1;
+            //fprintf(file_out,"\n\nJoint frequency distribution for each variant and population (No included variants that are missing or polymorphic in the outgroup):");
+            //fprintf(file_out,"\n");
+            //for(x=0;x<npops-oo;x++) fprintf(file_out,"\tpop[%d]",x);
+            for(zz=0;zz<length_seg;zz++) {
+                ss=0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz];}
+                if(ss) {
+                    if(formatfile ==3) {
+                        if(matrix_pos[zz] < 0) fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]-(long int)vector_priors[0]+1);
+                        else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]+(long int)vector_priors[0]-1);
+                    }
+                    else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]);
+                    for(x=0;x<npops-oo;x++) {
+                        if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                        else fprintf(file_out,"\tNA");
+                    }
+                }
+            }
+        }
+        else if(output == 7) { /* SweepFinder Format */
             /*only print the first population (and outgroup if present)*/
             fprintf(file_out,"position\t");
             fprintf(file_out,"x\t");
@@ -1490,8 +1509,8 @@ int print_output( int mainargc,int npops,int *nsam,
                                 else fprintf(file_out,"NA\t");
                             }
                             /*position*/
-                            fprintf(file_out,"%ld",labs(matrix_pos[zz]));
-                            if(*file_input) fprintf(file_out,"%s",file_input);
+                            fprintf(file_out,"%ld\t",labs(matrix_pos[zz]));
+                            if(*file_input) fprintf(file_out,"%s\t",file_input);
                         }
                     }
                     fprintf(file_out,"\n");
@@ -2037,7 +2056,7 @@ int print_output( int mainargc,int npops,int *nsam,
                         for(zz=0;zz<length_seg;zz++) {
                             ss=0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz];}
                             if(ss) {
-                                fprintf(file_out,"\tSNP[%ld]",matrix_pos[zz]);
+                                fprintf(file_out,"\tSNP[%s:%ld]",chr_name,matrix_pos[zz]);
                                 for(x=0;x<npops-oo;x++) {
                                     if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
                                     else fprintf(file_out,"\tNA");
