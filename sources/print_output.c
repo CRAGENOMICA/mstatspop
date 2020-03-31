@@ -1058,7 +1058,7 @@ int print_output( int mainargc,int npops,int *nsam,
                 }
                 else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]);
 				for(x=0;x<npops-oo;x++) {
-                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.6f",jfd[x][zz]);
                     else fprintf(file_out,"\tNA");
 				}
 			}
@@ -1204,7 +1204,7 @@ int print_output( int mainargc,int npops,int *nsam,
 						for(z=initsq1[x];z<initsq1[x]+nsam[x];z++) {
 							fprintf(file_out,"\nline[%d]:",z);
 							for(ss=1;ss<=(long int)floor(nsam[x]/2);ss++) {
-								fprintf(file_out,"\t%.3f",statistics[0].linefreq[z][ss]);
+								fprintf(file_out,"\t%.6f",statistics[0].linefreq[z][ss]);
 							}
 						}
 					}
@@ -1329,7 +1329,7 @@ int print_output( int mainargc,int npops,int *nsam,
                     }
                     else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]);
                     for(x=0;x<npops-oo;x++) {
-                        if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                        if(nfd[x][zz] > 0) fprintf(file_out,"\t%.6f",jfd[x][zz]);
                         else fprintf(file_out,"\tNA");
                     }
                 }
@@ -2017,7 +2017,7 @@ int print_output( int mainargc,int npops,int *nsam,
                                 for(x=0;x<npops-oo;x++) {
                                     for(z=initsq1[x];z<initsq1[x]+nsam[x];z++) {
                                         for(ss=1;ss<(long int)floor(nsam[x]/2);ss++) {
-                                            fprintf(file_out,"line_freq[%d,%d]:\t%.3f\t",z,ss,statistics[0].linefreq[z][ss]);
+                                            fprintf(file_out,"line_freq[%d,%d]:\t%.6f\t",z,ss,statistics[0].linefreq[z][ss]);
                                         }
                                     }
                                 }
@@ -2058,7 +2058,7 @@ int print_output( int mainargc,int npops,int *nsam,
                             if(ss) {
                                 fprintf(file_out,"\tSNP[%s:%ld]",chr_name,matrix_pos[zz]);
                                 for(x=0;x<npops-oo;x++) {
-                                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
+                                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.6f",jfd[x][zz]);
                                     else fprintf(file_out,"\tNA");
                                 }
                                 if(missratio > 0.) {for(x=0;x<npops-oo;x++) fprintf(file_out,"\t%d",nfd[x][zz]);}
