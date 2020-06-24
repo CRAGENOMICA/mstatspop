@@ -376,12 +376,14 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
                             for(y2=0;y2<nsamtot/*n_samp*/;y2++) { /* non-outgroup: 0 indicates higher frequency */
                                 if(*(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx)) == k_0) {
                                     matrix_pol[0][((bial_sites*(nsamtot/*n_samp*/))+y2)] = '0';
-                                    matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y2)] = k_0;
+                                    matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y2)] =
+                                    *(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx));//k_0;
                                 }
                                 else {
                                     if(*(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx)) == m_0) {
                                         matrix_pol[0][((bial_sites*(nsamtot/*n_samp*/))+y2)] = '1';
-                                        matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y2)] = m_0;
+                                        matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y2)] =
+                                        *(DNA_matr+(((long long)n_site*(unsigned long)y2)+(unsigned long)xx));//m_0;
                                         d += 1;
                                     }
                                     else {
@@ -498,7 +500,8 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 			for(y=0;y<nsamtot/*n_samp*/;y++) { /* non-outgroup: 0 indicates higher frequency */
                 if(*(DNA_matr+(((long long)n_site*(unsigned long)y)+(unsigned long)xx)) == k_0) {
                     matrix_pol[0][((bial_sites*(nsamtot/*n_samp*/))+y)] = '0';
-                    matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y)] = k_0;
+                    matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y)] =
+                        *(DNA_matr+(((long long)n_site*(unsigned long)y)+(unsigned long)xx));//k_0;
                 }
 				else {
 					if(*(DNA_matr+(((long long)n_site*(unsigned long)y)+(unsigned long)xx)) == 48+5 ||
@@ -508,7 +511,8 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
                     }
 					else {
                         matrix_pol[0][((bial_sites*(nsamtot/*n_samp*/))+y)] = '1';
-                        matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y)] = m_0;
+                        matrix_pol_tcga[0][((bial_sites*(nsamtot/*n_samp*/))+y)] =
+                            *(DNA_matr+(((long long)n_site*(unsigned long)y)+(unsigned long)xx));//m_0;
 						d += 1;
 					}
 				}

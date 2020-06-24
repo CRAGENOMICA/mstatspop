@@ -1364,7 +1364,7 @@ int print_output( int mainargc,int npops,int *nsam,
                 fprintf(file_out,"#Run: %ld",niterdata);
                 fprintf(file_out,"\nscaffold_name: %s",chr_name);
                 fprintf(file_out,"\n#SNP chr");
-                for(x=0;x<npops-!outgroup_presence;x++) { for(y=0;y<nsam[x];y++) { fprintf(file_out," ind%03d%03d",x,y);}}
+                for(x=0;x<npops-!outgroup_presence;x++) { for(y=0;y<nsam[x];y++) { fprintf(file_out," ind.%03d.%03d",x,y);}}
                 fprintf(file_out,"\n");
                 if(force_outgroup==1 || outgroup_presence == 0) oo = 1; else oo = 0;
                 /*table*/
@@ -1372,8 +1372,9 @@ int print_output( int mainargc,int npops,int *nsam,
                     /* ancestral[0] = 0; */
                     if(matrix_pos[zz]<=0) fabsmatsize = -matrix_pos[zz];
                     else fabsmatsize = matrix_pos[zz];
-                    fprintf(file_out,"%-9ld %-9c",fabsmatsize,'0');
-                    
+                    //fprintf(file_out,"%-9ld %-9c",fabsmatsize,'0');
+                    fprintf(file_out,"%-9ld %-9s",fabsmatsize,chr_name);
+
                     /*calculate the ancestral sequence if outgroup*/
                     /*
                     if(outgroup_presence+force_outgroup==1) {
@@ -1406,7 +1407,6 @@ int print_output( int mainargc,int npops,int *nsam,
                     */
                     /*print genotype, including the outgroup if exist*/
                     for(y=0;y<sumnsam/*-oo*/;y++) {
-                        if(matrix_pol[zz*sumnsam+y] == '0') {
                             if(matrix_pol_tcga[zz*sumnsam+y] == '1')
                                 nt1[0] = 'T';
                             if(matrix_pol_tcga[zz*sumnsam+y] == '2')
@@ -1415,20 +1415,10 @@ int print_output( int mainargc,int npops,int *nsam,
                                 nt1[0] = 'G';
                             if(matrix_pol_tcga[zz*sumnsam+y] == '4')
                                 nt1[0] = 'A';
-                        }
-                        if(matrix_pol[zz*sumnsam+y] == '1') {
-                            if(matrix_pol_tcga[zz*sumnsam+y] == '1')
-                                nt2[0] = 'T';
-                            if(matrix_pol_tcga[zz*sumnsam+y] == '2')
-                                nt2[0] = 'C';
-                            if(matrix_pol_tcga[zz*sumnsam+y] == '3')
-                                nt2[0] = 'G';
-                            if(matrix_pol_tcga[zz*sumnsam+y] == '4')
-                                nt2[0] = 'A';
-                        }
-                        if(matrix_pol[zz*sumnsam+y] == '0') fprintf(file_out," %c",nt1[0]);
-                        if(matrix_pol[zz*sumnsam+y] == '1') fprintf(file_out," %c",nt2[0]);
-                        if(matrix_pol[zz*sumnsam+y] == '-') fprintf(file_out," N");
+                        if(matrix_pol[zz*sumnsam+y] == '-')
+                            fprintf(file_out," N");
+                        else
+                            fprintf(file_out," %c",nt1[0]);
                         /*
                         if(ancestral[0] == matrix_pol[zz*sumnsam+y]) fprintf(file_out," 0");
                         else {

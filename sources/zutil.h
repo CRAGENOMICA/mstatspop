@@ -1,4 +1,4 @@
-/**
+ /**
  * mstatspop, Statistical Analysis using Multiple Populations for Genomic Data.
  * Created by Sebastian E. Ramos Onsins.
  */
@@ -7,15 +7,16 @@
  *  \details
  *  \author    Joan Jené
  *  \version   1.15
- *  \date      May 22, 2017
- *  \history   - March 29, 2017 : Added stdarg.h include.
- *             - April 7, 2017  : fprintf generates box GZ and Index files.
- *             - April 12, 2017 : different size constants for "in" and "out" buffers & discard Z_BUF_ERROR message.
- *             - April 13, 2017 : Documentation added & some fixes to the fzgetc  & fzeof functions.
- *             - April 18, 2017 : Documentation updated & fzprintf, fzgetc, fzeof, fzclose functions updated, too.
- *             - April 20, 2017 : Library updated for Mac Os X.
- *             - May 19, 2017   : working on zindex::fzseekNearest.
- *             - May 22, 2017   : C++ things (comments, declararions, ...) changed to C things.
+ *  \date      June 22, 2017
+ *  \history   - March 29, 2017 : jjene : Added stdarg.h include.
+ *             - April 7, 2017  : jjene : fprintf generates box GZ and Index files.
+ *             - April 12, 2017 : jjene : different size constants for "in" and "out" buffers & discard Z_BUF_ERROR message.
+ *             - April 13, 2017 : jjene : Documentation added & some fixes to the fzgetc  & fzeof functions.
+ *             - April 18, 2017 : jjene : Documentation updated & fzprintf, fzgetc, fzeof, fzclose functions updated, too.
+ *             - April 20, 2017 : jjene : Library updated for Mac Os X.
+ *             - May 19, 2017   : jjene : working on zindex::fzseekNearest.
+ *             - May 22, 2017   : jjene : C++ things (comments, declararions, ...) changed to C things.
+ *             - June 22, 2017  : jjene : fzgetc(), case of inflating compressed data and getting only the EOF. private_setEnd added.
  *  \pre
  *  \bug
  *  \warning
@@ -193,12 +194,21 @@ extern "C" {
     #define MAX_FZPRINTF_MESSAGE 0x4000 /* 16384 bytes */
 
     /*
-     * Do not used this function directly. This function is used by the fzprintf function.
+     * Do not use this function directly. This function is used by the fzprintf function.
      *
      * @return: GZ_OK
      * 			GZ_PARAMS_ERROR
      */
     gz_return private_fzprintf(FILE * file_handle, SGZip *z, char *message);
+
+
+    /*
+     * Do not use this function directly. This function ends the inflate.
+     *
+     * @param file_handle is the open file.
+     * @param z is the initialized SGZip structure.
+     */
+    void private_setEnd(FILE * file_handle, SGZip *z);
 
     /**
      * Use this function for writing strings to a file.
