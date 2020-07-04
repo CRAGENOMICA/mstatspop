@@ -660,6 +660,11 @@ int main(int argc, const char * argv[])
         if(length==0) {
             length = atol(chr_length_array[0]);/*for ms files*/
         }
+        if(formatfile==1 || formatfile==2) {
+            if(length > 1e8) {
+                printf("Warning: The length for the ms file is too large. It will take too much memory/time.\nBetter include a smaller value.\n");
+            }
+        }
         /*separate all values of the list chr_name_all in chr_name_array: */
         /* Only do the list if input and output is tfa*/
         /*
