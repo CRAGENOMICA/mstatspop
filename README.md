@@ -1,20 +1,22 @@
-# mstatspop
-Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
+# mstatspop  
 
-mstatspop v.0.1beta (20180622)
+Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.  
+
+```
+mstatspop v.0.1beta (20180622)  
 Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
-Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
-Flags:
-      -f [input format file: ms, fasta OR tfa (gz file indexed)]
-      -i [path and name of the input file]
-      -o [output format file: 0 (extended),
-                              1 (single line/window),
-                              2 (single line SFS/window),
-                              3 (dadi-like format),
-                              4 (single line pairwise distribution)
-                              5 (single line freq. variant per line/window)
-                              6 (SNP genotype matrix)
-                              7 (SweepFiinder format -only first pop-)
+Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.  
+Flags:  
+      -f [input format file: ms, fasta OR tfa (gz file indexed)]  
+      -i [path and name of the input file]  
+      -o [output format file: 0 (extended),  
+                              1 (single line/window),  
+                              2 (single line SFS/window),  
+                              3 (dadi-like format),  
+                              4 (single line pairwise distribution)  
+                              5 (single line freq. variant per line/window)  
+                              6 (SNP genotype matrix)  
+                              7 (SweepFiinder format -only first pop-)  
                              10 (full extended)]
       -N [#_pops] [#samples_pop1] ... [#samples_popN]
       -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]
@@ -70,4 +72,5 @@ Flags:
       -c [in case use coding regions, criteria to consider transcripts (max/min/first/long)]. DEFAULT long.
       -K [make a MASK file with the valid positions for this fasta. Useful for running ms simulations (1/0)]. DEFAULT 0.
    HELP:
-      -h [help and exit]
+      -h [help and exit] 
+```
