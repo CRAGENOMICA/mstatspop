@@ -602,7 +602,7 @@ int main(int argc, const char * argv[])
             exit(1);
         }*/
         if(formatfile == 0 && niterdata > 1) {
-            fprintf(file_logerr,"\nError. The option ");
+            fprintf(file_logerr,"\nError. The option -f fasta does not accept the option -r\n");
             exit(1);
         }
         if(include_unknown == 1)
@@ -649,7 +649,7 @@ int main(int argc, const char * argv[])
 				
         /*separate all values of the list chr_name_all in chr_name_array: */
         if(read_index_file(file_chr_name_all,&nscaffolds,&chr_name_array,&chr_length_array)) {
-            printf("\nError reading the index file %s",file_chr_name_all);
+            printf("Error reading the scaffold names file %s\n",file_chr_name_all);
             exit(1);
         }
 
@@ -659,11 +659,6 @@ int main(int argc, const char * argv[])
         }
         if(length==0) {
             length = atol(chr_length_array[0]);/*for ms files*/
-        }
-        if(formatfile==1 || formatfile==2) {
-            if(length > 1e8) {
-                printf("Warning: The length for the ms file is too large. It will take too much memory/time.\nBetter include a smaller value.\n");
-            }
         }
         /*separate all values of the list chr_name_all in chr_name_array: */
         /* Only do the list if input and output is tfa*/
@@ -2084,7 +2079,7 @@ int main(int argc, const char * argv[])
                 
                 for(y=z;y<z+vint_perpop_nsam[x];y++) {
                     statistics[0].length[x] += sum_sam[y];
-                        for(w=0;w<4;w++) {
+                    for(w=0;w<4;w++) {
                         statistics[0].total_tcga[w] += tcga[y][w];
                         statistics[0].tcga[x][w] += tcga[y][w];
                     }
@@ -2627,7 +2622,8 @@ int main(int argc, const char * argv[])
                 }
             }
             /*print results*/
-            /* TODO: mas elegante el tema de force_outgroup */            if(print_output( argc,npops,vint_perpop_nsam,file_output,&file_output_gz,file_in,file_out,
+            /* TODO: mas elegante el tema de force_outgroup */
+            if(print_output( argc,npops,vint_perpop_nsam,file_output,&file_output_gz,file_in,file_out,
                                     gfffiles,file_GFF,subset_positions,code_name,
                                     genetic_code,length,length_seg,length_al,
                                     length_al_real,statistics,piter,niter,
@@ -2906,6 +2902,8 @@ void usage(void)
     printf("                              5 (single line freq. variant per line/window)\n");
     printf("                              6 (SNP genotype matrix)\n");
     printf("                              7 (SweepFiinder format -only first pop-)\n");
+    printf("                              8 (single line/window: Frequency of each haplotype in the populations)\n");
+    printf("                              9 (single line/window: Frequency of variants per line and population)\n");
     printf("                             10 (full extended)]\n");
     printf("      -N [#_pops] [#samples_pop1] ... [#samples_popN]\n");
     //printf("      -n [name of a single scaffold to analyze. For tfa can be a list separated by commas(ex. -n chr1,chr2,chr3]\n");
@@ -2987,11 +2985,11 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_na
     chr_length_array[0][0] = (char *)calloc(MSP_MAX_NAME,sizeof(char));
     
     if (!(file_scaffolds = fopen(chr_name_all,"r"))) {
-        printf("Error reading the input file %s\n",chr_name_all);
+        printf("Error opening the scaffold names file %s\n",chr_name_all);
         return(1);
     }
     if(!(buf = (char *)malloc(BUFSIZ))) {
-        puts("\nError: Not enough memory to read  the input file.\n");
+        puts("\nError: Not enough memory to read the scaffold names file.\n");
         return(1);
     }
     setbuf(file_scaffolds,buf);
@@ -3004,14 +3002,14 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_na
         }
         chr_name_array[0][*nscaffolds-1][k] = '\0';
         if(c!= 9 && c!= 32) {
-            printf("Error reading the input file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+            printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
             return(1);
         }
         do {
             c=fgetc(file_scaffolds);
         }while(!(c!= 9 && c!= 32 && c!= 10 && c!=13 && c!=-1 && c!=EOF));
         if(c==EOF) {
-            printf("Error reading the input file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+            printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
             return(1);
         }
         k=0;
