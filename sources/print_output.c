@@ -1058,7 +1058,7 @@ int print_output( int mainargc,int npops,int *nsam,
                 }
                 else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]);
 				for(x=0;x<npops-oo;x++) {
-                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.6f",jfd[x][zz]);
+                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
                     else fprintf(file_out,"\tNA");
 				}
 			}
@@ -1119,6 +1119,29 @@ int print_output( int mainargc,int npops,int *nsam,
 					}
 				}
 			}
+            /*BEGIN SECTION popfreq: print matrix npop x sumnsam*/
+            fprintf(file_out,"\n\n-rSFS- Frequency of variants for each pop in relation to the whole pops:\n");
+            if(outgroup_presence==0) {
+                for(ss=1;ss<(long int)floor((sumnsam-nsam[npops-1])/2);ss++) fprintf(file_out,"\trSFS[%d]",ss);
+                for(x=0;x<npops-oo;x++) {
+                    fprintf(file_out,"\nPop[%d]\t",x);
+                    for(z1=1;z1<(long int)floor((sumnsam-nsam[npops-1])/2);z1++) {
+                        fprintf(file_out,"%ld\t",(long int)statistics[0].popfreq[x][z1]);
+                    }
+                    /*fprintf(file_out,"\n");*/
+                }
+            }
+            else {
+                for(ss=1;ss<sumnsam-nsam[npops-1];ss++) fprintf(file_out,"\trSFS[%d]",ss);
+                for(x=0;x<npops-oo;x++) {
+                    fprintf(file_out,"\nPop[%d]\t",x);
+                    for(z1=1;z1<sumnsam-nsam[npops-1];z1++) {
+                        fprintf(file_out,"%ld\t",(long int)statistics[0].popfreq[x][z1]);
+                    }
+                    /*fprintf(file_out,"\n");*/
+                }
+            }
+            /*END SECTION popfreq*/
 		}
 		
 		if(output == 10) {
@@ -1194,7 +1217,7 @@ int print_output( int mainargc,int npops,int *nsam,
 					if(ploidy[0] == '1') {fprintf(file_out,"\t%.2f",statistics[0].mdw[x][zz]);}
 					if(ploidy[0] == '2') {fprintf(file_out,"\tNA");}					
 				}
-			}
+			}/*
 			if(ploidy[0] == '1') {
 				fprintf(file_out,"\n\nFrequency of SNPs of each line :");
 				if(outgroup_presence==0) {
@@ -1204,7 +1227,7 @@ int print_output( int mainargc,int npops,int *nsam,
 						for(z=initsq1[x];z<initsq1[x]+nsam[x];z++) {
 							fprintf(file_out,"\nline[%d]:",z);
 							for(ss=1;ss<=(long int)floor(nsam[x]/2);ss++) {
-								fprintf(file_out,"\t%.6f",statistics[0].linefreq[z][ss]);
+								fprintf(file_out,"\t%.3f",statistics[0].linefreq[z][ss]);
 							}
 						}
 					}
@@ -1221,7 +1244,6 @@ int print_output( int mainargc,int npops,int *nsam,
 						}
 					}
 				}
-				/*
 				fprintf(file_out,"\n\nCovariance matrix of SNPs frequency per line based on SNM:");
 				if(outgroup_presence==0) {
 					for(x=0;x<npops-oo;x++) {
@@ -1305,8 +1327,7 @@ int print_output( int mainargc,int npops,int *nsam,
 						}
 					}
 				}
-				*/
-			}
+			}*/
 		}
 		fprintf(file_out,"\n");
 		/*
@@ -1329,7 +1350,7 @@ int print_output( int mainargc,int npops,int *nsam,
                     }
                     else fprintf(file_out,"\nSNP[%s:%ld]",chr_name,matrix_pos[zz]);
                     for(x=0;x<npops-oo;x++) {
-                        if(nfd[x][zz] > 0) fprintf(file_out,"\t%.6f",jfd[x][zz]);
+                        if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
                         else fprintf(file_out,"\tNA");
                     }
                 }
@@ -1364,7 +1385,7 @@ int print_output( int mainargc,int npops,int *nsam,
                 fprintf(file_out,"#Run: %ld",niterdata);
                 fprintf(file_out,"\nscaffold_name: %s",chr_name);
                 fprintf(file_out,"\n#SNP chr");
-                for(x=0;x<npops-!outgroup_presence;x++) { for(y=0;y<nsam[x];y++) { fprintf(file_out," ind.%03d.%03d",x,y);}}
+                for(x=0;x<npops-!outgroup_presence;x++) { for(y=0;y<nsam[x];y++) { fprintf(file_out," ind%03d%03d",x,y);}}
                 fprintf(file_out,"\n");
                 if(force_outgroup==1 || outgroup_presence == 0) oo = 1; else oo = 0;
                 /*table*/
@@ -1372,9 +1393,8 @@ int print_output( int mainargc,int npops,int *nsam,
                     /* ancestral[0] = 0; */
                     if(matrix_pos[zz]<=0) fabsmatsize = -matrix_pos[zz];
                     else fabsmatsize = matrix_pos[zz];
-                    //fprintf(file_out,"%-9ld %-9c",fabsmatsize,'0');
-                    fprintf(file_out,"%-9ld %-9s",fabsmatsize,chr_name);
-
+                    fprintf(file_out,"%-9ld %-9c",fabsmatsize,'0');
+                    
                     /*calculate the ancestral sequence if outgroup*/
                     /*
                     if(outgroup_presence+force_outgroup==1) {
@@ -1407,6 +1427,7 @@ int print_output( int mainargc,int npops,int *nsam,
                     */
                     /*print genotype, including the outgroup if exist*/
                     for(y=0;y<sumnsam/*-oo*/;y++) {
+                        if(matrix_pol[zz*sumnsam+y] == '0') {
                             if(matrix_pol_tcga[zz*sumnsam+y] == '1')
                                 nt1[0] = 'T';
                             if(matrix_pol_tcga[zz*sumnsam+y] == '2')
@@ -1415,10 +1436,20 @@ int print_output( int mainargc,int npops,int *nsam,
                                 nt1[0] = 'G';
                             if(matrix_pol_tcga[zz*sumnsam+y] == '4')
                                 nt1[0] = 'A';
-                        if(matrix_pol[zz*sumnsam+y] == '-')
-                            fprintf(file_out," N");
-                        else
-                            fprintf(file_out," %c",nt1[0]);
+                        }
+                        if(matrix_pol[zz*sumnsam+y] == '1') {
+                            if(matrix_pol_tcga[zz*sumnsam+y] == '1')
+                                nt2[0] = 'T';
+                            if(matrix_pol_tcga[zz*sumnsam+y] == '2')
+                                nt2[0] = 'C';
+                            if(matrix_pol_tcga[zz*sumnsam+y] == '3')
+                                nt2[0] = 'G';
+                            if(matrix_pol_tcga[zz*sumnsam+y] == '4')
+                                nt2[0] = 'A';
+                        }
+                        if(matrix_pol[zz*sumnsam+y] == '0') fprintf(file_out," %c",nt1[0]);
+                        if(matrix_pol[zz*sumnsam+y] == '1') fprintf(file_out," %c",nt2[0]);
+                        if(matrix_pol[zz*sumnsam+y] == '-') fprintf(file_out," N");
                         /*
                         if(ancestral[0] == matrix_pol[zz*sumnsam+y]) fprintf(file_out," 0");
                         else {
@@ -1632,29 +1663,53 @@ int print_output( int mainargc,int npops,int *nsam,
                         }
                     }
                     if(output == 9) {
-                        if(ploidy[0] == '1') {
-                            if(outgroup_presence==0) {
-                                for(x=0;x<npops-oo;x++) {
-                                    fprintf(file_out,"linefreq_pop[%d]:\t",x);
-                                    for(z1=1;z1<=(long int)floor(nsam[x]/2);z1++) {
-                                        for(ss=initsq1[x];ss<initsq1[x]+nsam[x];ss++) {
-                                            fprintf(file_out,"%ld\t",(long int)statistics[0].linefreq[ss][z1]);
+                        if(include_unknown == 0) {
+                            if(ploidy[0] == '1') {
+                                if(outgroup_presence==0) {
+                                    for(x=0;x<npops-oo;x++) {
+                                        fprintf(file_out,"linexfreqy_pop[%d]:\t",x);
+                                        for(z1=1;z1<=(long int)floor(nsam[x]/2);z1++) {
+                                            for(ss=initsq1[x];ss<initsq1[x]+nsam[x];ss++) {
+                                                fprintf(file_out,"%ld\t",(long int)statistics[0].linefreq[ss][z1]);
+                                            }
                                         }
+                                    }
+                                }
+                                else {
+                                    for(x=0;x<npops-oo;x++) {
+                                        fprintf(file_out,"linexfreqy_pop[%d]:\t",x);
+                                        for(z1=1;z1<nsam[x];z1++) {
+                                            for(ss=initsq1[x];ss<initsq1[x]+nsam[x];ss++) {
+                                                fprintf(file_out,"%ld\t",(long int)statistics[0].linefreq[ss][z1]);
+                                            }
+                                        }
+                                    }
+                                }
+                                fprintf(file_out,"\n");
+                            }
+                        }
+                    }
+                    if(output == 92) {
+                        /*BEGIN SECTION popfreq: rSFS: print matrix npop x sumnsam but in a single line*/
+                        if(include_unknown == 0) {
+                            if(outgroup_presence==0) {
+                                fprintf(file_out,"rSFS[npops(%d)xsumnsam/2-1(%ld)/2]:\t",npops-oo,(long int)floor((sumnsam-nsam[npops-1])/2)-1);
+                                for(x=0;x<npops-oo;x++) {
+                                    for(z1=1;z1<(long int)floor((sumnsam-nsam[npops-1])/2);z1++) {
+                                        fprintf(file_out,"%ld\t",(long int)statistics[0].popfreq[x][z1]);
                                     }
                                 }
                             }
                             else {
+                                fprintf(file_out,"rSFS[npops(%d)xsumnsam-1(%d)]:\t",npops-oo,sumnsam-nsam[npops-1]-1);
                                 for(x=0;x<npops-oo;x++) {
-                                    fprintf(file_out,"linefreq_pop[%d]:\t",x);
-                                    for(z1=1;z1<nsam[x];z1++) {
-                                        for(ss=initsq1[x];ss<initsq1[x]+nsam[x];ss++) {
-                                            fprintf(file_out,"%ld\t",(long int)statistics[0].linefreq[ss][z1]);
-                                        }
+                                    for(z1=1;z1<sumnsam-nsam[npops-1];z1++) {
+                                        fprintf(file_out,"%ld\t",(long int)statistics[0].popfreq[x][z1]);
                                     }
                                 }
                             }
-                            fprintf(file_out,"\n");
                         }
+                        /*END SECTION popfreq*/
                     }
                     if(output == 8) {
                         if(ploidy[0] == '1' && include_unknown == 0) {
@@ -2007,7 +2062,7 @@ int print_output( int mainargc,int npops,int *nsam,
                                 for(x=0;x<npops-oo;x++) {
                                     for(z=initsq1[x];z<initsq1[x]+nsam[x];z++) {
                                         for(ss=1;ss<(long int)floor(nsam[x]/2);ss++) {
-                                            fprintf(file_out,"line_freq[%d,%d]:\t%.6f\t",z,ss,statistics[0].linefreq[z][ss]);
+                                            fprintf(file_out,"line_freq[%d,%d]:\t%.3f\t",z,ss,statistics[0].linefreq[z][ss]);
                                         }
                                     }
                                 }
@@ -2048,7 +2103,7 @@ int print_output( int mainargc,int npops,int *nsam,
                             if(ss) {
                                 fprintf(file_out,"\tSNP[%s:%ld]",chr_name,matrix_pos[zz]);
                                 for(x=0;x<npops-oo;x++) {
-                                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.6f",jfd[x][zz]);
+                                    if(nfd[x][zz] > 0) fprintf(file_out,"\t%.3f",jfd[x][zz]);
                                     else fprintf(file_out,"\tNA");
                                 }
                                 if(missratio > 0.) {for(x=0;x<npops-oo;x++) fprintf(file_out,"\t%d",nfd[x][zz]);}

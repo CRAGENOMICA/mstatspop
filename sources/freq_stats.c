@@ -43,14 +43,14 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
 	double thetaL 	= 0.;
 	double thetaSA 	= 0.;
 	double thetaTA 	= 0.;
-	
+	/*
 	double anx      = 0.;
-	double bnx      = 0.;
+	double bnx      = 0.;*/
 	double any      = 0.;
 	
 	/**/double *coef,n;/**/
 	
-	long int S,Si;
+	long int S/*,Si*/;
 	double Sc,Sco;
 	double *w1,*w2;
 	long int *sfreqn;
@@ -142,7 +142,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
         for(pop1=0;pop1<npops-1;pop1++) {
             an = 0;
             bn = 0;
-            Si = 0;
+            /*Si = 0;*/
             S  = 0;
             Sc = 0.;
             thetaS = 0.;
@@ -154,9 +154,9 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
             thetaL = 0.;
             thetaSA = 0.;
             thetaTA = 0.;
-            
+           /*
             anx = 0.;
-            bnx = 0.;
+            bnx = 0.;*/
             any = 0.;
 
             statistics[0].S[pop1]  = S;
@@ -260,9 +260,9 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                     if(freq[2]>0 && freq[2]<freq[0]) {
                         /*an = 0.; for(x=1;x<freq[0];x++) an += 1./(double)x;*/
                         bn = 0.; for(x=1;x<freq[0];x++) bn += 1./((double)x*x);
-                        anx += an;
-                        bnx += bn;
-                        Si += 1;
+                        /*anx += an;
+                        bnx += bn;*/
+                        /*Si += 1;*/
                         
                         thetaS += (double)1/(double)an;				
                         thetaT += (double)(freq[1]*freq[2])/(double)(freq[0]*(freq[0]-1.0)/2.0);				
@@ -470,9 +470,9 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
             thetaFL = 0.;
             thetaSA = 0.;
             thetaTA = 0.;
-            
+            /*
             anx = 0.;
-            bnx = 0.;
+            bnx = 0.;*/
             any = 0.;
 
             statistics[0].S[pop1]  = S;
@@ -517,8 +517,8 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                     if(freq[2]>0 && freq[1]>0) {
                         /*an = 0.; for(x=1;x<freq[0];x++) an += 1./(double)x;*/
                         bn = 0.; for(x=1;x<freq[0];x++) bn += 1./((double)x*x);
-                        anx += an;
-                        bnx += bn;
+                        /*anx += an;
+                        bnx += bn;*/
                         thetaS += (double)1/(double)an;				
                         thetaT += (double)(freq[1]*freq[2])/(double)(freq[0]*(freq[0]-1.0)/2.0);
                         if((freq[2] == 1 || freq[1] == 1) && freq[0]==2) thetaFL += 1.0 * (freq[0]-1.)/(double)freq[0] * 2.0;

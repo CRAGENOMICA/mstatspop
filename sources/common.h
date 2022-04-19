@@ -22,7 +22,7 @@ extern "C" {
 #include "zindex.h"
 
 
-#define MSTATSPOP "\nmstatspop v.0.1beta (20210614)\n" \
+#define MSTATSPOP "\nmstatspop v.0.1beta (20220419)\n" \
 		   "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera\n" \
 		   "Variability Analyses of multiple populations: " \
 		   "Calculation and estimation of statistics and neutrality tests.\n"
@@ -137,8 +137,9 @@ struct stats {
 	double *mdg2;/*mismatch distribution: kurtosis*/
 	double **mdw; /*the complete mismatch distribution*/
 
-	double **linefreq; /*frequency of variants (calculated within population) that contain each line*/
-	
+    double **linefreq; /*frequency of variants (in relation to total population, within population) that contain each line*/
+    double **popfreq; /*frequency of variants (in relation to all populations) that contain each pop*/
+
 	double *anx;
 	double *bnx;
 	double *anxo;

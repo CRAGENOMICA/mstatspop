@@ -735,7 +735,7 @@ int assigna(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_loger
     
     j = 0;
     for(i_=0;i_<N_VAR;i_++) {
-        while((var_file[i_][j]) == *c && (var_file[i_][j]) != '\0' && c != '\0') {
+        while((var_file[i_][j]) == *c && (var_file[i_][j]) != '\0' && *c != '\0') {
             *c = fzgetc(file_input, input_gz);
             j++;
         }

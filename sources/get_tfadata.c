@@ -785,6 +785,14 @@ int read_weights_positions_file(FILE *file_ws, SGZip *file_ws_gz, struct SGZInde
         if(position == 0) { /*assign the value of count0s and nchrstr*/
             /*pass scaffold name:*/
             *c = fzgetc(file_ws, file_ws_gz);
+            if(check_comment(c,file_ws,file_ws_gz) == 0) {
+                free(valn);
+                free(ID);
+                return(0);
+            }
+            if(!(*c == 0 || *c==-1 || *c=='\xff' || *c=='\xfe'))
+                *c = fzgetc(file_ws, file_ws_gz);
+
             while(*c==10 || *c==13 || *c == 9 || *c == 32)
                 *c = fzgetc(file_ws, file_ws_gz);
             col = 0;
