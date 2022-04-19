@@ -85,9 +85,9 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
     aaseq[0]=0;
     aaput[0]=0;
     
-    /*printf("\nReading GTF file chr_name: %s...",chr_name);*/
+    /*printf("\nReading GTF file...");*/
     fflush(stdout);
-    fprintf(file_logerr,"\nReading GTF file: chr_name: %s...",chr_name);
+    fprintf(file_logerr,"\nReading GTF file...");
 
     /*calculate the degeneration of each triplet and position:*/
     if(function_do_nfold_triplets(n_fold,genetic_code,tripletsN) == 0)
@@ -853,31 +853,29 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 				
 				l = 0;
 				while(l <= end-start) {
-					while(matrix_coding[ntransc][l] == 0 && l <= end-start) {l++;}
-                    if(l <= end-start) {
-                        jj = (int)l;
-                        while(matrix_coding[ntransc][jj] != 0) {jj++;}
-                        if(jj-1<=end-start) {
-                            memcpy(fieldsgff2+nrows2,fieldsgff+j,sizeof(struct valuesgff)*1);/*include row in fieldsgff2*/
-                            fieldsgff2[nrows2].start     = l  + start;
-                            fieldsgff2[nrows2].end       = jj-1 + start;
-                            fieldsgff2[nrows2].strand[0] = cstrand[0];
-                            if(fieldsgff2[nrows2].strand[0] == '+') fieldsgff2[nrows2].frame[0]  = matrix_coding[ntransc][l];
-                            if(fieldsgff2[nrows2].strand[0] == '-') fieldsgff2[nrows2].frame[0]  = matrix_coding[ntransc][jj-1];
-                            strcpy(fieldsgff2[nrows2].feature,"CDS\0");
-                            strcpy(fieldsgff2[nrows2].transcript_id,transcript);
-                            nrows2++;
-                            /*
-                            if(nrows2 >= nrows) {
-                                if(!(fieldsgff2 = (struct valuesgff *)realloc(fieldsgff2,(nrows2+1)*sizeof(struct valuesgff)))) {
-                                    fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3b \n");
-                                    return 0;
-                                }
-                            }
-                            */
-                        }
-                        l = jj;
-                    }
+                    while(matrix_coding[ntransc][l] == 0 && l <= end-start) {l++;}
+                    jj = (int)l;
+                    while(matrix_coding[ntransc][jj] != 0 && jj <= end-start) {jj++;}
+                    if(jj-1<=end-start && matrix_coding[ntransc][jj-1] != 0) {
+						memcpy(fieldsgff2+nrows2,fieldsgff+j,sizeof(struct valuesgff)*1);/*include row in fieldsgff2*/
+						fieldsgff2[nrows2].start     = l  + start;
+						fieldsgff2[nrows2].end       = jj-1 + start;
+						fieldsgff2[nrows2].strand[0] = cstrand[0];
+						if(fieldsgff2[nrows2].strand[0] == '+') fieldsgff2[nrows2].frame[0]  = matrix_coding[ntransc][l];
+						if(fieldsgff2[nrows2].strand[0] == '-') fieldsgff2[nrows2].frame[0]  = matrix_coding[ntransc][jj-1];
+						strcpy(fieldsgff2[nrows2].feature,"CDS\0");
+						strcpy(fieldsgff2[nrows2].transcript_id,transcript);
+						nrows2++;
+						/*
+						if(nrows2 >= nrows) {
+							if(!(fieldsgff2 = (struct valuesgff *)realloc(fieldsgff2,(nrows2+1)*sizeof(struct valuesgff)))) {
+								fprintf(file_logerr,"\nError: memory not reallocated. use_gff.3b \n");
+								return 0; 
+							}
+						}
+						*/
+					}
+					l = jj;
 				}
 			}
 			/*define all the rest of rows that are not CDS in fieldsgff2*/
