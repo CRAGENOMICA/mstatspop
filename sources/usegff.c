@@ -67,7 +67,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 	char name_fileinputgff2[1024];
 	char *ff,*ff1;
 	
-	int countframe;
+	//int countframe;
 	long int *longtr;
 	int lotr;
     long int ncountrow;
@@ -1237,7 +1237,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 						}
 
 						/*checking annotation versus continuos frame*/
-						countframe = 0;
+						//countframe = 0;
 						ii2 = ii;
 						if(cframe_pos[ii2] != 0) {
 							if(cframe_pos[ii2] != '0') { /*start position of the codon*/
@@ -1260,7 +1260,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 							ii2 += k;
 						}while(ii2*k <= end*k && cmat[ii2] == (double)0);
 						if(ii2*k > end*k) break;
-						countframe += 1;
+						//countframe += 1;
 						if(cframe_pos[ii2] != 0) {
 							if(cframe_pos[ii2] != '1') { /*start position of the codon*/
 								if(cframe_pos[ii2] == '2') {
@@ -1282,7 +1282,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 							ii2 += k;
 						}while(ii2*k <= end*k && cmat[ii2] == (double)0);
 						if(ii2*k > end*k) break;
-						countframe += 1;
+						//countframe += 1;
 						if(cframe_pos[ii2] != 0) {
 							if(cframe_pos[ii2] != '2') { /*start position of the codon*/
 								if(cframe_pos[ii2] == '0') {

@@ -403,10 +403,10 @@ float watterson_variance(float theta, int l, int* nx, int* ny,int* nxy, float* v
 		asum+=a(nx[x]);
 	}
 	float covsum=0.0;
-	float checksum=0.0;
+	//float checksum=0.0;
 	float dsum=0.0;
 	float covdsum=0.0;
-	float checksum_h=0.0;
+	//float checksum_h=0.0;
 	float hsum=0.0;
 	float covhsum=0.0;
 	int i,j;
@@ -417,16 +417,16 @@ float watterson_variance(float theta, int l, int* nx, int* ny,int* nxy, float* v
 	/**/
 	for(x=0;x<l;x++){
 		/*printf("x=%d\r",x);*/
-		checksum=0.0;
-		checksum_h=0.0;
+		//checksum=0.0;
+		//checksum_h=0.0;
 		for(i=1;i<=nx[x]-1;i++){
 			//wx=(float)(2*i*(nx[x]-i))/(float)(l*nx[x]*(nx[x]-1))-1.0/asum;
 			wxh=(float)(2*i*(nx[x]-i))/(float)(l*nx[x]*(nx[x]-1))-(float)i/(float)(l*(nx[x]-1));
 			wxd=(float)(2*i*(nx[x]-i))/(float)(l*nx[x]*(nx[x]-1))-1.0/asum;
 			//printf("w[%d,%d]=%f\n",i,nx[x],wx);
-			checksum+=wxd/(float)i;//debug
+			//checksum+=wxd/(float)i;//debug
 			dsum+=wxd*wxd/(float)i;
-			checksum_h+=wxh/(float)i;//debug
+			//checksum_h+=wxh/(float)i;//debug
 			hsum+=wxh*wxh/(float)i;
 			for(j=1;j<=ny[x]-1;j++){
 				wyh=(float)(2*j*(ny[x]-j))/(float)(l*ny[x]*(ny[x]-1))-(float)j/(float)(l*(ny[x]-1));

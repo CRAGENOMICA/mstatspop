@@ -57,7 +57,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 	long int *mvbp;
 	long int mv = 0;
  	int nsamtot;
-	long int totalmis=0;
+	/*long int totalmis=0;*/
 	long int mis2,miso;
     /*int alleles,fao[5];*/
     int al3,fal3,al4,fal4;
@@ -575,7 +575,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
                 algsites -= matrix_sizepos[xx];
             }
             else {
-                totalmis += mis;
+                /*totalmis += mis;*/
                 if(miso < nsamuser[npops-1])
                     mis2 += (mis - miso);
                 /*printf("%ld ",xx);*/

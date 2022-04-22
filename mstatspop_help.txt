@@ -1,5 +1,5 @@
 
-mstatspop v.0.1beta (20220211)
+mstatspop v.0.1beta (20220422)
 Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 Flags:
@@ -15,6 +15,7 @@ Flags:
                               7 (SweepFiinder format -only first pop-)
                               8 (single line/window: Frequency of each haplotype in the populations)
                               9 (single line/window: Frequency of variants per line and population)
+                              92 (single line/window: -rSFS- Frequency of variants per population relative to all)
                              10 (full extended)]
       -N [#_pops] [#samples_pop1] ... [#samples_popN]
       -n [name of the file containing the name(s) of scaffold(s) and their length (separated by a tab), one per line (ex. fai file)]
