@@ -1708,6 +1708,7 @@ int print_output( int mainargc,int npops,int *nsam,
                                     }
                                 }
                             }
+                            fprintf(file_out,"\n");
                         }
                         /*END SECTION popfreq*/
                     }

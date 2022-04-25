@@ -1,5 +1,5 @@
 
-mstatspop v.0.1beta (20220422)
+mstatspop v.0.1beta (20220425)
 Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 Flags:
