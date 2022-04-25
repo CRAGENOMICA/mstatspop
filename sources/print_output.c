@@ -1693,7 +1693,7 @@ int print_output( int mainargc,int npops,int *nsam,
                         /*BEGIN SECTION popfreq: rSFS: print matrix npop x sumnsam but in a single line*/
                         if(include_unknown == 0) {
                             if(outgroup_presence==0) {
-                                fprintf(file_out,"rSFS[npops(%d)xsumnsam/2(%ld)/2]:\t",npops-oo,(long int)floor((sumnsam-nsam[npops-1])/2));
+                                fprintf(file_out,"rSFS[npops(%d)xsumnsam/2(%ld)]:\t",npops-oo,(long int)floor((sumnsam-nsam[npops-1])/2));
                                 for(x=0;x<npops-oo;x++) {
                                     for(z1=1;z1<=(long int)floor((sumnsam-nsam[npops-1])/2);z1++) {
                                         fprintf(file_out,"%ld\t",(long int)statistics[0].popfreq[x][z1]);
