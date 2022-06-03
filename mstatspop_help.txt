@@ -1,5 +1,5 @@
 
-mstatspop v.0.1beta (20220425)
+mstatspop v.0.1beta (20220603)
 Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 Flags:
@@ -50,7 +50,6 @@ Flags:
          third a boolean weight for the variant (eg. syn variant in nsyn counts is 0.000)].
          DEFAULT all 1.000
    PARAMETERS FOR MS INPUT (-f ms):'SIMULATION ANALYSIS OF A SINGLE REGION'
-      -l [length]
     Optional:
       -r [# ms iterations]. DEFAULT 1.
       -m [include mask_filename] DEFAULT -1 (all positions included).
