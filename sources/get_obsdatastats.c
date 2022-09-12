@@ -487,12 +487,11 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 				}
 			}			
 			
-			/* k_0 will be the large frequency */
+			/* k_0 will be the large frequency: m_1 and k_1 are lost variables*/
 			if(m_1 > k_1)  {
-                k_1 = m_0;
+                m_1 = k_0;
                 k_0 = m_0;
-                m_0 = k_1;
-				k_1 = m_1;
+                m_0 = m_1;
 			}
 			d = 0;
 			for(y=0;y<nsamtot/*n_samp*/;y++) { /* non-outgroup: 0 indicates higher frequency */
