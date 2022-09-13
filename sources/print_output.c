@@ -1475,7 +1475,7 @@ int print_output( int mainargc,int npops,int *nsam,
                     fprintf(file_out,"#mstatspop output for dadi format of joint frequency spectrum.\n");
                     fprintf(file_out,"#Input file: %s\n",file_input);
                     fprintf(file_out,"#scaffold_name: %s\n",chr_name);
-                    fprintf(file_out,"#Note: All alleles are defined arbitrarily to A and T.\n");
+                    fprintf(file_out,"#Note: With ms format all alleles are defined arbitrarily to A and T.\n");
                     fprintf(file_out,"Ref_int\tRef_out\tAllele1\t");
                     for(x=0;x<npops-oo;x++) fprintf(file_out,"Pop_%03d\t",x);
                     fprintf(file_out,"Allele2\t");
@@ -1693,7 +1693,7 @@ int print_output( int mainargc,int npops,int *nsam,
                         /*BEGIN SECTION popfreq: rSFS: print matrix npop x sumnsam but in a single line*/
                         if(include_unknown == 0) {
                             if(outgroup_presence==0) {
-                                fprintf(file_out,"rSFS[npops(%d)xsumnsam/2(%ld)]:\t",npops-oo,(long int)floor((sumnsam-nsam[npops-1])/2));
+                                fprintf(file_out,"rSFS[npops(%d)xsumnsam/2(%ld)/2]:\t",npops-oo,(long int)floor((sumnsam-nsam[npops-1])/2));
                                 for(x=0;x<npops-oo;x++) {
                                     for(z1=1;z1<=(long int)floor((sumnsam-nsam[npops-1])/2);z1++) {
                                         fprintf(file_out,"%ld\t",(long int)statistics[0].popfreq[x][z1]);
