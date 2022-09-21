@@ -1159,7 +1159,7 @@ int print_output( int mainargc,int npops,int *nsam,
 			/*table*/
 			for(zz=0;zz<length_seg;zz++) {
 				ss=0; sf = 0.0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz]; sf += jfd[x][zz];}
-				if(ss && sf > 0.0 && sf < 1.0) {
+                if(ss && sf > 0.0)/* && sf < 1.0) */{
 					/*Define nucleotide*/
                     for(y=0;y<sumnsam;y++) {
                         if(matrix_pol[zz*sumnsam+y] == '0') {
@@ -1485,7 +1485,7 @@ int print_output( int mainargc,int npops,int *nsam,
                     /*table*/
                     for(zz=0;zz<length_seg;zz++) {
                         ss=0; sf = 0.0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz]; sf += jfd[x][zz];}
-                        if(ss && sf > 0.0 && sf < 1.0*(npops-oo)) {
+                        if(ss && sf > 0.0)/* && sf < 1.0*(npops-oo)) */{
                             fprintf(file_out,"\n");
                             /*Define nucleotide*/
                             for(y=0;y<sumnsam;y++) {
