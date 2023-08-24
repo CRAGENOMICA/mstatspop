@@ -16,7 +16,7 @@
 extern "C" {
 #endif
 
-#define TO_NEW	0
+#define TO_NEW	1
 #define DENCOV_CORRECTION	1
 #define MATRIXCOV	0
 #define LUCA_CRs	1

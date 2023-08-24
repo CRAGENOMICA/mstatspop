@@ -482,7 +482,8 @@ int print_output( int mainargc,int npops,int *nsam,
 						fprintf(file_out,"frH1[%d,%d]: %.5f\t",x,y,statistics[0].H1freq[x][y]);
 					}
 				}
-				fprintf(file_out,"\nOptimal tests given SNM as null model: To[inf,inf], To[0,0], To[inf,0]");/*, ToQc[inf,inf], ToQw[inf,inf], ToLc[inf,inf].");*/
+                fprintf(file_out,"\n");
+                fprintf(file_out,"\nOptimal tests given SNM as null model: To[inf,inf], To[0,0], To[inf,0], ToQc[inf,inf], ToQw[inf,inf].");//, ToLw[inf,inf].");
 				for(x=0;x<npops-1;x++) {
 					fprintf(file_out,"\n");
 					if(statistics[0].To_ii[x] > -10000)
@@ -501,9 +502,9 @@ int print_output( int mainargc,int npops,int *nsam,
 					if(statistics[0].To_Qw_ii[x] > -10000)
 						fprintf(file_out,"To_Qw_ii[%d]: %f\t",x,statistics[0].To_Qw_ii[x]);
 					else  fprintf(file_out,"To_Qw_ii[%d]: NA\t",x);
-					if(statistics[0].To_Lc_ii[x] > -10000)
-						fprintf(file_out,"To_Lc_ii[%d]: %f\t",x,statistics[0].To_Lc_ii[x]);
-					else  fprintf(file_out,"To_Lc_ii[%d]: NA\t",x);
+				//	if(statistics[0].To_Lc_ii[x] > -10000)
+				//		fprintf(file_out,"To_Lw_ii[%d]: %f\t",x,statistics[0].To_Lc_ii[x]);
+				//	else  fprintf(file_out,"To_Lw_ii[%d]: NA\t",x);
 				#endif
 				}
 				fprintf(file_out,"\n");
@@ -1159,7 +1160,7 @@ int print_output( int mainargc,int npops,int *nsam,
 			/*table*/
 			for(zz=0;zz<length_seg;zz++) {
 				ss=0; sf = 0.0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz]; sf += jfd[x][zz];}
-                if(ss && sf > 0.0)/* && sf < 1.0) */{
+				if(ss && sf > 0.0 && sf < 1.0) {
 					/*Define nucleotide*/
                     for(y=0;y<sumnsam;y++) {
                         if(matrix_pol[zz*sumnsam+y] == '0') {
@@ -1485,7 +1486,7 @@ int print_output( int mainargc,int npops,int *nsam,
                     /*table*/
                     for(zz=0;zz<length_seg;zz++) {
                         ss=0; sf = 0.0; for(x=0;x<npops-oo;x++) {ss += nfd[x][zz]; sf += jfd[x][zz];}
-                        if(ss && sf > 0.0)/* && sf < 1.0*(npops-oo)) */{
+                        if(ss && sf > 0.0 && sf < 1.0*(npops-oo)) {
                             fprintf(file_out,"\n");
                             /*Define nucleotide*/
                             for(y=0;y<sumnsam;y++) {

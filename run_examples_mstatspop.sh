@@ -41,7 +41,6 @@ gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -L
 #for linux:
 #gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz
 gcc -o ./bin/ms ./sources_msHudson/ms.c ./sources_msHudson/streec.c ./sources_msHudson/rand2.c -lm -O3
-
 cd ./Examples
 
 echo
@@ -339,5 +338,7 @@ echo ---------------------------------------------------------------------------
 echo 
 echo  ../bin/mstatspop -f fasta -i ./MC1R_PigsOutg_aligned.fas -o 0 -p 1 -u 0 -t 1000 -s 123456 -G 1 -N 3 48 46 1 -A ./MC1R_H1frq.txt -g ./MC1R.gff nonsynonymous Nuclear_Universal -T ../Results/MC1R_PigsOutg_NSyn_Opttest.txt -n MC1R.txt
  ../bin/mstatspop -f fasta -i ./MC1R_PigsOutg_aligned.fas -o 0 -p 1 -u 0 -t 1000 -s 123456 -G 1 -N 3 48 46 1 -A ./MC1R_H1frq.txt -g ./MC1R.gff nonsynonymous Nuclear_Universal -T ../Results/MC1R_PigsOutg_NSyn_Opttest.txt -n MC1R.txt
+ echo ../bin/mstatspop -f fasta -i ./MC1R_PigsOutg_aligned.fas -o 0 -p 1 -u 0 -s 123456 -G 1 -N 3 48 46 1 -A ./MC1R_H1frq.txt -S ./MC1R_H0frq.txt -T ./MC1R_PigsOutg_NSyn_Opttest_H0.txt -n MC1R.txt
+  ../bin/mstatspop -f fasta -i ./MC1R_PigsOutg_aligned.fas -o 0 -p 1 -u 0 -s 123456 -G 1 -N 3 48 46 1 -A ./MC1R_H1frq.txt -S ./MC1R_H0frq.txt -T ./MC1R_PigsOutg_NSyn_Opttest_H0.txt -n MC1R.txt
 echo
 echo
