@@ -2962,7 +2962,7 @@ void usage(void)
     printf("         third a boolean weight for the variant (eg. syn variant in nsyn counts is 0.000)].\n");
     printf("         DEFAULT all 1.000\n");
     printf("   PARAMETERS FOR MS INPUT (-f ms):'SIMULATION ANALYSIS OF A SINGLE REGION'\n");
-    //printf("      -l [length]\n");//to eliminate!!
+    printf("      -l [length]\n");//to eliminate!!
     printf("    Optional:\n");
     printf("      -r [# ms iterations]. DEFAULT 1.\n");
     printf("      -m [include mask_filename] DEFAULT -1 (all positions included).\n");

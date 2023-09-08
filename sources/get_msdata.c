@@ -686,7 +686,7 @@ int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_l
 						bnx[y] += 1.0/((double)k*(double)k);
 					}
 					p = 0;
-					if(outgroup_presence == 1 || force_outgroup == 1) {//modified 20220603
+					if(outgroup_presence == 1) {
 						for(x=nsamtot-1;x>=nsamtot-nsamuser[npops-1];x--)
 							if(matrix_mask2[x*length+xx] == -1 || matrix_mask[x*length+xx] == -1 ) p += 1;
 						if(p < nsamuser[npops-1] && v < nsamuser[y])
@@ -744,7 +744,7 @@ int get_msdata( FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_l
 					p = 0;
 					if(mhitbp[xx]!=1 && ((include_unknown == 1 && vector_mask[xx] > 0) ||
 					   (include_unknown==0 && v == 0 && vector_mask[xx] > 0))) {
-						if(outgroup_presence == 1 || force_outgroup == 1) { //modified 20220603
+						if(outgroup_presence == 1) {
 							for(x=nsamtot-1;x>=nsamtot-nsamuser[npops-1];x--) {
 								if(matrix_mask2[x*length+xx] == -1/**/ || matrix_mask[x*length+xx] == -1/**/) p += 1;
 							}

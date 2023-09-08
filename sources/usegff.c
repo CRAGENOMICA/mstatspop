@@ -1373,7 +1373,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                 if(endtrp != ii2) {
                                     if(type_output == 0 || type_output == 10) {
                                         /*if(mainargc > 1)*/ /*printf("\nError:\n Excluded codons:  Stop Codon starting at position %ld.",ii+1);*/
-                                        if(file_output) fzprintf(file_output,file_output_gz,"\n Excluded codons: Stop Codon starting at position %ld.",ii+1);
+                                        if(file_output) fzprintf(file_output,file_output_gz,"\n Excluded codons: Stop Codon (or SelenoCysteine) starting at position %ld.",ii+1);
                                     }
                                 }
                                 stop = 1;
@@ -1437,7 +1437,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     if(endtrp != ii2) {
                                         if(type_output == 0 || type_output == 10) {
                                             /*if(mainargc > 1)*/ /*printf("\n Excluded codons:  Stop Codon starting at position %ld.",ii+1);*//**/
-                                            if(file_output) fprintf(file_output,"\n Excluded codons: Stop Codon starting at position %ld.",ii+1);
+                                            if(file_output) fprintf(file_output,"\n Excluded codons: Stop Codon (or SelenoCysteine) starting at position %ld.",ii+1);
                                         }
                                     }
                                     stop = 1;
