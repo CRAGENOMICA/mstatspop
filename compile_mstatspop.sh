@@ -21,10 +21,14 @@
 #    make && \
 #    sudo make install
 
+#perhaps is necessary to include a symbolic link for finding gsl libraries:
+#for example:
+#sudo ln -s /home/gonza057/anaconda3/lib/libgsl.a /usr/local/lib/libgsl.a
+
 #To compile:
 #gcc ./sources/*.c -lm -o ./bin/mstatspop -Wall -O3 -lz
 #OR (IN CASE USING OPTIMAL TESTS include the GSL Scientific library, downloading from http://www.gnu.org/software/gsl/)
 #for osx 10.12 add:-I/usr/local/include -L/usr/local/lib
-gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -L/usr/local/lib -I/usr/local/include /usr/local/lib/libgsl.a -lz
+gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -L/opt/homebrew/Cellar/gsl/2.7.1/lib/ /opt/homebrew/Cellar/gsl/2.7.1/lib/libgsl.a -I/opt/homebrew/Cellar/gsl/2.7.1/include -lz
 #for linux:
 #gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz
