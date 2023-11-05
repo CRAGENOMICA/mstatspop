@@ -3,10 +3,10 @@
 #zlib 1.2.8 installation (dependency)
 #
 #mkdir -p ./zlib
-#wget http://zlib.net/zlib-1.2.8.tar.gz -P ./zlib
-#tar -zxvf ./zlib/zlib-1.2.8.tar.gz -C ./zlib
-#rm ./zlib/zlib-1.2.8.tar.gz
-#cd ./zlib/zlib-1.2.8
+#wget http://zlib.net/zlib-1.3.tar.gz -P ./zlib
+#tar -zxvf ./zlib/zlib-1.3.tar.gz -C ./zlib
+#rm ./zlib/zlib-1.3.tar.gz
+#cd ./zlib/zlib-1.3
 #./configure
 #make
 #sudo make install

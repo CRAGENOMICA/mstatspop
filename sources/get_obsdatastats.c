@@ -594,7 +594,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 			fprintf(file_logerr,"\n\nWARNING: Positions with missing values and multiple hits (including codon positions with more than 2 variants) are filtered using THE COMPLETE FILE included.");
 			fprintf(file_logerr,"\n\nREADING INPUT FILE DATA:\n\n Number of Total Samples (if diploid, doubled): %d\n Valid sites: %.2f\n Multiple hits: %ld\n Polymorphic (biallelic) positions with missing samples: %ld\n Ratio missing/positions: %f\n Ratio trans/transv: %.3f.",nnnsam-!outgroup_presence,_sites,mhits,mv,(double)totalmis/(double)(nnnsam*_sites),(double)transitions/(double)transversions);
 			*/
-			if(*nmhits) {
+			if(*nmhits && output==10) {
                 fprintf(file_output,"\n Position(s) of the multiple hits ");
                 if(include_unknown)
                     fprintf(file_output," (minor frequency not outgroup excluded in the analysis):");
@@ -605,7 +605,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
                     else fprintf(file_output," %ld",mhitbp[x]);
 				}
 			}
-			if(mv) {
+			if(mv && output==10) {
 				fprintf(file_output,"\n Position(s) of the Variable (converted biallelic if mhits) base with missing samples:");
 				for(x=0;x<mv;x++) {
 					if(formatfile>0) fprintf(file_output," %ld",mvbp[x] + formatfile-1);
@@ -637,7 +637,7 @@ int get_obsstats(FILE *file_output,SGZip *file_output_gz,
 			printf("\n\nWARNING: Positions with missing values and multiple hits (including codon positions with more than 2 variants) are filtered using THE COMPLETE FILE included.");
 			printf("\n\nREADING INPUT FILE DATA:\n\n Number of Total Samples (if diploid, doubled): %d\n Valid sites: %.2f\n Multiple hits: %ld\n Polymorphic (biallelic) positions with missing samples: %ld\n Ratio missing/positions: %f\n Ratio trans/transv: %.3f.",nnnsam-!outgroup_presence,_sites,*nmhits,mv,(double)totalmis/(double)(nnnsam*_sites),(double)transitions/(double)transversions);
 			*/
-			if(*nmhits) {
+			if(*nmhits && output==10) {
                 fprintf(file_output,"\n Position(s) of the multiple hits ");
                 if(include_unknown)
                     fprintf(file_output," (minor frequency not outgroup excluded in the analysis):");

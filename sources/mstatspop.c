@@ -886,7 +886,8 @@ int main(int argc, const char * argv[])
 		{	
 			/* TODO: Reordenar, esto ya esta definido en el gff_data.c !
 			 */
-			if( strcmp(code_name, "Nuclear_Universal") == 0 ) 
+            /* Genetic code: It is possible to count Stop codons as NOnsynonymous if we call STOPs with a non * (eg, a Z letter) */
+			if( strcmp(code_name, "Nuclear_Universal") == 0 )
 			{
 				genetic_code[0] = 'F';
 				genetic_code[1] = 'F';

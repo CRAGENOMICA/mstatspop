@@ -12,13 +12,13 @@
 #options: [-G -u  -T]
 #-G 1/0 -u 1/0
 
-#zlib 1.2.8 installation (dependency)
+#zlib 1.3 installation (dependency)
 #
 #mkdir -p ./zlib
-#wget http://zlib.net/zlib-1.2.8.tar.gz -P ./zlib
-#tar -zxvf ./zlib/zlib-1.2.8.tar.gz -C ./zlib
-#rm ./zlib/zlib-1.2.8.tar.gz
-#cd ./zlib/zlib-1.2.8
+#wget http://zlib.net/zlib-1.3.tar.gz -P ./zlib
+#tar -zxvf ./zlib/zlib-1.3.tar.gz -C ./zlib
+#rm ./zlib/zlib-1.3.tar.gz
+#cd ./zlib/zlib-1.3
 #./configure
 #make
 #sudo make install
@@ -108,20 +108,20 @@ echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 0 -N 1 42 -T ../
 ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 0 -N 1 42 -T ../Results/mstatspop_100chr10.ms.00.txt -l 100000 -n chr10.txt
 echo 
 echo Example ms.01.txt
-echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 0 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01.txt -l 100000 -m ./100Kchr10_fa2ms_02.ms.txt_npops1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 0 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01.txt -l 100000 -m ./100Kchr10_fa2ms_02.ms.txt_npops1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-echo 
+echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 0 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01.txt -l 100000 -m ./100Kchr10_npop1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 0 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01.txt -l 100000 -m ./100Kchr10_npop1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+echo
 echo Example ms.01b.txt: Same result but in a single line
-echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 1 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01b.txt -l 100000 -m ./100Kchr10_fa2ms_02.ms.txt_npops1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 1 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01b.txt -l 100000 -m ./100Kchr10_fa2ms_02.ms.txt_npops1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 1 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01b.txt -l 100000 -m ./100Kchr10_npop1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_02.ms.txt -o 1 -N 1 42 -T ../Results/mstatspop_100chr10.ms.01b.txt -l 100000 -m ./100Kchr10_npop1_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
 echo 
 echo Example ms.02.txt: Two populations
-echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.02.txt -l 100000 -m ./100Kchr10_fa2ms_07.ms.txt_npops2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.02.txt -l 100000 -m ./100Kchr10_fa2ms_07.ms.txt_npops2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.02.txt -l 100000 -m ./100Kchr10_npop2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.02.txt -l 100000 -m ./100Kchr10_npop2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
 echo 
 echo Example ms.03.txt: Two pops + outgroup
-echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.03.txt -l 100000 -G 1 -m ./100Kchr10_fa2ms_07.ms.txt_npops2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.03.txt -l 100000 -G 1 -m ./100Kchr10_fa2ms_07.ms.txt_npops2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.03.txt -l 100000 -G 1 -m ./100Kchr10_npop2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_03.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.03.txt -l 100000 -G 1 -m ./100Kchr10_npop2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
 echo 
 echo Example ms.04.txt: One pop + several ms iterations
 echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_07.ms.txt -o 1 -N 1 42 -T ../Results/mstatspop_100chr10.ms.04.txt -l 10000 -r 5 -n chr10.txt
@@ -145,26 +145,26 @@ echo ../bin/mstatspop  -f ms -i ./100Kchr10_tfa2ms_06.ms.txt -o 1 -N 2 40 2 -T .
 echo 
 echo Example ms.09.txt: Two pops +  missing
 ../bin/ms 42 1 -t 1000 -I 2 40 2 -ej 2.0 2 1 -p 9 > ./100Kchr10_simulation.ms.txt
-echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.09.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_07.ms.txt_npops2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.09.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_07.ms.txt_npops2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-echo 
+echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.09.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_npop2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.09.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_npop2_nsam42_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+echo
 echo Example ms.10.txt: Two pops + missing + weight for nonsyn
 echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.10.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04.ms.txt_npops1_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
 ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.10.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04.ms.txt_npops1_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
-echo 
+echo
 echo Example ms.11.txt: Two pops + missing + weight for nonsyn + permutation test
 echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.11.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04.ms.txt_npops1_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -t 1000 -s 1684 -n chr10.txt
 ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -T ../Results/mstatspop_100chr10.ms.11.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04.ms.txt_npops1_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -t 1000 -s 1684 -n chr10.txt
-echo 
+echo
 echo Example ms.12.txt: Two pops + outg + missing + weight for nonsyn + permutation test + s/v ratio
 echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.12.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -n chr10.txt
 ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.12.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -n chr10.txt
-echo 
+echo
 echo Example ms.13.txt: Two pops + outg + missing + weight for nonsyn + permutation test + s/v ratio + 1000 replicates
 ../bin/ms 42 1000 -t 1000 -I 2 40 2 -ej 2.0 2 1 -p 9 > ./100Kchr10_simulation1000.ms.txt
 echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation1000.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -r 1000 -n chr10.txt
 ../bin/mstatspop  -f ms -i ./100Kchr10_simulation1000.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -r 1000 -n chr10.txt
-echo 
+echo
 echo --------------------------------------------------------------------------------------------------
 echo PARAMETERS FOR TFASTA INPUT -f tfa: -w [-z -Y -W -E -O  -T -s] SLIDING WINDOW ANALYSIS OF EMPIRICAL DATA
 echo --------------------------------------------------------------------------------------------------
@@ -249,22 +249,22 @@ echo Example tfa.15.txt: Two pops + outg + missing + window 10000 + slide 20000 
 echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 2 40 2 -T ../Results/mstatspop_100chr10.tfa.15.txt -G 1 -u 1 -w 10000 -z 20000 -t 1000 -s 1684 -n chr10.txt
  ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 2 40 2 -T ../Results/mstatspop_100chr10.tfa.15.txt -G 1 -u 1 -w 10000 -z 20000 -t 1000 -s 1684 -n chr10.txt
 echo
-echo Example tfa.16.txt: Two pops + outg + missing + window 100 + slide 100 + permutations:
-echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 2 40 2 -T ../Results/mstatspop_100chr10.tfa.16.txt -G 1 -u 1 -w 100 -z 100 -t 1000 -s 1684 -n chr10.txt
- ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 2 40 2 -T ../Results/mstatspop_100chr10.tfa.16.txt -G 1 -u 1 -w 100 -z 100 -t 1000 -s 1684 -n chr10.txt
-echo 
-echo Example tfa.17.txt: Three pops + outg + missing + window 100 + slide 100 + permutations:
-echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 20 20 2 -T ../Results/mstatspop_100chr10.tfa.17.txt -G 1 -u 1 -w 100 -z 100 -t 1000 -s 1684 -n chr10.txt
- ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 20 20 2 -T ../Results/mstatspop_100chr10.tfa.17.txt -G 1 -u 1 -w 100 -z 100 -t 1000 -s 1684 -n chr10.txt
+echo Example tfa.16.txt: Two pops + outg + missing + window 1000 + slide 100 + permutations:
+echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 2 40 2 -T ../Results/mstatspop_100chr10.tfa.16.txt -G 1 -u 1 -w 1000 -z 100 -t 1000 -s 1684 -n chr10.txt
+ ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 2 40 2 -T ../Results/mstatspop_100chr10.tfa.16.txt -G 1 -u 1 -w 1000 -z 100 -t 1000 -s 1684 -n chr10.txt
 echo
-echo Example tfa.18.txt: Three pops LESS SAMPLES + outg + missing + window 100 + slide 100 :
-echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.18.txt -G 1 -u 1 -w 100 -z 100 -n chr10.txt
- ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.18.txt -G 1 -u 1 -w 100 -z 100 -n chr10.txt
-echo 
-echo Example tfa.19.txt: Three pops LESS SAMPLES + reordering + outg + missing + window 100 + slide 100 :
-echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.19.txt -G 1 -u 1 -w 100 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10.txt
- ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.19.txt -G 1 -u 1 -w 100 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10.txt
-echo 
+echo Example tfa.17.txt: Three pops + outg + missing + window 1000 + slide 100 + permutations:
+echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 20 20 2 -T ../Results/mstatspop_100chr10.tfa.17.txt -G 1 -u 1 -w 1000 -z 100 -t 1000 -s 1684 -n chr10.txt
+ ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 20 20 2 -T ../Results/mstatspop_100chr10.tfa.17.txt -G 1 -u 1 -w 1000 -z 100 -t 1000 -s 1684 -n chr10.txt
+echo
+echo Example tfa.18.txt: Three pops LESS SAMPLES + outg + missing + window 1000 + slide 100 :
+echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.18.txt -G 1 -u 1 -w 1000 -z 100 -n chr10.txt
+ ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.18.txt -G 1 -u 1 -w 1000 -z 100 -n chr10.txt
+echo
+echo Example tfa.19.txt: Three pops LESS SAMPLES + reordering + outg + missing + window 1000 + slide 100 :
+echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.19.txt -G 1 -u 1 -w 1000 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10.txt
+ ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.19.txt -G 1 -u 1 -w 1000 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10.txt
+echo
 echo --------------------------------------------------------------------------------------------------
 echo Examples using MULTICHROMOSOME TFA FILE
 echo --------------------------------------------------------------------------------------------------
@@ -277,9 +277,9 @@ echo Same as before but single line output
 echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 1 42   -T ../Results/mstatspop_100allchr.tfa.01b.txt   -w 100000 -n chr10-12-14.txt
 ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 1 42   -T ../Results/mstatspop_100allchr.tfa.01b.txt   -w 100000 -n chr10-12-14.txt
 echo
-echo Same as before but using 1000bp sliding window
- ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 1 42   -T ../Results/mstatspop_100allchr.tfa.01c.txt -w 1000 -n chr10-12-14.txt
-echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 1 42   -T ../Results/mstatspop_100allchr.tfa.01c.txt -w 1000 -n chr10-12-14.txt
+echo Same as before but using 10000bp sliding window
+ ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 1 42   -T ../Results/mstatspop_100allchr.tfa.01c.txt -w 10000 -n chr10-12-14.txt
+echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 1 42   -T ../Results/mstatspop_100allchr.tfa.01c.txt -w 10000 -n chr10-12-14.txt
 echo
 echo Same but using two populations
 echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 0 -N 2 40 2 -T ../Results/mstatspop_100allchr.tfa.02.txt   -w 100000 -n chr10-12-14.txt
@@ -322,8 +322,8 @@ echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 0 -N 2 40 2 -T ../Results
 ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 0 -N 2 40 2 -T ../Results/mstatspop_100allchr.tfa.11.txt -G 1 -u 1 -w 100 -E ./100Kallchr07.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz -Y 0 -n chr10-12-14.txt
 echo
 echo three pops and different sample order
-echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100allchr.tfa.12.txt -G 1 -u 1 -w 100 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10-12-14.txt
-../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100allchr.tfa.12.txt -G 1 -u 1 -w 100 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10-12-14.txt
+echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100allchr.tfa.12.txt -G 1 -u 1 -w 1000 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10-12-14.txt
+../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100allchr.tfa.12.txt -G 1 -u 1 -w 1000 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10-12-14.txt
 echo
 echo --------------------------------------------------------------------------------------------------
 echo Collect some columns from the mstatspop output file:

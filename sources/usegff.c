@@ -22,7 +22,8 @@ static char tripletsN[64][3] =
 	{"311"},	{"312"},	{"314"},	{"313"},	{"321"},	{"322"},	{"324"},	{"323"},
 	{"341"},	{"342"},	{"344"},	{"343"},	{"331"},	{"332"},	{"334"},	{"333"},
 };
-	
+/* order: TCGA=1234 */
+
 int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
 			double *matrix_sizepos,int n_samp,long int n_site,char *DNA_matr,
 			double *matrix_segrpos,FILE *file_output,SGZip *file_output_gz,int mainargc,
@@ -1361,7 +1362,7 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                 }
                             }
                             if(q==64 && include_unknown == 1)
-                                continue;/*missing codon, not counting. It can be missing positions*/
+                                continue;/*missing codon, not counting. They can be missing positions*/
                             if(aaseq[0] == '*') {
                                 ii2 = ii;
                                 do{
@@ -1373,7 +1374,8 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                 if(endtrp != ii2) {
                                     if(type_output == 0 || type_output == 10) {
                                         /*if(mainargc > 1)*/ /*printf("\nError:\n Excluded codons:  Stop Codon starting at position %ld.",ii+1);*/
-                                        if(file_output) fzprintf(file_output,file_output_gz,"\n Excluded codons: Stop Codon (or SelenoCysteine) starting at position %ld.",ii+1);
+                                        if(file_output) fzprintf(file_output,file_output_gz,"\n Excluded codons starting at position %ld: Stop Codon ",ii+1);
+                                        if(q==14) if(file_output) fzprintf(file_output,file_output_gz," or Possible SelenoCysteine.");
                                     }
                                 }
                                 stop = 1;
@@ -1437,7 +1439,8 @@ int use_gff(char *name_fileinputgff,char *subset_positions,char *genetic_code,
                                     if(endtrp != ii2) {
                                         if(type_output == 0 || type_output == 10) {
                                             /*if(mainargc > 1)*/ /*printf("\n Excluded codons:  Stop Codon starting at position %ld.",ii+1);*//**/
-                                            if(file_output) fprintf(file_output,"\n Excluded codons: Stop Codon (or SelenoCysteine) starting at position %ld.",ii+1);
+                                            if(file_output) fprintf(file_output,"\n Excluded codons starting at position %ld: Stop Codon ",ii+1);
+                                            if(q==14) if(file_output) fprintf(file_output," or Possible SelenoCysteine.");
                                         }
                                     }
                                     stop = 1;
