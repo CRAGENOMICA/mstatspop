@@ -29,6 +29,8 @@
 #gcc ./sources/*.c -lm -o ./bin/mstatspop -Wall -O3 -lz
 #OR (IN CASE USING OPTIMAL TESTS include the GSL Scientific library, downloading from http://www.gnu.org/software/gsl/)
 #for osx 10.12 add:-I/usr/local/include -L/usr/local/lib
-gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -L/opt/homebrew/Cellar/gsl/2.7.1/lib/ /opt/homebrew/Cellar/gsl/2.7.1/lib/libgsl.a -I/opt/homebrew/Cellar/gsl/2.7.1/include -lz
+gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz 
+#or
+#gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz -L/opt/homebrew/Cellar/gsl/2.7.1/lib/ /opt/homebrew/Cellar/gsl/2.7.1/lib/libgsl.a -I/opt/homebrew/Cellar/gsl/2.7.1/include
 #for linux:
 #gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz

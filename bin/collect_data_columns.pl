@@ -27,7 +27,6 @@ while(<INPUTC>) {
 }
 close(INPUTC);
 
-
 #read the mstatspop and keep the necessary columns
 $nrow=0;
 open(INPUT,"$options{'in'}") or die "\nCan't open ".$options{'in'}." file.\n";
@@ -45,26 +44,19 @@ while(<INPUT>) {
          }  
       }
       $ncol = $#colnumbers + 1;
+      #print headers: selected columns
+      for(my $colv=0;$colv<$ncol;$colv++){
+         print $colnames_real[$colv]."\t";
+      }
+      print "\n";
    }
-   my @coldata_lines;
+   #print values of the columns;
    foreach my $colv (@colnumbers) {
-      push @coldata_lines, $col_lines[$colv]
-   }
-   push @coldata, @coldata_lines;
-   $nrow = $nrow + 1;
-}
-close(INPUT);
-
-#print selected data
-for(my $colv=0;$colv<$ncol;$colv++){
-   print $colnames_real[$colv]."\t";
-}
-print "\n";
-for(my $row=0;$row<$nrow;$row++) {
-   for(my $colv=0;$colv<$ncol;$colv++){
-      print $coldata[$row*$ncol+$colv]."\t";
+      print $col_lines[$colv]."\t";
    }
    print "\n";
+   $nrow=1;
 }
+close(INPUT);
 
 exit(0);
