@@ -886,8 +886,7 @@ int main(int argc, const char * argv[])
 		{	
 			/* TODO: Reordenar, esto ya esta definido en el gff_data.c !
 			 */
-            /* Genetic code: It is possible to count Stop codons as NOnsynonymous if we call STOPs with a non * (eg, a Z letter) */
-			if( strcmp(code_name, "Nuclear_Universal") == 0 )
+			if( strcmp(code_name, "Nuclear_Universal") == 0 ) 
 			{
 				genetic_code[0] = 'F';
 				genetic_code[1] = 'F';
@@ -2936,7 +2935,7 @@ void usage(void)
     printf("      -u [include unknown positions (0/1)].  DEFAULT 0.\n");
     printf("      -A [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)\n");
     printf("          File format: (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,\n");
-    printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]\n");
+    printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...; -u 1 not allowed yet]\n");
     printf("      -S [Null Spectrum File (only if -A is defined): null_spectrum for each population (except outg).\n");
     printf("          (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,\n");
     printf("          fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]. DEFAULT SNM.\n");
@@ -2963,7 +2962,7 @@ void usage(void)
     printf("         third a boolean weight for the variant (eg. syn variant in nsyn counts is 0.000)].\n");
     printf("         DEFAULT all 1.000\n");
     printf("   PARAMETERS FOR MS INPUT (-f ms):'SIMULATION ANALYSIS OF A SINGLE REGION'\n");
-    printf("      -l [length]\n");//to eliminate!!
+    //printf("      -l [length]\n");//to eliminate!!
     printf("    Optional:\n");
     printf("      -r [# ms iterations]. DEFAULT 1.\n");
     printf("      -m [include mask_filename] DEFAULT -1 (all positions included).\n");
