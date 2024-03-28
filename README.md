@@ -1,10 +1,10 @@
-#mstatspop v.0.1beta (20230907)
+# mstatspop v.0.1beta (20230907)
 
-##Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
+## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 
-####Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
+#### Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 
-##Flags:
+## Flags:
       -f [input format file: ms, fasta OR tfa (gz file indexed)]
       -i [path and name of the input file]
       -o [output format file: 0 (extended),
@@ -22,7 +22,7 @@
       -N [#_pops] [#samples_pop1] ... [#samples_popN]
       -n [name of the file containing the name(s) of scaffold(s) and their length (separated by a tab), one per line (ex. fai file)]
       -T [path and name of the output file]. DEFAULT stdout.
-#####OPTIONAL GENERAL PARAMETERS:
+##### OPTIONAL GENERAL PARAMETERS:
       -G [outgroup (0/1)] (last population). DEFAULT 0.
       -u [include unknown positions (0/1)].  DEFAULT 0.
       -A [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)
@@ -36,7 +36,7 @@
          DEFAULT current order.
       -t [# permutations per window (H0: Fst=0). Only available with option -u 0]. DEFAULT 0.
       -s [seed]. DEFAULT 123456.
-#####PARAMETERS FOR TFASTA INPUT (-f tfa): 'SLIDING WINDOW ANALYSIS OF EMPIRICAL DATA'
+##### PARAMETERS FOR TFASTA INPUT (-f tfa): 'SLIDING WINDOW ANALYSIS OF EMPIRICAL DATA'
       -w [window size].
         OR
       -W [file with the coordinates of each window [scaffold init end] (instead options -w and -z).
@@ -51,7 +51,7 @@
          second the weight for positions and
          third a boolean weight for the variant (eg. syn variant in nsyn counts is 0.000)].
          DEFAULT all 1.000
-#####PARAMETERS FOR MS INPUT (-f ms):'SIMULATION ANALYSIS OF A SINGLE REGION'
+##### PARAMETERS FOR MS INPUT (-f ms):'SIMULATION ANALYSIS OF A SINGLE REGION'
     Optional:
       -r [# ms iterations]. DEFAULT 1.
       -m [include mask_filename] DEFAULT -1 (all positions included).
@@ -60,7 +60,7 @@
       -v [ratio transitions/transversions]. DEFAULT 0.5.
       -F [force analysis to include outgroup (0/1) (0 in ms means ancestral)]. DEFAULT 0.
       -q [frequency of reverted mutation] (only with -F 1). DEFAULT 0.
-#####PARAMETERS FOR FASTA INPUT (-f fasta): 'WHOLE REGION ANALYSIS'
+##### PARAMETERS FOR FASTA INPUT (-f fasta): 'WHOLE REGION ANALYSIS'
     Optional:
       -p [Number of lineages per sequence (1/2)]. DEFAULT 1.
       -g [GFF_file]
@@ -70,5 +70,5 @@
          DEFAULT no annotation.
       -c [in case use coding regions, criteria to consider transcripts (max/min/first/long)]. DEFAULT long.
       -K [make a MASK file with the valid positions for this fasta. Useful for running ms simulations (1/0)]. DEFAULT 0.
-#####HELP:
+##### HELP:
       -h [help and exit]
