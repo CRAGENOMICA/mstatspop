@@ -19,7 +19,7 @@ extern "C" {
 
 int get_obsdata(FILE *file_output,SGZip *file_output_gz,
                     FILE *file_input, SGZip *input_gz,
-                    FILE *file_logerr,SGZip *file_logerr_gz,
+                    // FILE *file_logerr,SGZip *file_logerr_gz,
                     FILE *file_mask,
                     char *name_fileinputgff,int gfffiles,char *subset_positions,
                     char *genetic_code,char **matrix_pol,long int **matrix_freq,
@@ -35,10 +35,14 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
                     double **lengthamng, double **lenghtamng_outg,int *sort_nsam,char **matrix_pol_tcga,
                 char *chr_name,int first);
 
-int var_char(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_logerr_gz,long int *count,int *c,int *n_sam,long int *n_sit,int *nseq,int *maxsam,char ***names,char **DNA_matr,
+int var_char(FILE *file_input,SGZip *input_gz,
+    // FILE *file_logerr,SGZip *file_logerr_gz,
+    long int *count,int *c,int *n_sam,long int *n_sit,int *nseq,int *maxsam,char ***names,char **DNA_matr,
 	long int *n_site,int excludelines,char *name_excluded,int *n_excl,int includelines,char *name_ingroups,char *name_outgroup,int outgroup,int nsamuser_eff,char *ploidy);
 
-int assigna(FILE *file_input,SGZip *input_gz,FILE *file_logerr,SGZip *file_logerr_gz,int *c,int *nseq,int *maxsam,char ***names);
+int assigna(FILE *file_input,SGZip *input_gz,
+ // FILE *file_logerr,SGZip *file_logerr_gz,
+ int *c,int *nseq,int *maxsam,char ***names);
 
 #ifdef	__cplusplus
 }

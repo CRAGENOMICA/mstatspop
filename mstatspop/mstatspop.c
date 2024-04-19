@@ -8,7 +8,7 @@
  */
 
 #include "mstatspop.h"
-
+#include "log.h"
 /**
  * \brief main function
  * \details More details
@@ -62,7 +62,7 @@ int main(int argc, const char * argv[])
 	memset( file_H0f, 0, MSP_MAX_FILENAME);
 			
 	FILE *file_input	= 	0;
-    FILE *file_logerr   =   stderr;
+  FILE * error_log_file = 0; // file_logerr 
 	FILE *file_output	=	stdout;
 	FILE *file_mask	    =	0;
 	FILE *file_H1freq	=	0;
@@ -70,7 +70,7 @@ int main(int argc, const char * argv[])
 
     SGZip file_input_gz;
     SGZip file_output_gz;
-    SGZip file_logerr_gz;
+    // SGZip file_logerr_gz;
 
     /* GFF variables */
 	int 	gfffiles			= 0;
@@ -254,7 +254,8 @@ int main(int argc, const char * argv[])
 			{
                 if(argv[arg][0] == '>')
                     break;
-                printf(" argument should be -%s ?\n", argv[arg]);
+                // printf(" argument should be -%s ?\n", argv[arg]);
+				log_error("argument should be -%s ?", argv[arg]);
 				usage();
 				exit(1);
 			}
@@ -269,7 +270,8 @@ int main(int argc, const char * argv[])
 							strcmp( argv[arg], "ms")!=0 &&
 							strcmp( argv[arg], "tfa")!=0 )
 					{
-						printf("\n Error: the argument -f has only the choices 'fasta', 'tfa' or 'ms'.");
+						// printf("\n Error: the argument -f has only the choices 'fasta', 'tfa' or 'ms'.");
+						log_error("Error: the argument -f has only the choices 'fasta', 'tfa' or 'ms'.");
 						usage();
 						exit(1);
 					}
@@ -298,21 +300,26 @@ int main(int argc, const char * argv[])
                     arg++;
                     strcpy( file_out, argv[arg] );
                     if( (file_output = fopen( file_out, "w")) == 0) { /*zipped not available yet*/
-                        fprintf(stdout,"\n It is not possible to write in the output file %s\n", file_out);
+                        // fprintf(stdout,"\n It is not possible to write in the output file %s\n", file_out);
+						log_error("It is not possible to write in the output file %s\n", file_out);
                         exit(1);
                     }
                     strcpy(file_log, file_out);
                     strcat(file_log,".log");
-                    if( (file_logerr = fopen( file_log, "w")) == 0) {
-                        fprintf(stdout,"\n It is not possible to write the log file %s.", file_log);
+                    if( (error_log_file = fopen( file_log, "w")) == 0) {
+                        // fprintf(stdout,"\n It is not possible to write the log file %s.", file_log);
+						log_error("It is not possible to write the log file %s.", file_log);
                         exit(1);
                     }
+					// TODO :: set log level from command line
+					log_add_fp(error_log_file,LOG_DEBUG);
                     break;
 				case 'o' : /* o Output type, from 0 to 11 - TODO: define*/
 					arg++;
 					output = (int)atoi( argv[arg] );
 					if(output < 0 || output > 100) {
-						printf("\n Error in -o argument: only values between 0 and 10 are allowed.");
+						// printf("\n Error in -o argument: only values between 0 and 10 are allowed.");
+						log_error("Error in -o argument: only values between 0 and 10 are allowed.");
 						usage();
 						exit(1);
 					}
@@ -322,7 +329,8 @@ int main(int argc, const char * argv[])
 					arg++;
 					ploidy[0] = argv[arg][0];
 					if(ploidy[0] != '1' && ploidy[0] != '2') {
-						printf("\n Error in -p argument: only the values 1 or 2 are allowed.");
+						// printf("\n Error in -p argument: only the values 1 or 2 are allowed.");
+						log_error("Error in -p argument: only the values 1 or 2 are allowed.");
 						usage();
 						exit(1);
 					}
@@ -333,7 +341,8 @@ int main(int argc, const char * argv[])
 					include_unknown = (int)atoi( argv[arg] );
 					
 					if(include_unknown != 0 && include_unknown != 1) {
-						printf("\n Error in -u argument: only the values 0 or 1 are allowed.");
+						// printf("\n Error in -u argument: only the values 0 or 1 are allowed.");
+						log_error("Error in -u argument: only the values 0 or 1 are allowed.");
 						usage();
 						exit(1);
 					}
@@ -378,7 +387,8 @@ int main(int argc, const char * argv[])
 					arg++;
 					outgroup_presence = (int)atoi(argv[arg]);					
 					if(outgroup_presence != 0 && outgroup_presence != 1) {
-						printf("\n Error in -G argument: only the values 0 or 1 are allowed.");
+						// printf("\n Error in -G argument: only the values 0 or 1 are allowed.");
+						log_error("Error in -G argument: only the values 0 or 1 are allowed.");
 						usage();
 						exit(1);
 					}
@@ -399,7 +409,8 @@ int main(int argc, const char * argv[])
 					arg++;
 					npops = atoi(argv[arg]);
 					if((vint_perpop_nsam = (int *) calloc( (unsigned long)npops, sizeof(int) )) == 0) {
-						printf("Error allocating memory");
+						// printf("Error allocating memory");
+						log_fatal("Error allocating memory, vint_perpop_nsam");
 						exit(1);
 					}
 					int_total_nsam = 0;
@@ -417,7 +428,8 @@ int main(int argc, const char * argv[])
 					arg++;
 					int_total_nsam_order = atoi(argv[arg]);
 					if((sort_nsam = (int *) calloc( (unsigned long)int_total_nsam_order, sizeof(int) )) == 0) {
-						printf("Error allocating memory");
+						//printf("Error allocating memory");
+						log_fatal("Error allocating memory, sort_nsam");
 						exit(1);
 					}
 					for( sort_index = 0; sort_index < int_total_nsam_order; sort_index++ ) 
@@ -457,7 +469,8 @@ int main(int argc, const char * argv[])
 							for(x=0;x<64;x++) {
 								arg++;
 								if(argv[arg][0] == '-') {
-									printf("\n Error in -g argument: In case use \"Other\", include the genetic code of the 64 aa values.");
+									// printf("\n Error in -g argument: In case use \"Other\", include the genetic code of the 64 aa values.");
+									log_error("Error in -g argument: In case use \"Other\", include the genetic code of the 64 aa values.");
 									usage();
 									exit(1);
 								}
@@ -490,7 +503,8 @@ int main(int argc, const char * argv[])
 							strcmp( criteria_transcript, "first")!=0   && 
 							strcmp( criteria_transcript, "long")!=0  ) 
 					{
-						printf("\n Error: the argument -c has only the choices 'max', 'min', 'first' or 'long'.");
+						// printf("\n Error: the argument -c has only the choices 'max', 'min', 'first' or 'long'.");
+						log_error("Error: the argument -c has only the choices 'max', 'min', 'first' or 'long'.");
 						usage();
 						exit(1);
 					}
@@ -515,7 +529,8 @@ int main(int argc, const char * argv[])
 				case 'P' : /*Calculation of R2_p: first value is the number of values to include, next are the ploidies to consider. ex: -P 6 1 2 4 8 16 64*/
 					arg++;
 					if( (r2i_ploidies = (int *)malloc((unsigned long)(atoi(argv[arg])+1)*sizeof(int))) == NULL ) {
-						printf("\nError: memory not reallocated. mstatspop.c.00 \n");
+						//printf("\nError: memory not reallocated. mstatspop.c.00 \n");
+						log_fatal("Error: memory not reallocated, r2i_ploidies mstatspop.c.00");
 						exit(1);
 					}
 					x=0;
@@ -530,7 +545,8 @@ int main(int argc, const char * argv[])
 					arg++;
 					Physical_length = (int)atoi(argv[arg]);
 					if(Physical_length != 0 && Physical_length != 1) {
-						printf("\n Error in -l argument: only the values 0 or 1 are allowed.");
+						//printf("\n Error in -l argument: only the values 0 or 1 are allowed.");
+						log_error("Error in -l argument: only the values 0 or 1 are allowed.");
 						usage();
 						exit(1);
 					}
@@ -575,46 +591,55 @@ int main(int argc, const char * argv[])
 		
 		/*few filters*/
 		if(!(formatfile == 1 || formatfile == 2) && force_outgroup == 1) {
-			fprintf(file_logerr,"\nError. The option -F 1 is only compatible with -f 'ms'.\n");
+			// fprintf(file_logerr,"\nError. The option -F 1 is only compatible with -f 'ms'.\n");
+			log_error("Error. The option -F 1 is only compatible with -f 'ms'.");
 			exit(1);
 		}
         if(npops == 0) {
-            fprintf(file_logerr,"\nError. The option -N must be included.\n");
+            // fprintf(file_logerr,"\nError. The option -N must be included.\n");
+			log_error("Error. The option -N must be included.");
             exit(1);
         }
         if(window <=0 && formatfile == 3 && coordfile == 0) {
-            fprintf(file_logerr,"\nError. The option -w or -W must be included with option -f tfa.\n");
+            // fprintf(file_logerr,"\nError. The option -w or -W must be included with option -f tfa.\n");
+			log_error("Error. The option -w or -W must be included with option -f tfa.");
             exit(1);
         }
         if(slide == 0 && window > 0 && coordfile == 0)
             slide = window;
 		if(slide <= 0 && formatfile == 3 && coordfile == 0) {
-			fprintf(file_logerr,"\nError. The value at option -z (slide) must be larger than 0\n");
+			//fprintf(file_logerr,"\nError. The value at option -z (slide) must be larger than 0\n");
+			log_error("Error. The value at option -z (slide) must be larger than 0");
 			exit(1);
 		}
         if(first_slide < 0 && formatfile == 3) {
-            fprintf(file_logerr,"\nError. The value at option -Z (first slide) must be larger than or equal to 0.\n");
+            //fprintf(file_logerr,"\nError. The value at option -Z (first slide) must be larger than or equal to 0.\n");
+			log_error("Error. The value at option -Z (first slide) must be larger than or equal to 0.");
             exit(1);
         }
         /*
         if(length == 0 && formatfile == 1) {
-            fprintf(file_logerr,"\nError. length (-l option) must be defined with ms input file.\n");
+            // fprintf(file_logerr,"\nError. length (-l option) must be defined with ms input file.\n");
+			log_error("Error. length (-l option) must be defined with ms input file.");
             exit(1);
         }*/
         if(formatfile == 0 && niterdata > 1) {
-            fprintf(file_logerr,"\nError. The option -f fasta does not accept the option -r\n");
+            // fprintf(file_logerr,"\nError. The option -f fasta does not accept the option -r\n");
+			log_error("Error. The option -f fasta does not accept the option -r");
             exit(1);
         }
         if(include_unknown == 1)
             niter = 0;
 		
         if(strcmp(file_chr_name_all,"") == 0) {
-               fprintf(file_logerr,"\nError: the file name containing the scaffold(s) (option -n) must be defined\n");
+               //fprintf(file_logerr,"\nError: the file name containing the scaffold(s) (option -n) must be defined\n");
+			   log_error("Error: the file name containing the scaffold(s) (option -n) must be defined");
                exit(1);
         }
         /*
         if(file_Wcoord[0]!=0 && (slide > 0 && window>0)) {
-            fprintf(file_logerr,"\n the option -W (coordinates file) is incompatible with definitions of -w and -z ");
+            // fprintf(file_logerr,"\n the option -W (coordinates file) is incompatible with definitions of -w and -z ");
+			log_error("the option -W (coordinates file) is incompatible with definitions of -w and -z ");
             exit(1);
         }
         */
@@ -626,13 +651,15 @@ int main(int argc, const char * argv[])
 			file_input_gz.file_compressed = 0;
             if(formatfile == 3) {
                 /*tfa must be a file because it needs the index file*/
-                fprintf(file_logerr,"\nError: tfa format file needs indexation. \nstdout is not available using this option. \n");
+                //fprintf(file_logerr,"\nError: tfa format file needs indexation. \nstdout is not available using this option. \n");
+				log_error("Error: tfa format file needs indexation. \nstdout is not available using this option.");
                 exit(1);
             }
 		}
 		else {
 			if( (file_input = fzopen( file_in, "r", &file_input_gz)) == 0) {
-				fprintf(file_logerr,"\n It is not possible to open the input file %s.", file_in);
+				//fprintf(file_logerr,"\n It is not possible to open the input file %s.", file_in);
+				log_error("It is not possible to open the input file %s.", file_in);
 				exit(1);
 			}
             if(formatfile == 3) {/*tfasta file*/
@@ -641,7 +668,8 @@ int main(int argc, const char * argv[])
 		}
 		
 		if( (f = (char *)malloc((unsigned long)BUFSIZ*10)) == NULL ) {
-			fprintf(file_logerr,"\nError: memory not reallocated. main.4 \n");
+			//fprintf(file_logerr,"\nError: memory not reallocated. main.4 \n");
+			log_fatal("Error: memory not reallocated, main.4");
 			exit(1);
 		}
 		/* Definition of a File Stream Buffer, for buffered IO */
@@ -649,12 +677,14 @@ int main(int argc, const char * argv[])
 				
         /*separate all values of the list chr_name_all in chr_name_array: */
         if(read_index_file(file_chr_name_all,&nscaffolds,&chr_name_array,&chr_length_array)) {
-            printf("Error reading the scaffold names file %s\n",file_chr_name_all);
+            //printf("Error reading the scaffold names file %s\n",file_chr_name_all);
+			log_error("Error reading the scaffold names file %s\n",file_chr_name_all);
             exit(1);
         }
 
         if(formatfile != 3 && nscaffolds > 1) {
-            printf("Error: it only possible to read one scaffold with option -f fasta or -f ms.\n");
+            //printf("Error: it only possible to read one scaffold with option -f fasta or -f ms.\n");
+			log_error("Error: it only possible to read one scaffold with option -f fasta or -f ms.");
             exit(1);
         }
         if(length==0) {
@@ -703,7 +733,8 @@ int main(int argc, const char * argv[])
 			/* Al cargar los datos, -N, hemos rellenado el vector */
 			/* TODO: Check for errors in realloc */
 			if((vint_perpop_nsam = (int *)realloc( vint_perpop_nsam, (npops+1)*sizeof(int) )) == 0) {
-				fprintf(file_logerr,"Error allocating memory");
+				//fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, vint_perpop_nsam");
 				exit(1);
 			}
 			
@@ -724,7 +755,8 @@ int main(int argc, const char * argv[])
 			npf = npops - 1; /* TODO: Mirar de cambiar por npops - 1...*/
 						
 			if((file_H1freq = fopen(file_H1f, "r")) == 0) {
-				fprintf(file_logerr,"\n Error opening Alternative frequency spectrum file %s",file_H1f);
+				//fprintf(file_logerr,"\n Error opening Alternative frequency spectrum file %s",file_H1f);
+				log_error("Error opening Alternative frequency spectrum file %s",file_H1f);
 				exit(1);
 			}
 			
@@ -736,34 +768,40 @@ int main(int argc, const char * argv[])
 				 */
 				/* antes 1026 y 1024 */
 				if((cad = (char *) calloc( MSP_MAX_FILELINE_LEN, sizeof(char))) == 0) {
-					fprintf(file_logerr,"Error allocating memory");
+					//fprintf(file_logerr,"Error allocating memory");
+					log_fatal("Error allocating memory, cad");
 					exit(1);
 				}
 				
 				fgets( cad, MSP_MAX_FILELINE_LEN, file_H1freq); 
 			}
 			else {
-				fprintf(file_logerr,"\n Error reading Alternative frequency spectrum file %s", file_H1f);
+				//fprintf(file_logerr,"\n Error reading Alternative frequency spectrum file %s", file_H1f);
+				log_error("Error reading Alternative frequency spectrum file %s", file_H1f);
 				exit(1);
 			}
 
 			if((freqspH1 	= (double **)	calloc( (unsigned long)npf, sizeof(double *))) == 0) {
-				fprintf(file_logerr,"Error allocating memory");
+				//fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, freqspH1");
 				exit(1);
 			}
 			
 			if((freqspH0 	= (double **)	calloc( (unsigned long)npf, sizeof(double *))) == 0) {
-				fprintf(file_logerr,"Error allocating memory");
+				//fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, freqspH0");
 				exit(1);
 			}
 			
 			if((thetaH1 		= (double *)	calloc( (unsigned long)npf, sizeof(double))) == 0) {
-				fprintf(file_logerr,"Error allocating memory");
+				//fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, thetaH1");
 				exit(1);
 			}
 			
 			if((thetaH0 		= (double *)	calloc( (unsigned long)npf, sizeof(double))) == 0) {
-				fprintf(file_logerr,"Error allocating memory");
+				//fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, thetaH0");
 				exit(1);
 			}
 			
@@ -771,12 +809,14 @@ int main(int argc, const char * argv[])
 			for(x=0;x<npf;x++) 
 			{
 				if((freqspH1[x] = (double *) calloc((unsigned long)vint_perpop_nsam[x], sizeof(double))) == 0) {
-					fprintf(file_logerr,"Error allocating memory");
+					//fprintf(file_logerr,"Error allocating memory");
+					log_fatal("Error allocating memory, freqspH1[x]");
 					exit(1);
 				}
 				
 				if((freqspH0[x] = (double *) calloc((unsigned long)vint_perpop_nsam[x], sizeof(double))) == 0) {
-					fprintf(file_logerr,"Error allocating memory");
+					//fprintf(file_logerr,"Error allocating memory");
+					log_fatal("Error allocating memory, freqspH0[x]");
 					exit(1);
 				}
 					
@@ -786,7 +826,8 @@ int main(int argc, const char * argv[])
 					cad1 = cad;	/* TODO: REVISAR, copiando punteros! */
 				}
 				else {
-					fprintf(file_logerr,"\n  Error reading Alternative frequency spectrum file %s, line %d",file_H1f,x+2);
+					//fprintf(file_logerr,"\n  Error reading Alternative frequency spectrum file %s, line %d",file_H1f,x+2);
+					log_error("Error reading Alternative frequency spectrum file %s, line %d",file_H1f,x+2);
 					exit(1);
 				}
 				
@@ -817,19 +858,22 @@ int main(int argc, const char * argv[])
 		if(H0frq == 1 && H1frq == 1) 
 		{
 			if((file_H0freq = fopen(file_H0f,"r")) == 0) {
-				fprintf(file_logerr,"\n Error opening NULL frequency spectrum file %s",file_H0f);
+				//fprintf(file_logerr,"\n Error opening NULL frequency spectrum file %s",file_H0f);
+				log_error("Error opening NULL frequency spectrum file %s",file_H0f);
 				exit(1);
 			}
 			if(!feof(file_H0freq)) {
 				if((cad = (char *)calloc(1026,sizeof(char))) == 0) {
-					fprintf(file_logerr,"Error allocating memory");
+					//fprintf(file_logerr,"Error allocating memory");
+					log_fatal("Error allocating memory, cad");
 					exit(1);
 				}
 				
 				fgets(cad,1024,file_H1freq);
 			}
 			else {
-				fprintf(file_logerr,"\n Error reading NULL frequency spectrum file %s",file_H0f);
+				//fprintf(file_logerr,"\n Error reading NULL frequency spectrum file %s",file_H0f);
+				log_error("Error reading NULL frequency spectrum file %s",file_H0f);
 				exit(1);
 			}
 			
@@ -841,7 +885,8 @@ int main(int argc, const char * argv[])
 					cad1 = cad;
 				}
 				else {
-					fprintf(file_logerr,"\n  Error reading NULL frequency spectrum file %s, line %d",file_H0f,x+2);
+					//fprintf(file_logerr,"\n  Error reading NULL frequency spectrum file %s, line %d",file_H0f,x+2);
+					log_error("Error reading NULL frequency spectrum file %s, line %d",file_H0f,x+2);
 					exit(1);
 				}
 				for(y=1;y<vint_perpop_nsam[x];y++) {
@@ -1092,20 +1137,23 @@ int main(int argc, const char * argv[])
 				/* Con control de errores, comprobar que es correcto (IUPAC,etc) */
 			}
 			else {
-					fprintf(file_logerr," %s: Unknown code, sorry", code_name);
+					//fprintf(file_logerr," %s: Unknown code, sorry", code_name);
+					log_error(" %s: Unknown code, sorry", code_name);
 					exit(1);
 			}	
 		}
 		
 		/*ordering data: in case O is not a flag included*/
 		if(int_total_nsam_order > 0 && int_total_nsam_order+!outgroup_presence != int_total_nsam) {
-			fprintf(file_logerr,"Error: the number of samples defined in -N and -O are different");
+			//fprintf(file_logerr,"Error: the number of samples defined in -N and -O are different");
+			log_error("Error: the number of samples defined in -N and -O are different");
 			exit(1);
 		}
 		if(int_total_nsam_order == 0) {
 			int_total_nsam_order = int_total_nsam-!outgroup_presence;
 			if((sort_nsam = (int *) calloc( (unsigned long)int_total_nsam, sizeof(int) )) == 0) {
-				fprintf(file_logerr,"Error allocating memory");
+				//fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, sort_nsam");
 				exit(1);
 			}
 			for( sort_index = 0; sort_index < int_total_nsam; sort_index++ ) {
@@ -1130,8 +1178,9 @@ int main(int argc, const char * argv[])
 		}
 	}
 	else {
+		// No arguments given, print help and exit with error
 		usage();
-		exit(0);
+		exit(1);
 	}
 		
 	/* STEP 3: And finally, some calculations ---------------------------------*/
@@ -1139,60 +1188,74 @@ int main(int argc, const char * argv[])
 
 	/*alloc memory for lengths of populations*/
 	if((nsites1_pop 		= (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, nsites1_pop");
 		exit(1);
 	}
 	if((nsites2_pop 	= (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, nsites2_pop");
 		exit(1);
 	}
 	if((nsites3_pop 	= (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, nsites3_pop");
 		exit(1);
 	}
 	if((nsites1_pop_outg = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, nsites1_pop_outg");
 		exit(1);
 	}
 	if((nsites2_pop_outg = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, nsites2_pop_outg");
 		exit(1);
 	}
 	if((nsites3_pop_outg = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");	
+		log_fatal("Error allocating memory, nsites3_pop_outg");
 		exit(1);
 	}
 	if((anx = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, anx");
 		exit(1);
 	}
 	if((bnx = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, bnx");
 		exit(1);
 	}
 	if((anxo = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, anxo");
 		exit(1);
 	}
 	if((bnxo = (double *)	calloc( (unsigned long)npops, sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, bnxo");
 		exit(1);
 	}
     if((lengthamng = (double **)	calloc( (unsigned long)npops, sizeof(double *))) == 0) {
-        fprintf(file_logerr,"Error allocating memory");
+        //fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, lengthamng");
         exit(1);
     }
     if((lengthamng_outg = (double **)	calloc( (unsigned long)npops, sizeof(double *))) == 0) {
-        fprintf(file_logerr,"Error allocating memory");
+        //fprintf(file_logerr,"Error allocating memory");
+				log_fatal("Error allocating memory, lengthamng_outg");
         exit(1);
     }
     for(x=0;x<npops;x++) {
         if((lengthamng[x] = (double *) calloc( (unsigned long)npops, sizeof(double))) == 0) {
-            fprintf(file_logerr,"Error allocating memory");
+            //fprintf(file_logerr,"Error allocating memory");
+						log_fatal("Error allocating memory, lengthamng[x]");
             exit(1);
         }
         if((lengthamng_outg[x] = (double *) calloc( (unsigned long)npops, sizeof(double))) == 0) {
-            fprintf(file_logerr,"Error allocating memory");
+            //fprintf(file_logerr,"Error allocating memory");
+						log_fatal("Error allocating memory, lengthamng_outg[x]");
             exit(1);
         }
     }
@@ -1220,7 +1283,8 @@ int main(int argc, const char * argv[])
             strcat(file_mas,"_MASK.txt");
 			
             if((file_mask = fopen(file_mas,"w")) == 0) {
-				fprintf(file_logerr,"Error in mask file %s.",file_out);
+				//fprintf(file_logerr,"Error in mask file %s.",file_out);
+				log_error("Error in mask file %s.",file_out);
 				exit(1);
 			}			
 			/*file_mask = stderr;*/ /* TODO: My GOD!!!! */
@@ -1250,7 +1314,8 @@ int main(int argc, const char * argv[])
             strcat(file_mas,"_MASK.txt");
 
             if((file_mask = fopen(file_mas,"w")) == 0) {
-				fprintf(file_logerr,"Error in mask file %s.",file_out);
+				//fprintf(file_logerr,"Error in mask file %s.",file_out);
+				log_error("Error in mask file %s.",file_out);
 				exit(1);
 			}
 		}
@@ -1274,61 +1339,70 @@ int main(int argc, const char * argv[])
 	/* TODO: Fix error checking */
 	statistics = 0;
 	if((statistics = (struct stats *)calloc(1,sizeof(struct stats))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, statistics");
 		exit(1);
 	}
 	/* length of each sequence, excluding non-tcga */
 	if((sum_sam = 	(double *) calloc(int_total_nsam+(!outgroup_presence), sizeof(double))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, sum_sam");
 		exit(1);
 	}
 	/*tcga content for each sample*/
 	if((tcga = (double **) calloc(int_total_nsam+(!outgroup_presence), sizeof(double *))) == 0) {
-		fprintf(file_logerr,"Error allocating memory");
+		//fprintf(file_logerr,"Error allocating memory");
+		log_fatal("Error allocating memory, tcga");
 		exit(1);
 	}
 	for( x=0; x<int_total_nsam+(!outgroup_presence); x++) 
 	{
 		if((tcga[x] = (double *) calloc(4,sizeof(double ))) == 0) { /*tcga content*/
-			fprintf(file_logerr,"Error allocating memory");
+			//fprintf(file_logerr,"Error allocating memory");
+			log_fatal("Error allocating memory, tcga[x]");
 			exit(1);
 		}
 	}
 
 	/******** READ FASTA DATA AND WRITE FILE_MASK *************/
-	if( formatfile == 0 ) 
+	if (formatfile == 0)
 	{
 		/*data from fasta*/
-        chr_name = chr_name_array[0];
-        if(length == 0) length = atol(chr_length_array[0]);
-        first = 0;
-        
-		if (get_obsdata(file_output,&file_output_gz,
-				        file_input, &file_input_gz,
-                        file_logerr,&file_logerr_gz,
+		chr_name = chr_name_array[0];
+		if (length == 0)
+			length = atol(chr_length_array[0]);
+		first = 0;
+
+		if (get_obsdata(
+						file_output,
+						&file_output_gz,
+						file_input, &file_input_gz,
+						// file_logerr,&file_logerr_gz,
 						file_mask,
 						file_GFF, gfffiles,
 						subset_positions, genetic_code, &matrix_pol, &matrix_freq,
 						&matrix_pos, &length, &length_seg, &length_al,
 						&length_al_real, argc, ploidy, vint_perpop_nsam,
 						npops, &svratio, &missratio, include_unknown,
-						sum_sam,tcga, &matrix_sv, &nmhits, output,
-						outgroup_presence, criteria_transcript,nsites1_pop,nsites1_pop_outg,
-						nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,
-						anx,bnx,anxo,bnxo,lengthamng,lengthamng_outg,
-						sort_nsam,&matrix_pol_tcga,chr_name,first) == 0)
+						sum_sam, tcga, &matrix_sv, &nmhits, output,
+						outgroup_presence, criteria_transcript, nsites1_pop, nsites1_pop_outg,
+						nsites2_pop, nsites2_pop_outg, nsites3_pop, nsites3_pop_outg,
+						anx, bnx, anxo, bnxo, lengthamng, lengthamng_outg,
+						sort_nsam, &matrix_pol_tcga, chr_name, first) == 0)
 		{
-			fprintf(file_logerr,"Error processing input data.\n");
+			//fprintf(file_logerr, "Error processing input data.\n");
+			log_error("Error processing input data.");
 			exit(1);
 		}
-		
+
 		fzclose(file_input, &file_input_gz);
-		if(file_mask) fclose(file_mask);
+		if (file_mask)
+			fclose(file_mask);
 
 		niterdata = 1;
 	}
-	
-    /*DEFINE PARAMETERS FOR MS MASK FILE AND READ DATA IF DEFINED*/
+
+		/*DEFINE PARAMETERS FOR MS MASK FILE AND READ DATA IF DEFINED*/
 	if( formatfile == 1 || formatfile == 2 )  
 	{	/* MASK FILE MS FORMAT => Ponerlo en una funcion */
 		niter = 0; /*permutation tests invalidated*/
@@ -1337,12 +1411,14 @@ int main(int argc, const char * argv[])
         length_al = length_al_real;
 	
 		if((vector_mask  = (float *)calloc((unsigned int)length,sizeof(float))) == 0) {
-			fprintf(file_logerr,"Error allocating memory");
+			//fprintf(file_logerr,"Error allocating memory");
+			log_fatal("Error allocating memory, vector_mask");
 			exit(1);
 		}
 		
 		if((matrix_mask = (int *)calloc((unsigned int)(int_total_nsam+1)*length,sizeof(int))) == 0) {
-			fprintf(file_logerr,"Error allocating memory");
+			//fprintf(file_logerr,"Error allocating memory");
+			log_fatal("Error allocating memory, matrix_mask");
 			exit(1);
 		}
 		
@@ -1363,7 +1439,8 @@ int main(int argc, const char * argv[])
 		if(file_mas[0] != '-') /*file_mask defined*/
         {
 			if((file_mask = fopen (file_mas,"r")) == 0) {
-				fprintf(file_logerr,"\n  It is not possible to open the input mask file %s.",file_mas);
+				//fprintf(file_logerr,"\n  It is not possible to open the input mask file %s.",file_mas);
+				log_error("It is not possible to open the input mask file %s.",file_mas);
 				exit(1);
 			}
 			li=0;n=0;vli=0;
@@ -1394,7 +1471,8 @@ int main(int argc, const char * argv[])
 				}
 				if(*c == 10 || *c == 13 || li > length) {
 					if(li > length) {
-						fprintf(file_logerr,"\n  Error: Length of rows in mask file %s are longer than defined (row %ld is %ld > %ld). ",file_mas, n, li, length);
+						//fprintf(file_logerr,"\n  Error: Length of rows in mask file %s are longer than defined (row %ld is %ld > %ld). ",file_mas, n, li, length);
+						log_error("Error: Length of rows in mask file %s are longer than defined (row %ld is %ld > %ld). ",file_mas, n, li, length);
 						exit(1);
 					}
 					n++;
@@ -1413,7 +1491,8 @@ int main(int argc, const char * argv[])
 		/*}*/
 			/*if(include_unknown) {*/
 				if((sum_sam_mask = (double *)calloc(int_total_nsam,sizeof(double))) == 0) {
-					fprintf(file_logerr,"Error allocating memory");
+					//fprintf(file_logerr,"Error allocating memory");
+					log_fatal("Error allocating memory, sum_sam_mask");
 					exit(1);
 				}
             /*}*/
@@ -1481,359 +1560,433 @@ int main(int argc, const char * argv[])
 	/*calloc pointers in struct*/
 
 	if((statistics[0].Sanc = (long int *)calloc(4*npops,sizeof(long int))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Sanc");
 		exit(1);
 	}
 	if((statistics[0].piw  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].piw");
 		exit(1);
 	}
 	
 	if((statistics[0].pia  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].pia");
 		exit(1);
 	}
 	if((statistics[0].piT  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].piT");
 		exit(1);
 	}
 	
 	if((statistics[0].piant  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].piant");
 		exit(1);
 	}
 	if((statistics[0].piTnt  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].piTnt");
 		exit(1);
 	}
 	
 	if((statistics[0].fst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].fst");
 		exit(1);
 	}
 	
     if((statistics[0].piwHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-        fprintf(file_logerr,"\n  Error allocating memory.");
+        //fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].piwHKY");
         exit(1);
     }
 	if((statistics[0].piaHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].piaHKY");
 		exit(1);
 	}
 	if((statistics[0].piTHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].piTHKY");
 		exit(1);
 	}
 	
 	if((statistics[0].fstHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].fstHKY");
 		exit(1);
 	}
 	
 	if((statistics[0].fst1all  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].fst1all");
 		exit(1);
 	}
 	
 	if((statistics[0].hapw = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].hapw");
 		exit(1);
 	}
 	
 	if((statistics[0].hapa = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].hapa");
 		exit(1);
 	}
 	
 	if((statistics[0].hapT = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].hapT");
 		exit(1);
 	}
 	
 	if((statistics[0].fsth = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].fsth");
 		exit(1);
 	}
 	
 	if((statistics[0].fsth1all = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].fsth1all");
 		exit(1);
 	}
 	
 	if((statistics[0].Gst = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Gst");
 		exit(1);
 	}
 	
 
 	if((statistics[0].S  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].S");
 		exit(1);
 	}
 	
 	if((statistics[0].So  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].So");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaS  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaS");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaSo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaSo");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaT  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaT");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaTo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaTo");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaTHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaTHKY");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaFL  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaFL");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaFW  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaFW");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaL  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaL");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaSA  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaSA");
 		exit(1);
 	}
 	
 	if((statistics[0].thetaTA  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].thetaTA");
 		exit(1);
 	}
 	
 	if((statistics[0].K     = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		// fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].K");
 		exit(1);
 	}
 	
 	if((statistics[0].KHKY    = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].KHKY");
 		exit(1);
 	}
 	
 	if((statistics[0].Dtaj  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Dtaj");
 		exit(1);
 	}
 	
 	if((statistics[0].Dfl  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Dfl");
 		exit(1);
 	}
 	
 	if((statistics[0].Ffl  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Ffl");
 		exit(1);
 	}
 	
 	if((statistics[0].Hnfw  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Hnfw");
 		exit(1);
 	}
 	
 	if((statistics[0].Ez  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Ez");
 		exit(1);
 	}
 	
-    if((statistics[0].Yach  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-        fprintf(file_logerr,"\n  Error allocating memory.");
+  if((statistics[0].Yach  = (double *)calloc(1*npops,sizeof(double))) == 0) {
+        //fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].Yach");
         exit(1);
     }
     if((statistics[0].FH  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-        fprintf(file_logerr,"\n  Error allocating memory.");
+        //fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].FH");
         exit(1);
     }
 	
 	if((statistics[0].R2  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].R2");
 		exit(1);
 	}
 	
 	if((statistics[0].Fs  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Fs");
 		exit(1);
 	}
 	
 	if((statistics[0].nhpop = (int *)calloc(1*npops,sizeof(int))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].nhpop");
 		exit(1);
 	}
 	
 	if((statistics[0].length = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].length");
 		exit(1);
 	}
 	if((statistics[0].length2 = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].length2");
 		exit(1);
 	}
     if((statistics[0].lengthamng  = (double **)calloc(npops,sizeof(double *))) == 0) {
-        fprintf(file_logerr,"\n  Error allocating memory.");
+        //fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].lengthamng");
         exit(1);
     }
     if((statistics[0].lengthamng_outg  = (double **)calloc(npops,sizeof(double *))) == 0) {
-        fprintf(file_logerr,"\n  Error allocating memory.");
+        //fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].lengthamng_outg");
         exit(1);
     }
 	for(x=0;x<npops;x++) {
         if((statistics[0].lengthamng[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-            fprintf(file_logerr,"\n  Error allocating memory.");
+            //fprintf(file_logerr,"\n  Error allocating memory.");
+						log_fatal("Error allocating memory, statistics[0].lengthamng[x]");
             exit(1);
         }
         if((statistics[0].lengthamng_outg[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-            fprintf(file_logerr,"\n  Error allocating memory.");
+            //fprintf(file_logerr,"\n  Error allocating memory.");
+						log_fatal("Error allocating memory, statistics[0].lengthamng_outg[x]");
             exit(1);
         }
 	}
 	if((statistics[0].total_tcga = (double *)calloc(4,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].total_tcga");
 		exit(1);
 	}
 	
 	if((statistics[0].tcga = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].tcga");
 		exit(1);
 	}
 	
 	if((statistics[0].sv = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].sv");
 		exit(1);
 	}
 	if((statistics[0].svT = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].svT");
 		exit(1);
 	}
 	
 	if((statistics[0].freq   = (long int **)calloc(1*npops,sizeof(long int *))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].freq");
 		exit(1);
 	}
 	
 	if((statistics[0].freqh  = (long int **)calloc(1*npops,sizeof(long int *))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].freqh");
 		exit(1);
 	}
 	
 	if((statistics[0].ToH0_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].ToH0_ii");
 		exit(1);
 	}
 	
 	if((statistics[0].To_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].To_ii");
 		exit(1);
 	}
 	
 	if((statistics[0].To_00  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].To_00");
 		exit(1);
 	}
 	
 	if((statistics[0].To_i0  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].To_i0");
 		exit(1);
 	}
 	
 	if((statistics[0].ToH0_00  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].ToH0_00");
 		exit(1);
 	}
 	
 	if((statistics[0].To_Qc_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].To_Qc_ii");
 		exit(1);
 	}
 	
 	if((statistics[0].To_Qw_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].To_Qw_ii");
 		exit(1);
 	}
 	
 	if((statistics[0].To_Lc_ii  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].To_Lc_ii");
 		exit(1);
 	}
 	
 	
 	if((statistics[0].Rm  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].Rm");
 		exit(1);
 	}
 	
 	if((statistics[0].ZnA  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].ZnA");
 		exit(1);
 	}
 	
 
 	if((statistics[0].mdsd  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].mdsd");
 		exit(1);
 	}
 	
 	if((statistics[0].mdg1  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].mdg1");
 		exit(1);
 	}
 	
 	if((statistics[0].mdg2  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].mdg2");
 		exit(1);
 	}
 	if((statistics[0].anx  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].anx");
 		exit(1);
 	}
 	if((statistics[0].bnx  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].bnx");
 		exit(1);
 	}
 	if((statistics[0].anxo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].anxo");
 		exit(1);
 	}
 	if((statistics[0].bnxo  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].bnxo");
 		exit(1);
 	}
 	if((statistics[0].mdw   = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].mdw");
 		exit(1);
 	}
 	
 
 	if((statistics[0].linefreq   = (double **)calloc(int_total_nsam,sizeof(double *))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].linefreq");
 		exit(1);
 	}
     if((statistics[0].popfreq   = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-        fprintf(file_logerr,"\n  Error allocating memory.");
+        //fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].popfreq");
         exit(1);
     }
 
@@ -1847,52 +2000,62 @@ int main(int argc, const char * argv[])
 	
 	for(x=0;x<npops;x++) {
 		if((statistics[0].tcga [x]   = (double *)calloc(4,sizeof(double))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			//fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].tcga");
 			exit(1);
 		}
 		
 		if((statistics[0].freq [x]   = (long int *)calloc(vint_perpop_nsam[x],sizeof(long int))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			//fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].freq");
 			exit(1);
 		}
 		
 		if((statistics[0].freqh[x]   = (long int *)calloc(int_total_nsam,sizeof(long int))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			//fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].freqh");
 			exit(1);
 		}
 		
 		if((statistics[0].sv[x]      = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			//fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].sv");
 			exit(1);
 		}
 		if((statistics[0].svT[x]      = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			//fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].svT");
 			exit(1);
 		}
 		
 		if((statistics[0].mdw[x]     = (double *)calloc((vint_perpop_nsam[x]*(vint_perpop_nsam[x]-1))/2,sizeof(double))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			//fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].mdw");
 			exit(1);
 		}
 		
 		for(y=0;y<npops;y++) {
 			if((statistics[0].sv[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-				fprintf(file_logerr,"\n  Error allocating memory.");
+				//fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].sv");
 				exit(1);
 			}
 			if((statistics[0].svT[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-				fprintf(file_logerr,"\n  Error allocating memory.");
+				//fprintf(file_logerr,"\n  Error allocating memory.");
+				log_fatal("Error allocating memory, statistics[0].svT");
 				exit(1);
 			}
             if((statistics[0].popfreq[x]= (double *)calloc(int_total_nsam+1,sizeof(double))) == 0) {
-                fprintf(file_logerr,"\n  Error allocating memory.");
+                //fprintf(file_logerr,"\n  Error allocating memory.");
+								log_fatal("Error allocating memory, statistics[0].popfreq");
                 exit(1);
             }
 		}
 	}
 	for(x=0;x<int_total_nsam;x++) {
 		if((statistics[0].linefreq[x]= (double *)calloc(int_total_nsam+1,sizeof(double))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			//fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].linefreq");
 			exit(1);
 		}
 		
@@ -1900,7 +2063,8 @@ int main(int argc, const char * argv[])
 	/*in case r2i_ploidies is undefined*/
 	if(r2i_ploidies == 0) {
 		if( (r2i_ploidies = (int *)calloc(2,sizeof(int)))== 0) {
-			fprintf(file_logerr,"\nError: memory not reallocated. mstatspop.c.00 \n");
+			//fprintf(file_logerr,"\nError: memory not reallocated. mstatspop.c.00 \n");
+			log_fatal("Error: memory not reallocated, r2i_ploidies mstatspop.c.00 \n");
 			exit(1);
 		}
 		r2i_ploidies[0] = 1;
@@ -1909,12 +2073,14 @@ int main(int argc, const char * argv[])
 	}
 	/*allocate R2p*/
 	if((statistics[0].R2p= (double **)calloc(r2i_ploidies[0],sizeof(double *))) == 0) {
-		fprintf(file_logerr,"\n  Error allocating memory.");
+		//fprintf(file_logerr,"\n  Error allocating memory.");
+		log_fatal("Error allocating memory, statistics[0].R2p");
 		exit(1);
 	}
 	for(x=0;x<r2i_ploidies[0];x++) {
 		if((statistics[0].R2p[x]= (double *)calloc(1*npops,sizeof(double))) == 0) {
-			fprintf(file_logerr,"\n  Error allocating memory.");
+			// fprintf(file_logerr,"\n  Error allocating memory.");
+			log_fatal("Error allocating memory, statistics[0].R2p");
 			exit(1);
 		}
 	}
@@ -1929,10 +2095,21 @@ int main(int argc, const char * argv[])
             /*read the file for weigth for positions, if included*/
             if( file_Wcoord[0] != '\0') {
                 if( (file_wcoor = fzopen( file_Wcoord, "r", &file_wcoor_gz)) == 0) {
-                    fprintf(file_logerr,"\n It is not possible to open the coordinates file %s\n", file_Wcoord);
+                    //fprintf(file_logerr,"\n It is not possible to open the coordinates file %s\n", file_Wcoord);
+										log_fatal("It is not possible to open the coordinates file %s\n", file_Wcoord);
                     exit(1);
                 }
-                if(read_coordinates(file_wcoor,&file_wcoor_gz,file_output,&file_output_gz,file_logerr,&file_logerr_gz,&wgenes, &nwindows,chr_name) == 0) {
+                if(
+										read_coordinates(
+											file_wcoor,
+											&file_wcoor_gz,
+											file_output,
+											&file_output_gz,
+											// file_logerr,
+											// &file_logerr_gz,
+											&wgenes, 
+											&nwindows,
+											chr_name) == 0) {
                     exit(1);
                 }
                 window = -1;
@@ -1941,7 +2118,8 @@ int main(int argc, const char * argv[])
             }
             if( file_wps[0] != '\0' && first == 0) {
                 if( (file_ws = fzopen( file_wps, "r", &file_ws_gz)) == 0) {
-                    fprintf(file_logerr,"\n It is not possible to open the weights file %s\n", file_wps);
+                    //fprintf(file_logerr,"\n It is not possible to open the weights file %s\n", file_wps);
+										log_fatal("It is not possible to open the weights file %s\n", file_wps);
                     exit(1);
                 }
                 load_index_from_file(file_ws_gz.index_file_name, &index_w);
@@ -1958,7 +2136,9 @@ int main(int argc, const char * argv[])
             if(formatfile == 1 || formatfile == 2) 
             {
                 /*read ms file*/
-                if(get_msdata( file_input,&file_input_gz,file_logerr,&file_logerr_gz,
+                if(get_msdata(
+										file_input,&file_input_gz,
+													// file_logerr,&file_logerr_gz,
                                     &matrix_pol,&matrix_freq,&matrix_pos,
                                     &length_seg,vint_perpop_nsam,npops,int_total_nsam,
                                     length,&nmhits,matrix_mask,vector_mask,ms_svratio,
@@ -1968,7 +2148,8 @@ int main(int argc, const char * argv[])
                                     nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,anx,bnx,anxo,bnxo,lengthamng,lengthamng_outg,
                                     include_unknown,file_mas,freq_missing_ms,kind_length,
                                     &sum_sam_mask,&length_mask,&length_mask_real,&missratio,location_missing_ms,sort_nsam)) {
-                    fprintf(file_logerr,"\nError processing ms data.\n");
+                    //fprintf(file_logerr,"\nError processing ms data.\n");
+										log_fatal("Error processing ms data.\n");
                     exit(1);
                 }
                 /*
@@ -2038,7 +2219,7 @@ int main(int argc, const char * argv[])
                 if( get_tfadata(file_output,&file_output_gz,
                                 file_input,&file_input_gz,&index_input,
                                 file_wps,file_ws,&file_ws_gz,&index_w,
-                                file_logerr,&file_logerr_gz,
+                                //file_logerr,&file_logerr_gz,
                                 &matrix_pol,&matrix_freq,
                                 &matrix_pos,&length,&length_seg,&length_al, 
                                 &length_al_real,argc,vint_perpop_nsam,npops, 
@@ -2138,37 +2319,44 @@ int main(int argc, const char * argv[])
             /*calculate statistics ------------------------------------------------ */
             if( calc_sxsfss( npops,vint_perpop_nsam,matrix_pol,matrix_pos,
                                     length_seg,statistics,sites_matrix,outgroup_presence,force_outgroup) == 0) {
-                fprintf(file_logerr,"\nError in calc_sxsfss function.1.\n");
+                //fprintf(file_logerr,"\nError in calc_sxsfss function.1.\n");
+								log_error("Error in calc_sxsfss function.1.");
                 exit(1);
             }
             if( jointfreqdist(npops,vint_perpop_nsam,matrix_pol,matrix_pos,
                                     length_seg,statistics,sites_matrix,jfd,nfd,outgroup_presence,force_outgroup) == 0) {
-                fprintf(file_logerr,"\nError in jointfreqdist function.1.\n");
+                //fprintf(file_logerr,"\nError in jointfreqdist function.1.\n");
+								log_error("Error in jointfreqdist function.1.");
                 exit(1);
             }
             if( calc_piwpiafst(flaghky,formatfile,npops,vint_perpop_nsam,
                                         matrix_pol,length_seg,statistics,matrix_sv,outgroup_presence,force_outgroup) == 0) {
-                fprintf(file_logerr,"\nError in calc_piwpiafst function.1.\n");
+                // fprintf(file_logerr,"\nError in calc_piwpiafst function.1.\n");
+								log_error("Error in calc_piwpiafst function.1.");
                 exit(1);
             }
             if( calc_freqstats(npops,vint_perpop_nsam,matrix_pol,length_seg,
                                         statistics,outgroup_presence,force_outgroup,include_unknown,n_ccov,H1frq) == 0) {
-                fprintf(file_logerr,"\nError in freqstats function.1.\n");
+                //fprintf(file_logerr,"\nError in freqstats function.1.\n");
+								log_error("Error in freqstats function.1.");
                 exit(1);
             }
             if(H1frq && include_unknown == 0) 
             {
                 if(calc_Toptimal_tests(npops,vint_perpop_nsam,statistics) == 0) {
-                    fprintf(file_logerr,"\nError in calc_Toptimal_tests function.1.\n");
+                    //fprintf(file_logerr,"\nError in calc_Toptimal_tests function.1.\n");
+										log_error("Error in calc_Toptimal_tests function.1.");
                     exit(1);
                 }
             }
             if(calcR2(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy)==0) {
-                fprintf(file_logerr,"\nError in calc_R2 function.1.\n");
+                //fprintf(file_logerr,"\nError in calc_R2 function.1.\n");
+								log_error("Error in calc_R2 function.1.");
                 exit(1);
             }	
             if(calcR2p(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,sum_sam,r2i_ploidies,outgroup_presence+force_outgroup)==0) {
-                fprintf(file_logerr,"\nError in calc_R2 function.1.\n");
+                //fprintf(file_logerr,"\nError in calc_R2 function.1.\n");
+								log_error("Error in calc_R2 function.1.");
                 exit(1);
             }
             
@@ -2176,18 +2364,21 @@ int main(int argc, const char * argv[])
             if(int_total_nsam < SAMPLE_LARGE) {
                 /*if(include_unknown==0) {*/
                 if(calc_mismatch(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics,ploidy,outgroup_presence+force_outgroup) == 0) {
-                    fprintf(file_logerr,"\nError in calc_mismatch function.1.\n");
+                    //fprintf(file_logerr,"\nError in calc_mismatch function.1.\n");
+										log_error("Error in calc_mismatch function.1.");
                     exit(1);
                 }
                 /*}*/
                 if(include_unknown == 0 &&  ploidy[0] == '1')
                     {
                     if(calc_hwhafsth(npops,vint_perpop_nsam,matrix_pol,length_seg,statistics) == 0) {
-                        fprintf(file_logerr,"\nError in calc_hwhafsth function.1.\n");
+                        //fprintf(file_logerr,"\nError in calc_hwhafsth function.1.\n");
+												log_error("Error in calc_hwhafsth function.1.");
                         exit(1);
                     }
                     if(calcFs(npops,vint_perpop_nsam,statistics)==0) { /*need calc_freqstats and calc_hwhafsth to be calculated*/
-                        fprintf(file_logerr,"\nError in calc_Fs function.1.\n");
+                        //fprintf(file_logerr,"\nError in calc_Fs function.1.\n");
+												log_error("Error in calc_Fs function.1.");
                         exit(1);
                     }
                 }
@@ -2209,182 +2400,220 @@ int main(int argc, const char * argv[])
             {			
                 /*calloc pointers in structs for permutation test*/
                 if((stats_iter = (struct stats *)calloc(1,sizeof(struct stats))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter");
                     exit(1);
                 }
 
                 if((stats_iter[0].piw  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].piw");
                     exit(1);
                 }
                 
                 if((stats_iter[0].pia  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].pia");
                     exit(1);
                 }
                 if((stats_iter[0].piT  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].piT");
                     exit(1);
                 }
                 
                 if((stats_iter[0].piant  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].piant");
                     exit(1);
                 }
                 if((stats_iter[0].piTnt  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].piTnt");
                     exit(1);
                 }
                 
                 if((stats_iter[0].fst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].fst");
                     exit(1);
                 }
                 
                 if((stats_iter[0].piwHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].piwHKY");
                     exit(1);
                 }
                 if((stats_iter[0].thetaTHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].thetaTHKY");
                     exit(1);
                 }
                 
                 if((stats_iter[0].piaHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].piaHKY");
                     exit(1);
                 }
                 if((stats_iter[0].piTHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].piTHKY");
                     exit(1);
                 }
                 
                 if((stats_iter[0].fstHKY  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].fstHKY");
                     exit(1);
                 }
                 
                 if((stats_iter[0].fst1all  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].fst1all");
                     exit(1);
                 }
                 
                 if((stats_iter[0].hapw = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].hapw");
                     exit(1);
                 }
                 
                 if((stats_iter[0].hapa = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].hapa");
                     exit(1);
                 }
                 
                 if((stats_iter[0].hapT = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].hapT");
                     exit(1);
                 }
                 
                 if((stats_iter[0].fsth = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].fsth");
                     exit(1);
                 }
                 
                 if((stats_iter[0].fsth1all = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].fsth1all");
                     exit(1);
                 }
                 
                 if((stats_iter[0].Gst  = (double *)calloc((npops*(npops-0))/2,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].Gst");
                     exit(1);
                 }
                 
                 if((stats_iter[0].K  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].K");
                     exit(1);
                 }
                 
                 if((stats_iter[0].KHKY  = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].KHKY");
                     exit(1);
                 }
                 
                 stats_iter[0].freq  = 0;
                 if((stats_iter[0].sv = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].sv");
                     exit(1);
                 }
                 if((stats_iter[0].svT = (double ***)calloc(1*npops,sizeof(double **))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].svT");
                     exit(1);
                 }
                 
                 if((stats_iter[0].nhpop  = (int *)calloc(1*npops,sizeof(int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].nhpop");
                     exit(1);
                 }
                 
                 if((stats_iter[0].freqh  = (long int **)calloc(1*npops,sizeof(long int *))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].freqh");
                     exit(1);
                 }
                 
                 if((stats_iter[0].tcga  = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].tcga");
                     exit(1);
                 }
                 
                 if((stats_iter[0].length = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].length");
                     exit(1);
                 }
                 if((stats_iter[0].length2 = (double *)calloc(1*npops,sizeof(double))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].length2");
                     exit(1);
                 }
                 if((stats_iter[0].lengthamng  = (double **)calloc(npops,sizeof(double *))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].lengthamng");
                     exit(1);
                 }
                 if((stats_iter[0].lengthamng_outg  = (double **)calloc(npops,sizeof(double *))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, stats_iter[0].lengthamng_outg");
                     exit(1);
                 }
                 for(x=0;x<npops;x++) {
                     if((stats_iter[0].lengthamng[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-                        fprintf(file_logerr,"\n  Error allocating memory.");
+                        //fprintf(file_logerr,"\n  Error allocating memory.");
+												log_fatal("Error allocating memory, stats_iter[0].lengthamng");
                         exit(1);
                     }
                     if((stats_iter[0].lengthamng_outg[x]  = (double *)calloc(npops,sizeof(double))) == 0) {
-                        fprintf(file_logerr,"\n  Error allocating memory.");
+                        //fprintf(file_logerr,"\n  Error allocating memory.");
+												log_fatal("Error allocating memory, stats_iter[0].lengthamng_outg");
                         exit(1);
                     }
                     if((stats_iter[0].tcga [x]  = (double *)calloc(4,sizeof(double))) == 0) {
-                        fprintf(file_logerr,"\n  Error allocating memory.");
+                        //fprintf(file_logerr,"\n  Error allocating memory.");
+												log_fatal("Error allocating memory, stats_iter[0].tcga");
                         exit(1);
                     }
                     
                     if((stats_iter[0].freqh[x]  = (long int *)calloc(int_total_nsam,sizeof(long int))) == 0) {
-                        fprintf(file_logerr,"\n  Error allocating memory.");
+                        //fprintf(file_logerr,"\n  Error allocating memory.");
+												log_fatal("Error allocating memory, stats_iter[0].freqh");
                         exit(1);
                     }
                     
                     if((stats_iter[0].sv[x]     = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-                        fprintf(file_logerr,"\n  Error allocating memory.");
+                        //fprintf(file_logerr,"\n  Error allocating memory.");
+												log_fatal("Error allocating memory, stats_iter[0].sv");
                         exit(1);
                     }
                     if((stats_iter[0].svT[x]     = (double **)calloc(1*npops,sizeof(double *))) == 0) {
-                        fprintf(file_logerr,"\n  Error allocating memory.");
+                        //fprintf(file_logerr,"\n  Error allocating memory.");
+												log_fatal("Error allocating memory, stats_iter[0].svT");
                         exit(1);
                     }
                     
                     for(y=0;y<npops;y++) {
                         if((stats_iter[0].sv[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-                            fprintf(file_logerr,"\n  Error allocating memory.");
+                            //fprintf(file_logerr,"\n  Error allocating memory.");
+														log_fatal("Error allocating memory, stats_iter[0].sv");
                             exit(1);
                         }
                         if((stats_iter[0].svT[x][y] = (double *)calloc(2,sizeof(double))) == 0) {
-                            fprintf(file_logerr,"\n  Error allocating memory.");
+                            //fprintf(file_logerr,"\n  Error allocating memory.");
+														log_fatal("Error allocating memory, stats_iter[0].svT");
                             exit(1);
                         }
                     }
@@ -2400,58 +2629,69 @@ int main(int argc, const char * argv[])
                 stats_iter[0].nmhits = nmhits;
                 
                 if((piter = (struct probs *)calloc(1,sizeof(struct probs))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter");
                     exit(1);
                 }			
                 
                 if((piter[0].i1  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].i1");
                     exit(1);
                 }
                 
                 if((piter[0].ih1 = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].ih1");
                     exit(1);
                 }
                 
                 if((piter[0].i	  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].i");
                     exit(1);
                 }
                 
                 if((piter[0].ih  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].ih");
                     exit(1);
                 }
                 
                 if((piter[0].igh  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].igh");
                     exit(1);
                 }
                 
                 
                 if((piter[0].niteri1  = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].niteri1");
                     exit(1);
                 }
                 
                 if((piter[0].niterih1 = (long int *)calloc(1*npops,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].niterih1");
                     exit(1);
                 }
                 
                 if((piter[0].niteri   = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].niteri");
                     exit(1);
                 }
                 
                 if((piter[0].niterih  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].niterih");
                     exit(1);
                 }
                 
                 if((piter[0].niterigh  = (long int *)calloc((npops*(npops-0))/2,sizeof(long int))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, piter[0].niterigh");
                     exit(1);
                 }
                 
@@ -2464,7 +2704,8 @@ int main(int argc, const char * argv[])
                 piter[0].niterighall= 0;
                 
                 if((matrix_perm = (char *)calloc(length_seg*int_total_nsam,sizeof(char))) == 0) {
-                    fprintf(file_logerr,"\n  Error allocating memory.");
+                    //fprintf(file_logerr,"\n  Error allocating memory.");
+										log_fatal("Error allocating memory, matrix_perm");
                     exit(1);
                 }
                 
@@ -2493,7 +2734,8 @@ int main(int argc, const char * argv[])
                         /*psam2[2] = psam2[1] + nsam2[1];*/
                         
                         if( permute(matrix_pol,length_seg,int_total_nsam,matrix_perm,nsam2,psam2,npops,vint_perpop_nsam[npops-1],int_total_nsam-vint_perpop_nsam[npops-1]) == 0) {
-                            fprintf(file_logerr,"\nError in permute function.\n");
+                            // fprintf(file_logerr,"\nError in permute function.\n");
+														log_error("Error in permute function.");
                             exit(1);
                         }
                         /*HERE WE ASSUME THAT THE LENGTH SIZE ARE THE SAME THAN FOR ORIGINAL SAMPLES!! (OK FOR NO MISSING)*/
@@ -2509,12 +2751,14 @@ int main(int argc, const char * argv[])
                         if( calc_piwpiafst(0,0,npops,vint_perpop_nsam,matrix_perm,
                                            length_seg,stats_iter,matrix_sv,
                                            outgroup_presence,force_outgroup) == 0) {
-                            fprintf(file_logerr,"\nError in calc_piwpiafst function.2.\n");
+                            //fprintf(file_logerr,"\nError in calc_piwpiafst function.2.\n");
+														log_error("Error in calc_piwpiafst function.2.");
                             exit(1);
                         }
                         if( ploidy[0] == '1') {
                             if(calc_hwhafsth(npops,vint_perpop_nsam,matrix_perm,length_seg,stats_iter) == 0) {
-                                fprintf(file_logerr,"\nError in calc_hwhafsth function.2.\n");
+                                //fprintf(file_logerr,"\nError in calc_hwhafsth function.2.\n");
+																log_error("Error in calc_hwhafsth function.2.");
                                 exit(1);
                             }
                         }
@@ -2582,7 +2826,8 @@ int main(int argc, const char * argv[])
                                 psam2[2] = psam2[1] + vint_perpop_nsam[y];
                                 nsam2[2] = vint_perpop_nsam[npops-1];
                                 if( permute(matrix_pol,length_seg,int_total_nsam,matrix_perm,nsam2,psam2,npops,vint_perpop_nsam[npops-1],int_total_nsam-vint_perpop_nsam[npops-1])== 0) {
-                                    fprintf(file_logerr,"\nError in permute function.\n");
+                                    //fprintf(file_logerr,"\nError in permute function.\n");
+																		log_error("Error in permute function.");
                                     exit(1);
                                 }
                                 /*HERE WE ASSUME THAT THE LENGTH SIZE ARE THE SAME THAN FOR ORIGINAL SAMPLES!! (OK FOR NO MISSING)*/
@@ -2594,16 +2839,19 @@ int main(int argc, const char * argv[])
                                 stats_iter[0].lengthamng_outg[0][1] = statistics[0].lengthamng_outg[x][y];
                                 
                                 if( calc_piwpiafst(0,0,2+1/*outg*/,nsam2,matrix_perm,length_seg,stats_iter,matrix_sv,outgroup_presence,force_outgroup) == 0) {
-                                    fprintf(file_logerr,"\nError in calc_piwpiafst function.2.\n");
+                                    //fprintf(file_logerr,"\nError in calc_piwpiafst function.2.\n");
+																		log_error("Error in calc_piwpiafst function.2.");
                                     exit(1);
                                 }
                                 if(int_total_nsam < SAMPLE_LARGE) {
                                     if( ploidy[0] == '1') {
-                                        if(calc_hwhafsth(2+1,nsam2,matrix_perm,length_seg,stats_iter) == 0) {
-                                            fprintf(file_logerr,"\nError in calc_hwhafsth function.2.\n");
-                                            exit(1);
-                                        }
-                                    }
+																			if (calc_hwhafsth(2 + 1, nsam2, matrix_perm, length_seg, stats_iter) == 0)
+																			{
+																				// fprintf(file_logerr,"\nError in calc_hwhafsth function.2.\n");
+																				log_error("Error in calc_hwhafsth function.2.");
+																				exit(1);
+																			}
+																		}
                                 }
                                 if( stats_iter[0].fst[0] != -10000 && statistics[0].fst[z] != -10000) {
                                     if(statistics[0].fst[z] <= stats_iter[0].fst[0])
@@ -2654,7 +2902,8 @@ int main(int argc, const char * argv[])
                                     li+1, matrix_pol,r2i_ploidies,matrix_pol_tcga,chr_name) == 0)
             {
 
-                fprintf(file_logerr,"\nSorry. Error in printing function.\n");
+                //fprintf(file_logerr,"\nSorry. Error in printing function.\n");
+								log_error("Sorry. Error in printing function.");
                 exit(1);
             }
             /* TODO: Check cleaning the house */
@@ -2735,7 +2984,7 @@ int main(int argc, const char * argv[])
 	free(statistics[0].piant);
 	free(statistics[0].piTnt);
 	free(statistics[0].fst);
-    free(statistics[0].piwHKY);
+  free(statistics[0].piwHKY);
 	free(statistics[0].piaHKY);
 	free(statistics[0].piTHKY);
 	free(statistics[0].fstHKY);
@@ -2766,8 +3015,8 @@ int main(int argc, const char * argv[])
 	free(statistics[0].Ffl);
 	free(statistics[0].Hnfw);
 	free(statistics[0].Ez);
-    free(statistics[0].Yach);
-    free(statistics[0].FH);
+  free(statistics[0].Yach);
+  free(statistics[0].FH);
 	free(statistics[0].R2);
 	free(statistics[0].Fs);
 	free(statistics[0].nhpop);
@@ -2902,8 +3151,9 @@ int main(int argc, const char * argv[])
 	free(f);
     free(r2i_ploidies);
     
-    if(file_logerr) fprintf(file_logerr,"\nProgram Ended\n");
-    if(file_logerr) fclose(file_logerr);
+    // if(file_logerr) fprintf(file_logerr,"\nProgram Ended\n");
+		log_info("Program Ended");
+    if(error_log_file) fclose(error_log_file);
 
 	exit(0);
 }
@@ -3006,11 +3256,13 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_na
     chr_length_array[0][0] = (char *)calloc(MSP_MAX_NAME,sizeof(char));
     
     if (!(file_scaffolds = fopen(chr_name_all,"r"))) {
-        printf("Error opening the scaffold names file %s\n",chr_name_all);
+        //printf("Error opening the scaffold names file %s\n",chr_name_all);
+				log_error("Error opening the scaffold names file %s",chr_name_all);
         return(1);
     }
     if(!(buf = (char *)malloc(BUFSIZ))) {
-        puts("\nError: Not enough memory to read the scaffold names file.\n");
+        //puts("\nError: Not enough memory to read the scaffold names file.\n");
+				log_error("Error: Not enough memory to read the scaffold names file.");
         return(1);
     }
     setbuf(file_scaffolds,buf);
@@ -3023,14 +3275,16 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_na
         }
         chr_name_array[0][*nscaffolds-1][k] = '\0';
         if(c!= 9 && c!= 32) {
-            printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+            //printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+						log_error("Error reading the scaffold names file %s:\n scaffold (%s) without length information.",chr_name_all, chr_name_array[0][*nscaffolds-1]);
             return(1);
         }
         do {
             c=fgetc(file_scaffolds);
         }while(!(c!= 9 && c!= 32 && c!= 10 && c!=13 && c!=-1 && c!=EOF));
         if(c==EOF) {
-            printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+            //printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
+						log_error("Error reading the scaffold names file %s:\n scaffold (%s) without length information.",chr_name_all, chr_name_array[0][*nscaffolds-1]);
             return(1);
         }
         k=0;

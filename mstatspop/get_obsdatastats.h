@@ -18,7 +18,7 @@ extern "C" {
 
 int get_obsstats(FILE *file_output,SGZip *file_output_gz,
                  FILE *file_mask,
-                 FILE *file_logerr,SGZip *file_logerr_gz,
+                 // FILE *file_logerr,SGZip *file_logerr_gz,
                  int n_samp, long int n_site,
 				 long int *n_realsite,char **names,char *DNA_matr,double *matrix_sizepos,
 				 double *matrix_segrpos,char **matrix_pol,long int **matrix_freq,
