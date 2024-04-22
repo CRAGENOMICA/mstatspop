@@ -1296,6 +1296,7 @@ int main(int argc, const char * argv[])
 		{
             el = strrchr(file_mas,'.');
             *el = '\0';
+			// TODO :: FIXME
             sprintf( file_mas, "%s_npop%d_nsam%d", file_mas,
                     npops-!outgroup_presence,
                     int_total_nsam-!outgroup_presence);

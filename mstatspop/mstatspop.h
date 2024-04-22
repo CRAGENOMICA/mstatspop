@@ -30,7 +30,11 @@ extern "C" {
 #include "util.h"
 #include "zutil.h"
 #include "zindex.h"
-    
+#include "get_msdata.h"    
+#include "sancestral.h"
+#include "fstcalc.h"
+#include "get_obsdata.h"
+#include "get_tfadata.h"
 /*introduce the FASTA file and the number of populations (with sample sizes)*/
 // int get_obsdata( FILE *,SGZip *,FILE *,SGZip *,FILE *, SGZip *,FILE *,char *,int ,char *,char *,char **,
 // 						long int **,long int **, long int *, long int *, double *,
