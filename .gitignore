@@ -1,1 +1,7 @@
 build/
+node_modules/
+tests/test_output/
+debug_test/
+bats.log
+package-lock.json
+package.json
