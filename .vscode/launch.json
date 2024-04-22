@@ -1,0 +1,71 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch - mstatspop",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/mstatspop",
+            // ../bin/mstatspop -f fasta -i ./100Kchr10.fa -o 0 -N 1 42   -T ../Results/mstatspop_100chr10.fa.01.txt -K 1 -n chr10.txt
+            "args": ["-f", "fasta", "-i", "../Examples/100Kchr10.fa", "-o", "0", "-N", "1", "42", "-T", "mstatspop_100chr10.fa.01.txt", "-K", "1", "-n", "../Examples/chr10.txt"],
+            
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            "environment": [
+                {
+                    // add the directory where our target was built to the PATHs
+                    // it gets resolved by CMake Tools:
+                    "name": "PATH",
+                    "value": "${env:PATH}:${command:cmake.getLaunchTargetDirectory}"
+                },
+                {
+                    "name": "OTHER_VALUE",
+                    "value": "Something something"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Launch gecho",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            "program": "${command:cmake.buildDirectory}/gecho",  
+            "args": ["./Examples/example.vcf.gz"],
+
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            "environment": [
+                {
+                    // add the directory where our target was built to the PATHs
+                    // it gets resolved by CMake Tools:
+                    "name": "PATH",
+                    "value": "${env:PATH}:${command:cmake.getLaunchTargetDirectory}"
+                },
+                {
+                    "name": "OTHER_VALUE",
+                    "value": "Something something"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
