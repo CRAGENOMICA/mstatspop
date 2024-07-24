@@ -82,9 +82,14 @@ static void stdout_callback(log_Event *ev) {
 static void file_callback(log_Event *ev) {
   char buf[64];
   buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", ev->time)] = '\0';
-  fprintf(
-    ev->udata, "%s %-5s %s:%d: ",
-    buf, level_strings[ev->level], ev->file, ev->line);
+  if(ev->file != NULL)
+    fprintf(
+      ev->udata, "%s %-5s %s:%d: ",
+      buf, level_strings[ev->level], ev->file, ev->line);
+  else
+    fprintf(
+      ev->udata, "%s %-5s : ",
+      buf, level_strings[ev->level]);
   vfprintf(ev->udata, ev->fmt, ev->ap);
   fprintf(ev->udata, "\n");
   fflush(ev->udata);
@@ -175,4 +180,21 @@ void log_log(int level, const char *file, int line, const char *fmt, ...) {
   }
 
   unlock();
+}
+
+
+void log_start(const char *program_name,int argc, char *argv[]) {
+   // echo program started
+  log_info("%s started", program_name);
+  // echo command line arguments as received
+  // construct a string of the command line arguments
+  char *cmdline = (char *)malloc(1);
+  cmdline[0] = '\0';
+  for (int i = 0; i < argc; i++) {
+    cmdline = (char *)realloc(cmdline, strlen(cmdline) + strlen(argv[i]) + 2);
+    strcat(cmdline, argv[i]);
+    strcat(cmdline, " ");
+  }
+  log_info("Command: %s", cmdline);
+
 }

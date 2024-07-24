@@ -22,7 +22,11 @@ extern "C" {
 #include "zindex.h"
 
 
-#define MSTATSPOP "mstatspop v.0.1beta (20231105)\n" \
+// #define STRINGIFY(x) #x
+// #define TOSTRING(x) STRINGIFY(x)
+#define FULL_VERSION "v." VERSION_NUMBER " (" BUILD_NUMBER ")"
+
+#define MSTATSPOP "mstatspop " FULL_VERSION "\n" \
 		   "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera\n" \
 		   "Variability Analyses of multiple populations: " \
 		   "Calculation and estimation of statistics and neutrality tests.\n"
@@ -47,6 +51,123 @@ extern "C" {
 -o [output: 0:extended, 10: complete extended, 1:single line, 2:single line freq spectrum, 3:single line joint freq distrib.\n");
 	printf("\t				4:single line pairwise distribution 5:single line frequency variant per line\n");
 	*/
+
+// possible formats for the input file
+#define FASTA_FORMAT 0
+#define NBRF_FORMAT 0
+#define MS_FORMAT 1
+#define MS_X_FORMAT 2
+#define TFA_FORMAT 3
+
+/* o Output type, from 0 to 11 - TODO: define*/
+
+//  0 (extended),
+#define OUTPUT_EXTENDED 0
+
+//  1 (single line/window)
+#define OUTPUT_SINGLE_LINE_WINDOW 1
+
+//  2 (single line SFS/window)
+#define OUTPUT_SINGLE_LINE_SFS_WINDOW 2
+
+//  3 (dadi-like format)
+#define OUTPUT_DADI_LIKE 3
+
+//  4 (single line pairwise distribution)
+#define OUTPUT_SINGLE_LINE_PAIRWISE_DISTRIBUTION 4
+
+//  5 (single line freq. variant per line/window)
+#define OUTPUT_SINGLE_LINE_FREQ_VARIANT_PER_LINE_WINDOW 5
+
+//  6 (SNP genotype matrix)
+#define OUTPUT_SNP_GENOTYPE_MATRIX 6
+
+//  7 (SweepFiinder format -only first pop-)
+#define OUTPUT_SWEEP_FINDER 7
+
+//  8 (single line/window: Frequency of each haplotype in the populations)
+#define OUTPUT_SINGLE_LINE_FREQ_HAPLOTYPE_POP 8
+
+//  9 (single line/window: Frequency of variants per line and population)
+#define OUTPUT_SINGLE_LINE_FREQ_VARIANT_POP 9
+
+//  92 (single line/window: -rSFS- Frequency of variants per population relative to all)
+#define OUTPUT_SINGLE_LINE_FREQ_VARIANT_POP_RELATIVE 92
+
+//  10 (full extended)
+#define OUTPUT_FULL_EXTENDED 10
+
+typedef struct
+{
+  const char *format_arg; // format of the input file [fasta,ms,ms_x,tfa]
+  int formatfile;         // format type of the input file [0,1,2,3]
+  int output;             /* TODO: tipo de output, de 0 a 11 */
+  char ploidy[2];         // ploidy, 1: haploid, 2: diploid
+  long int niterdata;     // number of iterations (ms) or permutations (others)
+  char file_in[MSP_MAX_FILENAME] /* input file */;
+  char file_out[MSP_MAX_FILENAME]; /* output file */
+  char file_mas[MSP_MAX_FILENAME]; /* mask file */
+  char file_GFF[MSP_MAX_FILENAME]; /* GFF file */
+
+  /* a Name of file of the Alternative frequency spectrum */
+  /* Only with optimal tests (in GSL libs) */
+  char file_H1f[MSP_MAX_FILENAME];
+
+  /* a Name of file of the NULL frequency spectrum */
+  /* Only with optimal tests (in GSL libs) */
+  char file_H0f[MSP_MAX_FILENAME];
+  /* 1: missing values allowed , 0: excluded missing positions */
+  int include_unknown;
+
+  /* variables defining more data*/
+  int npops; // TODO args.npops
+  /* Number of samples for each population, each element a population */
+  int *vint_perpop_nsam; /* old nsam */
+
+  /* Sum of all nsam of all populations */
+  int int_total_nsam; /* old nsamtot*/
+
+  int coordfile;
+
+  /* number of iterations (ms) or permutations (others) */
+  long int niter;
+
+  /* GFF variables */
+  int gfffiles;
+  /*int 	observed_data	= 0;*/
+  char subset_positions[MSP_MAX_GFF_WORDLEN];
+  char code_name[MSP_GENETIC_CODETYPE_LEN];
+  char genetic_code[MSP_GENCODE_COMBINATIONS + 1];
+  char criteria_transcript[MSP_GFF_CRITERIA_MSG_LEN];
+
+  long int length; /* Sequence length */
+  int kind_length; // TODO args.kind_length
+
+  float ms_svratio;        // TODO args.ms_svratio
+  int outgroup_presence;   // TODO args.outgroup_presence
+  int force_outgroup;      // TODO args.force_outgroup
+  float freq_revert;       // TODO args.freq_revert
+  double freq_missing_ms;  // TODO args.freq_missing_ms
+  int location_missing_ms; // TODO args.location_missing_ms
+
+  /*R2_p*/
+  int *r2i_ploidies; // TODO args.r2i_ploidies
+  /*Covariances in missing values*/
+  int n_ccov;                                              // TODO args.n_ccov
+  int int_total_nsam_order;                                /*number of samples. value for ordering the samples in populations in case they are not consecutive*/
+  int *sort_nsam; /*vector with the position in the file*/ // TODO : args.sort_nsam
+  long int slide;                                          // TODO args.slide
+  long int first_slide;                                    // TODO args.first_slide
+  long int window;                                         // TODO args.window
+  char file_wps[MSP_MAX_FILENAME];                         // TODO args.file_wps
+  char file_Wcoord[MSP_MAX_FILENAME];                      // TODO args.file_Wcoord
+  int Physical_length;                                     // TODO args.Physical_length
+  int mask_print;                                          // TODO args.mask_print
+  char file_chr_name_all[MSP_MAX_NAME];                    // TODO :: args.file_chr_name_all
+  long int nseed;
+  int argc;
+} mstatspop_args_t;
+
 
 struct stats {
 	long int *Sanc;

@@ -8,7 +8,7 @@
 #ifndef RAN1_H_
 #define RAN1_H_
 
-#include "common.h"
+//#include "common.h"
 
 #ifdef	__cplusplus
 extern "C" {

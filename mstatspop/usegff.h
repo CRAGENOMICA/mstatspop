@@ -61,7 +61,7 @@ extern "C"
 	 include_unknown: flag to say if include missing values or not <- defined before
 	 criteria_transcripts: char vector wit "max" or "min" values <- defined before
 	*/
-	int use_gff(
+	/* int use_gff(
 		char *name_fileinputgff,
 		char *subset_positions,
 		char *genetic_code,
@@ -82,7 +82,32 @@ extern "C"
 		int outgroup_presence,
 		int nsamoutg,
 		char *chr_name,
-		int first);
+		int first,
+	    mstatspop_args_t *args); */
+int use_gff(
+	// char *file_GFF,
+	// char *subset_positions, 
+	// char *genetic_code,
+	double *matrix_sizepos, 
+	int n_samp, 
+	long int n_site, 
+	char *DNA_matr,
+	double *matrix_segrpos, 
+	FILE *file_output, 
+	SGZip *file_output_gz, 
+	// int argc,
+	// FILE *file_logerr, SGZip *file_logerr_gz,
+	// int include_unknown,
+	// char *criteria_transcripts, 
+	// int output, 
+	long int *nmhits, 
+	long int *mhitbp,
+	// int outgroup_presence, 
+	// int nsamoutg, 
+	char *chr_name, 
+	int first,
+	mstatspop_args_t *args);
+
 
 	int tripletnsamp(
 		char *cod3n,

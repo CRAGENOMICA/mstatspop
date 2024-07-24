@@ -8,23 +8,55 @@
 
 #include "get_obsdata.h"
 #include "log.h"
-int get_obsdata(FILE *file_output,SGZip *file_output_gz,
-				FILE *file_input, SGZip *input_gz,
-                //FILE *file_logerr,SGZip *file_logerr_gz,
-				FILE *file_mask,
-				char *name_fileinputgff,int gfffiles,char *subset_positions,
-				char *genetic_code,char **matrix_pol,long int **matrix_freq,
-				long int **matrix_pos, long int *length, long int *length_seg,
-				double *length_al, long int *length_al_real, int mainargc,
-				char *ploidy,int *nsamuser,int npops,double *svratio,
-				double *missratio,int include_unknown, double *sum_sam,
-				double **tcga, long int **matrix_sv,long int *nmhits,
-				int output,int outgroup_presence,char *criteria_transcript,
-				double *nsites1_pop, double *nsites1_pop_outg,
-				double *nsites2_pop,double *nsites2_pop_outg,double *nsites3_pop,double *nsites3_pop_outg,
-				double *anx, double *bnx,double *anxo, double *bnxo,
-				double **lengthamng, double **lenghtamng_outg,int *sort_nsam,char **matrix_pol_tcga,
-                char *chr_name,int first)
+int get_obsdata(
+    FILE *file_output,
+    SGZip *file_output_gz,
+    FILE *file_input, 
+    SGZip *input_gz,
+    // FILE *file_logerr,SGZip *file_logerr_gz,
+    FILE *file_mask,
+    // char *file_GFF,
+    // int gfffiles,
+    // char *subset_positions,
+    // char *genetic_code,
+    char **matrix_pol, 
+    long int **matrix_freq,
+    long int **matrix_pos, 
+    long int *length, 
+    long int *length_seg,
+    double *length_al, 
+    long int *length_al_real, 
+    // int argc,
+    // char *ploidy, 
+    // int *vint_perpop_nsam, 
+    // int npops, 
+    double *svratio,
+    double *missratio, 
+    // int include_unknown, 
+    double *sum_sam,
+    double **tcga, 
+    long int **matrix_sv, 
+    long int *nmhits,
+    // int output, 
+    // int outgroup_presence, 
+    // char *criteria_transcript,
+    double *nsites1_pop,
+    double *nsites1_pop_outg,
+    double *nsites2_pop, 
+    double *nsites2_pop_outg, 
+    double *nsites3_pop, 
+    double *nsites3_pop_outg,
+    double *anx, 
+    double *bnx, 
+    double *anxo, 
+    double *bnxo,
+    double **lengthamng, 
+    double **lenghtamng_outg, 
+    // int *sort_nsam, 
+    char **matrix_pol_tcga,
+    char *chr_name,
+    int first,
+    mstatspop_args_t *args)
 {    
     static char *DNA_matr = 0;
     static char *DNA_matr2 = 0;
@@ -69,11 +101,11 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 	n_excl= 0;
 	
 	nsamtot = 0;
-	for(x=0;x<npops;x++) {
-		nsamtot += nsamuser[x];
+	for(x=0;x<args->npops;x++) {
+		nsamtot += args->vint_perpop_nsam[x];
 	}
 	
-	nsamuser_eff = (nsamtot- !outgroup_presence)/atoi(ploidy) ;
+	nsamuser_eff = (nsamtot- !args->outgroup_presence)/atoi(args->ploidy) ;
 	
     if(names == 0) { /* only initialize once. Check */
         if((names = (char **)calloc(128,sizeof(char *))) == 0) {
@@ -102,7 +134,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
         n_sit = 0;
         if(!(var_char(file_input,input_gz,
            // file_logerr,file_logerr_gz,
-           &count,&c,&n_sam,&n_sit,&nseq,&maxsam,&names,&DNA_matr,&n_site,excludelines,name_excluded,&n_excl,includelines,name_ingroups,name_outgroup,outgroup,nsamuser_eff,ploidy)))
+           &count,&c,&n_sam,&n_sit,&nseq,&maxsam,&names,&DNA_matr,&n_site,excludelines,name_excluded,&n_excl,includelines,name_ingroups,name_outgroup,outgroup,nsamuser_eff,args->ploidy)))
             return 0;
         if(n_sam == 32767) {
             //fprintf(file_logerr,"Only 32167 samples per loci are allowed.\n");
@@ -116,7 +148,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 	/*modify the order of samples using option flag O*/
 	flag_change_sort = 0;
 	for(x=0;x<nsamuser_eff;x++) {
-		if(sort_nsam[x] != x) {
+		if(args->sort_nsam[x] != x) {
 			flag_change_sort = 1;
 			break;
 		}
@@ -153,8 +185,8 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 		
 		/*include data in *DNA_matr and in *names[] in the correct order*/
 		for(x=0;x<nsamuser_eff;x++) {
-			strncpy(DNA_matr+(long long)n_site*(long long)x,DNA_matr2+(long long)n_site*(long long)sort_nsam[x],n_site);			
-			strncpy(names[x],names2[sort_nsam[x]],50);
+			strncpy(DNA_matr+(long long)n_site*(long long)x,DNA_matr2+(long long)n_site*(long long)args->sort_nsam[x],n_site);			
+			strncpy(names[x],names2[args->sort_nsam[x]],50);
 		}
 		/*delete duplicated matr*/
 		for(x=0;x<n_samp;x++) free(names2[x]); free(names2); names2 = 0;
@@ -171,7 +203,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 	}
 	/*end option flag O*/
     
-	if(n_samp * atoi(ploidy) < nsamtot-!outgroup_presence) return(0);
+	if(n_samp * atoi(args->ploidy) < nsamtot-!args->outgroup_presence) return(0);
     if(n_samp == 0 || n_site == 0) return(0);
     else {
         if(nsamuser_eff > 32767) {
@@ -222,7 +254,7 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 			matrix_sizepos[xx] = (double)1;
 			matrix_segrpos[xx] = (double)1;
 		}
-		if(ploidy[0]=='2'){
+		if(args->ploidy[0]=='2'){
 			if ((DNA_matr2 = (char *)calloc(n_site*(long long)(nsamuser_eff)*2,sizeof(char))) == 0) {
 				//fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23 \n");
                 log_fatal("Error: memory not reallocated, DNA_matr2 get_obsdata.23");
@@ -326,8 +358,8 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 				strncpy(names2[x],names[x],50);
 			}
 		}
-		if(outgroup_presence == 0) {
-			if ((DNA_matr2 = (char *)realloc(DNA_matr2,(long long)n_site*(nsamuser_eff+!outgroup_presence)*sizeof(char))) == 0) {
+		if(args->outgroup_presence == 0) {
+			if ((DNA_matr2 = (char *)realloc(DNA_matr2,(long long)n_site*(nsamuser_eff+!args->outgroup_presence)*sizeof(char))) == 0) {
 				//fprintf(file_logerr,"\nError: memory not reallocated. get_obsdata.23a \n");
                 log_fatal("Error: memory not reallocated, DNA_matr2 get_obsdata.23a");
 				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
@@ -407,43 +439,106 @@ int get_obsdata(FILE *file_output,SGZip *file_output_gz,
 			return(0);
 		}
 		/*here include a function to filter positions: to read gff files (if necessary)*/
-		if(gfffiles == 1) {
+		if(args->gfffiles == 1) {
 			/*include**name_fileinputgff,*subset_positions,ifgencode,*codename,*genetic_code,*matrix_sizepos,n_samp,n_site,*DNA_matr*/
 			/*the function read the gff file and cut the DNA_matr, also gives the number of positions in matrix_sizepos and count the total in n_site*/
 			/*only modify values in matrix_sizepos*/
-			if(use_gff(name_fileinputgff,subset_positions,genetic_code,matrix_sizepos,
-                       nsamuser_eff,n_site,DNA_matr2,matrix_segrpos,
-					   file_output,file_output_gz,mainargc,
-                       //file_logerr,file_logerr_gz,
-                       include_unknown,criteria_transcript,output,nmhits,mhitbp,
-                       outgroup_presence,nsamuser[npops-1],chr_name,first) == 0) {
-				/*if error realloc DNA_matr*/
-				for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
-				free(DNA_matr);
-				free(DNA_matr2);
-				free(matrix_sizepos);
-				free(matrix_segrpos);
-				free(mhitbp);
-				return(0);
-			}
-		}
-        /*function to analyze all data*/
-        if(get_obsstats(file_output,file_output_gz,file_mask,
-        // file_logerr,file_logerr_gz,
-                        nsamuser_eff,n_site,length_al_real,names2,DNA_matr2,matrix_sizepos,matrix_segrpos,
-						matrix_pol,matrix_freq,matrix_pos,length_al,length_seg,nsamuser,npops,svratio,missratio,
-                        include_unknown,sum_sam,tcga,matrix_sv,nmhits,output,ploidy,outgroup_presence,
-                        nsites1_pop,nsites1_pop_outg,nsites2_pop,nsites2_pop_outg,nsites3_pop,nsites3_pop_outg,
-                        anx,bnx,anxo,bnxo,lengthamng,lenghtamng_outg,mhitbp,matrix_pol_tcga,0) == 0) {
-			for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;
-			free(DNA_matr);
-			free(DNA_matr2);
-			free(matrix_sizepos);
-			free(matrix_segrpos);
-			free(mhitbp);
-            return(0);
+            if (use_gff(
+                    // args->file_GFF,
+                    // args->subset_positions,
+                    // args->genetic_code,
+                    matrix_sizepos,
+                    nsamuser_eff, 
+                    n_site, 
+                    DNA_matr2, 
+                    matrix_segrpos,
+                    file_output, 
+                    file_output_gz, 
+                    // args->argc,
+                    // file_logerr,file_logerr_gz,
+                    //args->include_unknown,
+                    // args->criteria_transcript,
+                    // args->output,
+                    nmhits,
+                    mhitbp,
+                    // args->outgroup_presence,
+                    // args->vint_perpop_nsam[args->npops - 1],
+                    chr_name,
+                    first,
+                    args) == 0)
+            {
+                /*if error realloc DNA_matr*/
+                for (x = 0; x < n_sam; x++)
+                    free(names[x]);
+                free(names);
+                names = 0;
+                free(DNA_matr);
+                free(DNA_matr2);
+                free(matrix_sizepos);
+                free(matrix_segrpos);
+                free(mhitbp);
+                return (0);
+            }
         }
-		free(mhitbp);
+        /*function to analyze all data*/
+        if (get_obsstats(
+                file_output,
+                file_output_gz,
+                file_mask,
+                // file_logerr,file_logerr_gz,
+                nsamuser_eff, 
+                n_site, 
+                length_al_real, 
+                names2, 
+                DNA_matr2, 
+                matrix_sizepos, 
+                matrix_segrpos,
+                matrix_pol, 
+                matrix_freq, 
+                matrix_pos, 
+                length_al, 
+                length_seg, 
+                //args->vint_perpop_nsam, 
+                //args->npops, 
+                svratio, 
+                missratio,
+                //args->include_unknown, 
+                sum_sam, 
+                tcga, 
+                matrix_sv, 
+                nmhits, 
+                //args->output, 
+                //args->ploidy, 
+                //args->outgroup_presence,
+                nsites1_pop, 
+                nsites1_pop_outg, 
+                nsites2_pop, 
+                nsites2_pop_outg, 
+                nsites3_pop, 
+                nsites3_pop_outg,
+                anx, 
+                bnx, 
+                anxo, 
+                bnxo, 
+                lengthamng, 
+                lenghtamng_outg, 
+                mhitbp, 
+                matrix_pol_tcga, 
+                0,
+                args) == 0)
+        {
+            for (x = 0; x < n_sam; x++)
+                free(names[x]);
+            free(names);
+            names = 0;
+            free(DNA_matr);
+            free(DNA_matr2);
+            free(matrix_sizepos);
+            free(matrix_segrpos);
+            free(mhitbp);
+            return (0);
+        }
+        free(mhitbp);
         /*for(x=0;x<n_sam;x++) free(names[x]); free(names); names = 0;*/
 	}
     return(1);

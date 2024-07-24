@@ -72,62 +72,7 @@ extern "C" {
 
 // int read_coordinates(FILE *file_wcoor, SGZip *file_wcoor_gz, FILE *file_output, SGZip *file_output_gz, FILE *file_logerr, SGZip *file_logerr_gz, long int **wgenes, long int *nwindows,char *chr_name);
 
-int get_tfadata(FILE *file_output,
-    SGZip *file_output_gz,
-	FILE *file_input,
-	SGZip *input_gz,
-    struct SGZIndex *index_input,
-    char *file_wps,
-    FILE *file_ws,
-    SGZip *file_ws_gz,
-    struct SGZIndex *index_w,
-    //FILE *file_logerr,
-    //SGZip *file_logerr_gz,
-    char **matrix_pol,
-	long int **matrix_freq,
-	long int **matrix_pos,
-	long int *length,
-	long int *length_seg,
-	double *length_al,
-	long int *length_al_real,
-	int mainargc,
-	int *nsamuser,
-	int npops,
-	double *svratio,
-	double *missratio,
-	int include_unknown,
-	double *sum_sam,
-	double **tcga,
-	long int **matrix_sv,
-	long int *nmhits,
-	int output,
-	int outgroup_presence,
-	double *nsites1_pop,
-	double *nsites1_pop_outg,
-	double *nsites2_pop,
-	double *nsites2_pop_outg,
-	double *nsites3_pop,
-	double *nsites3_pop_outg,
-	double *anx,
-	double *bnx,
-	double *anxo,
-	double *bnxo,
-    double **lengthamng,
-    double **lengthamng_outg,
-	int *sort_nsam,
-	long int *wgenes,
-	long int nwindows,
-    long int first_slide,
-	long int slide,/**/
-	long int window,/**/
-	int Physical_length,
-	long int *li/**/,
-    int *npriors,
-    double **vector_priors,
-    char **matrix_pol_tcga,
-    char *chr_name,
-    int first
-);
+
 void usage(void);
 int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_name_array,char ***chr_length_array);
     

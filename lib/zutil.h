@@ -8,14 +8,14 @@
  *  \author    Joan Jené
  *  \version   1.15
  *  \date      June 22, 2017
- *  \history   - March 29, 2017 : jjene : Added stdarg.h include.
- *             - April 7, 2017  : jjene : fprintf generates box GZ and Index files.
- *             - April 12, 2017 : jjene : different size constants for "in" and "out" buffers & discard Z_BUF_ERROR message.
- *             - April 13, 2017 : jjene : Documentation added & some fixes to the fzgetc  & fzeof functions.
- *             - April 18, 2017 : jjene : Documentation updated & fzprintf, fzgetc, fzeof, fzclose functions updated, too.
- *             - April 20, 2017 : jjene : Library updated for Mac Os X.
- *             - May 19, 2017   : jjene : working on zindex::fzseekNearest.
- *             - May 22, 2017   : jjene : C++ things (comments, declararions, ...) changed to C things.
+ *  \history   - March 29, 2017 : Added stdarg.h include.
+ *             - April 7, 2017  : fprintf generates box GZ and Index files.
+ *             - April 12, 2017 : different size constants for "in" and "out" buffers & discard Z_BUF_ERROR message.
+ *             - April 13, 2017 : Documentation added & some fixes to the fzgetc  & fzeof functions.
+ *             - April 18, 2017 : Documentation updated & fzprintf, fzgetc, fzeof, fzclose functions updated, too.
+ *             - April 20, 2017 : Library updated for Mac Os X.
+ *             - May 19, 2017   : working on zindex::fzseekNearest.
+ *             - May 22, 2017   : C++ things (comments, declararions, ...) changed to C things.
  *             - June 22, 2017  : jjene : fzgetc(), case of inflating compressed data and getting only the EOF. private_setEnd added.
  *  \pre
  *  \bug
