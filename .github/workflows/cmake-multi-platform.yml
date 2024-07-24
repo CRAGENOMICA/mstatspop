@@ -68,11 +68,11 @@ jobs:
         echo "build-output-dir=${{ github.workspace }}/build" >> "$GITHUB_OUTPUT"
 
     ## Install htslib and run only in ubuntu-latest
-    - name : Install htslib ubuntu
+    - name : Install htslib libgsl ubuntu
       if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt-get update
-        sudo apt-get install -y libhts-dev
+        sudo apt-get install -y libhts-dev libgsl-dev 
     
     ## Install htslib on macOS and run only in macos-latest or macos-latest-xlarge
     - name : Install htslib macOS 
