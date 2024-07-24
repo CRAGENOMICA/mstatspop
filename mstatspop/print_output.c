@@ -2811,23 +2811,23 @@ int print_output(
 						/*ffprintf(file_out,file_out,"\nFrequency of variants for each population:");*/
 						if (outgroup_presence == 1)
 						{
-							for (x = 0; x < args->npops - 1; x++)
+							for (x = 0; x < args->npops - 1; x++) /*MOD \t 20240618*/
 							{
-								fprintf(file_out, "\tnsam[%d]:\t%d\tS[%d]:\t%ld", x, args->vint_perpop_nsam[x], x, (long int)statistics[0].S[x]);
+								fprintf(file_out, "nsam[%d]:\t%d\tS[%d]:\t%ld\t", x, args->vint_perpop_nsam[x], x, (long int)statistics[0].S[x]);
 								for (y = 1; y < args->vint_perpop_nsam[x]; y++)
 								{
-									fprintf(file_out, "\tfr[%d,%d]:\t%ld", x, y, statistics[0].freq[x][y]);
+									fprintf(file_out, "fr[%d,%d]:\t%ld\t", x, y, statistics[0].freq[x][y]);
 								}
 							}
 						}
 						else
 						{
-							for (x = 0; x < args->npops - 1; x++)
+							for (x = 0; x < args->npops - 1; x++) /*MOD \t 20240618*/
 							{
-								fprintf(file_out, "\tnsam[%d]:\t%d\tS[%d]:\t%ld", x, args->vint_perpop_nsam[x], x, (long int)statistics[0].S[x]);
+								fprintf(file_out, "nsam[%d]:\t%d\tS[%d]:\t%ld\t", x, args->vint_perpop_nsam[x], x, (long int)statistics[0].S[x]);
 								for (y = 1; y <= floor(args->vint_perpop_nsam[x] / 2); y++)
 								{
-									fprintf(file_out, "\tfr[%d,%d]:\t%ld", x, y, statistics[0].freq[x][y]);
+									fprintf(file_out, "fr[%d,%d]:\t%ld\t", x, y, statistics[0].freq[x][y]);
 								}
 							}
 						}
