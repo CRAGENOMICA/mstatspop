@@ -101,10 +101,10 @@ if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
   message(FATAL_ERROR "Could not find gsl")
 endif()
 
+include_directories(${HTSLIB_INCLUDE_DIR} ${GLS_INCLUDE_DIR})
 
 add_executable(mstatspop ${SOURCE_FILE})
 target_include_directories(mstatspop PRIVATE "lib")
-target_include_directories(mstatspop PRIVATE ${GLS_INCLUDE_DIR})
 target_compile_options(mstatspop PRIVATE -DinGSL=1)
 target_link_libraries(mstatspop  ${HTSLIB_LIBRARY} -lm -lgsl -lgslcblas -lz logging )
 # target_link_libraries(mstatspop PRIVATE  )
