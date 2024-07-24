@@ -75,10 +75,11 @@ jobs:
         sudo apt-get install -y libhts-dev libgsl-dev 
     
     ## Install htslib on macOS and run only in macos-latest or macos-latest-xlarge
-    - name : Install htslib macOS 
+    - name : Install htslib gsl macOS 
       if: matrix.os == 'macos-latest' || matrix.os == 'macos-latest-xlarge'
       run: |
         brew install htslib
+        brew install gsl
         
     
     - name: Configure CMake
@@ -107,9 +108,10 @@ jobs:
         # Name of the artifact. This is the name that will be displayed in the GitHub Actions UI.
         # get the name of the release tarball
 
-        name: release
+        name: mstatspop-release
         path: ${{ steps.strings.outputs.build-output-dir }}/*.tar.gz
-
+    - name: check release tarball
+      run: ls -l ${{ github.workspace }}/mstatspop-release/ 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
@@ -128,11 +130,11 @@ jobs:
     - name: Download release tarball
       uses: actions/download-artifact@v3
       with:
-        name: release
-        path: ${{ github.workspace }}/release
+        name: mstatspop-release
+        path: ${{ github.workspace }}/mstatspop-release
 
     - name: check release tarball
-      run: ls -l ${{ github.workspace }}/release/ 
+      run: ls -l ${{ github.workspace }}/mstatspop-release/ 
 
     - name: version
       run: |
