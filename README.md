@@ -1,6 +1,6 @@
 # mstatspop v.1.0.0
 
-## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
+## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests. 
 
 #### Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 
