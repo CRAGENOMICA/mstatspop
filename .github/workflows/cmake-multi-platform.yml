@@ -154,8 +154,8 @@ jobs:
 
     - name: version
       run: |
-        echo "version=$(cat version.txt)" >> "$GITHUB_ENV"
-        echo "version=$(cat version.txt)" >> "$GITHUB_OUTPUT"
+        echo "version=$(cat ${{ github.workspace }}/mstatspop-release/version.txt)" >> "$GITHUB_ENV"
+        echo "version=$(cat ${{ github.workspace }}/mstatspop-release/version.txt)" >> "$GITHUB_OUTPUT"
       id: version
 
 
