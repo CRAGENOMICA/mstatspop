@@ -1,10 +1,10 @@
-# mstatspop v.0.1beta (20230907)
+# mstatspop v.1.0.0
 
 ## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests. 
 
 #### Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 
-## Flags:
+### Flags:
       -f [input format file: ms, fasta OR tfa (gz file indexed)]
       -i [path and name of the input file]
       -o [output format file: 0 (extended),
@@ -72,3 +72,32 @@
       -K [make a MASK file with the valid positions for this fasta. Useful for running ms simulations (1/0)]. DEFAULT 0.
 ##### HELP:
       -h [help and exit]
+
+### Create index file and tfasta convertion
+To create an index file for tfasta file use `tfa_index` program. 
+Note : if the tfasta file is in version 1, it will convert it to version 2 and create the index.
+`tfa_index` program also accepts weight files. In this case, it will create an index for the weight file and convert it to the correct format if needed.
+
+```bash
+Usage:  tfa_index  [options] <input.tfa|input.tfa.bgz|input.tfa.gz|weights.txt|weights.txt.gz>
+Options:
+  --version
+  --help
+  --threads <int>
+  --force
+  --weight
+   the input file is a weight file. In this case create and index for it. and convert it to the correct format
+  --output FILE           set custom name to the output file, only used when converting from TFAv1 to TFAv2 or compressing the input file
+  ```
+
+Convertion example 
+```bash
+  tfa_index  ./Examples/V0.1.0/100Kchr10.tfa.gz -o ./Examples/V1.0.0//100Kchr10.tfa.gz
+```
+
+Create an index example
+```bash
+  tfa_index  ./Examples/V1.0.0/100Kchr10.tfa.gz
+  # use -f to force create the index file if it already exists
+  tfa_index  ./Examples/V1.0.0/100Kchr10.tfa.gz -f
+```

@@ -1,0 +1,251 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(gdb) Launch - mstatspop",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/mstatspop",
+            // ../bin/mstatspop -f fasta -i ./100Kchr10.fa -o 0 -N 1 42   -T ../Results/mstatspop_100chr10.fa.01.txt -K 1 -n chr10.txt
+            // "args": ["-f", "fasta", "-i", "../Examples/100Kchr10.fa", "-o", "0", "-N", "1", "42", "-T", "mstatspop_100chr10.fa.01.txt", "-K", "1", "-n", "../Examples/chr10.txt"],
+            // ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 0 -N 1 42   -T ../Results/mstatspop_100chr10.tfa.01.txt -w 100000 -n chr10.txt
+            // "args": ["-f", "tfa", "-i", "../Examples/100Kchr10.tfa.gz", "-o", "0", "-N", "1", "42", "-T", "mstatspop_100chr10.tfa.01.txt", "-w", "100000", "-n", "../Examples/chr10.txt"],
+            // ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 0 -N 1 42   -T ../Results/mstatspop_100allchr.tfa.01.txt   -w 100000 -n chr10-12-14.txt
+            // "args" : ["-f", "tfa", "-i", "../Examples/100Kallchr.tfa.gz", "-o", "0", "-N", "1", "42", "-T", "mstatspop_100allchr.tfa.01.txt", "-w", "25000", "-n", "../Examples/chr10-12-14.txt"],
+
+            // "args" : ["-f", "tfa", "-i", "../Examples/100Kallchr_TFAv2.tfa.bgz", "-o", "0", "-N", "1", "42", "-T", "mstatspop_100allchr.tfa.02.txt", "-w", "25000", "-n", "../Examples/chr10-12-14.txt"],
+            
+             // ./bin/mstatspop_v1 -f tfa -i ./Examples/100Kchr10.tfa.gz -o 0 -N 2 40 2 -T ./Results/mstatspop_100chr10.tfa.09.txt -G 1 -u 1 -w 10000 -E ./Examples/100Kchr10_fa2tfa_08.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz -n ./Examples/chr10.txt
+             "args": ["-f", "tfa", "-i", "../examples2/100Kchr10.tfa.gz", "-o", "0", "-N", "2", "40", "2", "-T", "mstatspop_100chr10.tfa.09.txt", "-G", "1", "-u", "1", "-w", "10000", "-E", "../examples2/100Kchr10_fa2tfa_08.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz" ,  "-n", "../Examples/chr10.txt"],
+
+            
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            "environment": [
+                {
+                    // add the directory where our target was built to the PATHs
+                    // it gets resolved by CMake Tools:
+                    "name": "PATH",
+                    "value": "${env:PATH}:${command:cmake.getLaunchTargetDirectory}"
+                },
+                {
+                    "name": "OTHER_VALUE",
+                    "value": "Something something"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Launch gecho",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            "program": "${command:cmake.buildDirectory}/gecho",  
+            "args": ["./Examples/example.vcf.gz"],
+
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            "environment": [
+                {
+                    // add the directory where our target was built to the PATHs
+                    // it gets resolved by CMake Tools:
+                    "name": "PATH",
+                    "value": "${env:PATH}:${command:cmake.getLaunchTargetDirectory}"
+                },
+                {
+                    "name": "OTHER_VALUE",
+                    "value": "Something something"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "(gdb) Launch - test",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/test_compress",
+            "args": ["-u",  "../../examples/vcf-file-large_2023-08-22_1014/53lines_phased.newChrID.vcf.gz"],
+            
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            "environment": [
+                {
+                    // add the directory where our target was built to the PATHs
+                    // it gets resolved by CMake Tools:
+                    "name": "PATH",
+                    "value": "${env:PATH}:${command:cmake.getLaunchTargetDirectory}"
+                },
+                {
+                    "name": "OTHER_VALUE",
+                    "value": "Something something"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "tfa_index",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/tfa_index",
+             "args": ["../Examples/100Kchr10.tfa.gz" , "-f" ],
+            // "args": ["100Kchr10_t.tfa"],
+            // 
+            // "args": ["100Kchr10_t.tfa" , "-o" , "xxx"],
+            // "args": ["100Kchr10.tfa" , "-f", "-n",  "-o" , "./100Kchr10.tfa"],
+            // "args": ["100Kchr10.tfa" , "-n" ],
+            // "args": ["100Kchr10.tfa" , "-n" , "-o" , "xxx"],
+            // ## compress with BGZF and create index
+            // "args": ["100Kchr10.tfa.gz" , "-f" ],
+            // "args": ["../Examples/100Kallchr.tfa.gz" , "-f" ],
+            // ## check zipped file will fail
+            // "args": ["100Kchr10.tfa.zip" ],
+            // tfa_index debug_test/gVCF2tFasta/v1_pool.tfa.gz
+            // "args": ["gVCF2tFasta/v1_pool.tfa.gz" , "-f" ],
+            // ./build/tfa_index debug_test/gVCF2tFasta/v1_pool.tfa.gz -o debug_test/gVCF2tFasta/test.tfa.gz
+            // "args": ["gVCF2tFasta/v1_pool.tfa.gz" , "-o" , "gVCF2tFasta/test" , "-f" ],
+            // "args": ["gVCF2tFasta/testgz.tfa.gz" , "-o" , "gVCF2tFasta/test" , "-f" ],
+            //"args": ["gVCF2tFasta/testgz.tfa.gz", "-f"  ],
+            // "args": ["Examples/100Kallchr07.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS", "-w"  ],
+
+            // "args": ["Examples/100Kallchr07.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS", "-w" , "-o","examples2/" ],
+           
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            // "environment": [
+            //     {
+            //         // add the directory where our target was built to the PATHs
+            //         // it gets resolved by CMake Tools:
+            //         "name": "PATH",
+            //         "value": "${env:PATH}:${command:cmake.getLaunchTargetDirectory}"
+            //     },
+            //     {
+            //         "name": "OTHER_VALUE",
+            //         "value": "Something something"
+            //     }
+            // ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        
+        {
+            "name": "tfa_tabix",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/tfa_fadix",
+            "args": ["100Kchr10_TFAv2.tfa.bgz" ],
+            
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "test_tfasta",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/test_tfasta",
+
+             "args": ["../Examples/100Kchr10.tfa.gz" ],
+    
+
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test",
+            
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
+        {
+            "name": "gVCF2tFasta",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/gVCF2tFasta",
+
+            "args": ["-v" , "example.vcf.gz"  ,   "-r" , "ref.fa"   ],
+            // "args": ["-v" , "example_unsorted.vcf"  , "-r" , "ref.fa"  , "-o" , "v2_example_gz" ],
+            // "args": ["-v" , "example.vcf.gz"  , "-r" , "ref.fa"  , "-o" , "v2_example_gz" ],
+
+            // "args": ["-v" , "example.vcf"  , "-n" ,"ref.fa.txt" ,  "-r" , "ref.fa"  , "-o" , "v2_example" ],
+
+            //"args": ["-v" , "example.vcf.gz"  , "-n" ,"ref.fa.txt" ,  "-r" , "ref.fa"  , "-o" , "out_tfa_im_1" , "-i" , "1" ],
+
+
+            // ../build/gVCF2tFasta -v multipleVCF_2pop.vcf -r ref.fa.gz -o  v2_example_mult -n ref.fa.fai
+            // "args": ["-v" , "multipleVCF_2pop.vcf"  , "-n" ,"ref.fa.txt" ,  "-r" , "ref.fa"  , "-o" , "v2_example_mult" ],
+
+            // ../build/gVCF2tFasta -v pool_p10.vcf -r ref.fa.gz -o  v2_pool -n ref.fa.fai
+            // "args": ["-v" , "pool_p10.vcf"  , "-n" ,"ref.fa.txt" ,  "-r" , "ref.fa"  , "-o" , "v2_pool" ],
+
+            // ../build/gVCF2tFasta -v ./gatk_combined.vcf_10lines.recode.vcf.gz -r ./pdulcis26.contigs_Pd1-8.fa -o  v2_TEST_almond_10lines -i 0 -n ./pdulcis26.chromosomes.lengths
+            // "args": ["-v" , "./gatk_combined.vcf_10lines.recode.vcf.gz"  , "-n" ,"./pdulcis26.chromosomes.lengths" ,  "-r" , "./pdulcis26.contigs_Pd1-8.fa"  , "-o" , "v2_TEST_almond_10lines" , "-i" , "0" ],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/debug_test/gVCF2tFasta",
+            
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
