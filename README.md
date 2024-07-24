@@ -1,4 +1,4 @@
-# mstatspop v.0.1beta (20230907)
+# mstatspop v.1.0.0
 
 ## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 
