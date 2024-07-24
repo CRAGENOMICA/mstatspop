@@ -121,7 +121,9 @@ jobs:
         # get the name of the release tarball
 
         name: mstatspop-release
-        path: ${{ steps.strings.outputs.build-output-dir }}/*.tar.gz ${{ steps.strings.outputs.build-output-dir }}/version.txt
+        path: | 
+           ${{ steps.strings.outputs.build-output-dir }}/*.tar.gz 
+           ${{ steps.strings.outputs.build-output-dir }}/version.txt
     - name: check release tarball
       run : ls -l ${{ steps.strings.outputs.build-output-dir }}/*.tar.gz
     - name: check release tarball 2
