@@ -74,39 +74,42 @@ if(NOT HTSLIB_INCLUDE_DIR OR NOT HTSLIB_LIBRARY)
 endif()
 
 ## set GLS_INCLUDE_DIR
-find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS /usr/local/include)
-find_library(GSL_LIBRARY NAMES gsl PATHS /usr/local/lib)
+# find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS /usr/local/include)
+# find_library(GSL_LIBRARY NAMES gsl PATHS /usr/local/lib)
 
-if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
-  find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "C:/Program Files/gsl/include")
-  find_library(GSL_LIBRARY NAMES gsl PATHS "C:/Program Files/gsl/lib")
-endif()
-## find gls on macos NEED TO BE TESTED
-if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
-  find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "/usr/local/Cellar/gsl")
-  find_library(GSL_LIBRARY NAMES gsl PATHS "/usr/local/Cellar/gsl")
-endif()
-# /opt/homebrew/opt/gsl
-if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
-  find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "/opt/homebrew/opt/gsl/include")
-  find_library(GSL_LIBRARY NAMES gsl PATHS "/opt/homebrew/opt/gsl/lib")
-endif()
-## if not search in  /opt/homebrew/Cellar/gsl
-if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
-  find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "/opt/homebrew/Cellar/gsl")
-  find_library(GSL_LIBRARY NAMES gsl PATHS "/opt/homebrew/Cellar/gsl")
-endif()
+# if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
+#   find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "C:/Program Files/gsl/include")
+#   find_library(GSL_LIBRARY NAMES gsl PATHS "C:/Program Files/gsl/lib")
+# endif()
+# ## find gls on macos NEED TO BE TESTED
+# if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
+#   find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "/usr/local/Cellar/gsl")
+#   find_library(GSL_LIBRARY NAMES gsl PATHS "/usr/local/Cellar/gsl")
+# endif()
+# # /opt/homebrew/opt/gsl
+# if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
+#   find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "/opt/homebrew/opt/gsl/include")
+#   find_library(GSL_LIBRARY NAMES gsl PATHS "/opt/homebrew/opt/gsl/lib")
+# endif()
+# ## if not search in  /opt/homebrew/Cellar/gsl
+# if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
+#   find_path(GSL_INCLUDE_DIR NAMES gsl/gsl_version.h HINTS "/opt/homebrew/Cellar/gsl")
+#   find_library(GSL_LIBRARY NAMES gsl PATHS "/opt/homebrew/Cellar/gsl")
+# endif()
 
-if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
-  message(FATAL_ERROR "Could not find gsl")
-endif()
+# if(NOT GSL_INCLUDE_DIR OR NOT GSL_LIBRARY)
+#   message(FATAL_ERROR "Could not find gsl")
+# endif()
 
-include_directories(${HTSLIB_INCLUDE_DIR} ${GLS_INCLUDE_DIR})
+FIND_PACKAGE(GSL REQUIRED)
+include_directories(${GSL_INCLUDE_DIRS} ${GSLCBLAS_INCLUDE_DIRS})
+
+include_directories(${HTSLIB_INCLUDE_DIR} ${GLS_INCLUDE_DIR} ${GSLCBLAS_INCLUDE_DIRS})
 
 add_executable(mstatspop ${SOURCE_FILE})
 target_include_directories(mstatspop PRIVATE "lib")
 target_compile_options(mstatspop PRIVATE -DinGSL=1)
-target_link_libraries(mstatspop  ${HTSLIB_LIBRARY} -lm -lgsl -lgslcblas -lz logging )
+target_link_libraries(mstatspop  ${HTSLIB_LIBRARY}  ${GSL_LIBRARIES} ${GSLCBLAS_LIBRARIES} -lm  -lz logging )
 # target_link_libraries(mstatspop PRIVATE  )
 
 
