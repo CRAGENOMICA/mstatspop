@@ -75,11 +75,23 @@ jobs:
         sudo apt-get install -y libhts-dev libgsl-dev 
     
     ## Install htslib on macOS and run only in macos-latest or macos-latest-xlarge
-    - name : Install htslib gsl macOS 
+    - name : Install htslib  macOS 
       if: matrix.os == 'macos-latest' || matrix.os == 'macos-latest-xlarge'
       run: |
         brew install htslib
         brew install gsl
+    - name : Install gsl macOS 
+      if: matrix.os == 'macos-latest' || matrix.os == 'macos-latest-xlarge'
+      run : |
+        mkdir -p tmp/gsl
+        curl -o tmp/gsl-2.2.tar.gz ftp://ftp.gnu.org/gnu/gsl/gsl-2.2.tar.gz -LOk
+        tar -zxvf tmp/gsl-2.2.tar.gz -C tmp/gsl
+        rm tmp/gsl-2.2.tar.gz
+        cd tmp/gsl/gsl-2.2
+        ./configure
+        make
+        make install
+
         
     
     - name: Configure CMake
@@ -111,7 +123,9 @@ jobs:
         name: mstatspop-release
         path: ${{ steps.strings.outputs.build-output-dir }}/*.tar.gz
     - name: check release tarball
-      run: ls -l ${{ github.workspace }}/mstatspop-release/ 
+      run : ls -l ${{ steps.strings.outputs.build-output-dir }}/*.tar.gz
+    - name: check release tarball 2
+      run: ls -l ${{ steps.strings.outputs.build-output-dir }}/ 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       # Execute tests defined by the CMake configuration. Note that --build-config is needed because the default Windows generator is a multi-config generator (Visual Studio generator).
