@@ -18,8 +18,12 @@
             // "args" : ["-f", "tfa", "-i", "../Examples/100Kallchr_TFAv2.tfa.bgz", "-o", "0", "-N", "1", "42", "-T", "mstatspop_100allchr.tfa.02.txt", "-w", "25000", "-n", "../Examples/chr10-12-14.txt"],
             
              // ./bin/mstatspop_v1 -f tfa -i ./Examples/100Kchr10.tfa.gz -o 0 -N 2 40 2 -T ./Results/mstatspop_100chr10.tfa.09.txt -G 1 -u 1 -w 10000 -E ./Examples/100Kchr10_fa2tfa_08.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz -n ./Examples/chr10.txt
-             "args": ["-f", "tfa", "-i", "../examples2/100Kchr10.tfa.gz", "-o", "0", "-N", "2", "40", "2", "-T", "mstatspop_100chr10.tfa.09.txt", "-G", "1", "-u", "1", "-w", "10000", "-E", "../examples2/100Kchr10_fa2tfa_08.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz" ,  "-n", "../Examples/chr10.txt"],
+             //  "args": ["-f", "tfa", "-i", "../examples2/100Kchr10.tfa.gz", "-o", "0", "-N", "2", "40", "2", "-T", "mstatspop_100chr10.tfa.09.txt", "-G", "1", "-u", "1", "-w", "10000", "-E", "../examples2/100Kchr10_fa2tfa_08.tfa.gz_npops2_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz" ,  "-n", "../Examples/chr10.txt"],
 
+
+            // debug issue_1 
+            // ./mstatspop -f tfa -i ./Dmel_alignment_allchr.tfa2.tfa.gz -o 1 -N 3 30 30 2 -G 1 -n ./scaffolds.txt -w 100000 -u 1 -T ./Dmel_alignment_allchr_mstatspop_Results_allchr.txt
+            "args": ["-f", "tfa", "-i", "issue_1/Dmel_alignment_allchr.tfa2.tfa.gz", "-o", "1", "-N", "3", "30", "30", "2", "-G", "1", "-n", "issue_1/scaffolds.txt", "-w", "100000", "-u", "1", "-T", "issue_1/Dmel_alignment_allchr_mstatspop_Results_allchr.txt"],
             
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}/debug_test",

@@ -2564,12 +2564,13 @@ int main(int argc, const char *argv[])
         log_fatal("Error allocating memory, statistics[0].svT");
         exit(1);
       }
-      if ((statistics[0].popfreq[x] = (double *)calloc(args.int_total_nsam + 1, sizeof(double))) == 0)
-      {
+      
+    }
+    if ((statistics[0].popfreq[x] = (double *)calloc(args.int_total_nsam + 1, sizeof(double))) == 0)
+    {
         // fprintf(file_logerr,"\n  Error allocating memory.");
-        log_fatal("Error allocating memory, statistics[0].popfreq");
-        exit(1);
-      }
+      log_fatal("Error allocating memory, statistics[0].popfreq");
+      exit(1);
     }
   }
   for (x = 0; x < args.int_total_nsam; x++)
@@ -4108,6 +4109,7 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds, char ***chr_n
     {
       // printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
       log_error("Error reading the scaffold names file %s:\n scaffold (%s) without length information.", chr_name_all, chr_name_array[0][*nscaffolds - 1]);
+      free(buf);
       return (1);
     }
     do
@@ -4118,6 +4120,7 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds, char ***chr_n
     {
       // printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
       log_error("Error reading the scaffold names file %s:\n scaffold (%s) without length information.", chr_name_all, chr_name_array[0][*nscaffolds - 1]);
+      free(buf);
       return (1);
     }
     k = 0;
@@ -4150,6 +4153,7 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds, char ***chr_n
     chr_length_array[0] = (char **)realloc(chr_length_array[0], *nscaffolds * sizeof(char *));
     chr_length_array[0][*nscaffolds - 1] = (char *)calloc(MSP_MAX_NAME, sizeof(char));
   }
+  free(buf);
   fclose(file_scaffolds);
 
   return (0);
