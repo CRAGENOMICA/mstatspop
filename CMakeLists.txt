@@ -31,7 +31,7 @@ file(WRITE "${CMAKE_BINARY_DIR}/version.txt" "${VERSION_NUMBER}")
 
 
 add_compile_options("-DLOG_USE_COLOR")
-IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+IF(CMAKE_BUILD_TYPE MATCHES Debug)
 
 # Set compiler options for warnings and AddressSanitizer
 if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
@@ -41,7 +41,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clan
 endif()
 
 add_compile_options("-DDEBUG")
-ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 
 file (GLOB_RECURSE SOURCE_FILE CONFIGURE_DEPENDS  "mstatspop/*.c")
 ## explude mstatspop/tfa_index.c and mstatspop/tfa_convert.c
