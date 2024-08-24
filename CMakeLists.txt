@@ -34,11 +34,11 @@ add_compile_options("-DLOG_USE_COLOR")
 IF(CMAKE_BUILD_TYPE MATCHES Debug)
 
 # Set compiler options for warnings and AddressSanitizer
-if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-    # add_compile_options(-Wall -Wextra -pedantic -fsanitize=address -g)
-    add_compile_options(-Wall -Wextra -pedantic -fsanitize=address -g -O0)
-    add_link_options(-fsanitize=address)
-endif()
+# if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+#     # add_compile_options(-Wall -Wextra -pedantic -fsanitize=address -g)
+#     add_compile_options(-Wall -Wextra -pedantic -fsanitize=address -g -O0)
+#     add_link_options(-fsanitize=address)
+# endif()
 
 add_compile_options("-DDEBUG")
 ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
