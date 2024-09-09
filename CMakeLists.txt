@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(mstatspop VERSION 1.0.0 LANGUAGES C CXX)
+project(mstatspop VERSION 1.0.1 LANGUAGES C CXX)
 
 # include(CTest)
 # enable_testing()
