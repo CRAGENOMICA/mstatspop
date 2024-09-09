@@ -4232,8 +4232,13 @@ int main(int argc, const char *argv[])
     log_trace("cleaning piter");
     free(piter);
   }
-  log_trace("cleaning f");
-  free(f);
+  // fix issue : free f if formatfile is not tfa
+  if (args.formatfile != TFA_FORMAT) 
+  {
+    log_trace("cleaning f");
+    free(f);
+  }
+
 
   log_trace("cleaning args.r2i_ploidies");
   free(args.r2i_ploidies);
