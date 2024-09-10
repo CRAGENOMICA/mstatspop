@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(mstatspop VERSION 1.0.0 LANGUAGES C CXX)
+project(mstatspop VERSION 1.0.1 LANGUAGES C CXX)
 
 # include(CTest)
 # enable_testing()
@@ -27,10 +27,21 @@ add_definitions(-DVERSION_NUMBER=\"${VERSION_NUMBER}\")
 file(WRITE "${CMAKE_BINARY_DIR}/version.txt" "${VERSION_NUMBER}")
 
 
+
+
+
 add_compile_options("-DLOG_USE_COLOR")
-IF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+IF(CMAKE_BUILD_TYPE MATCHES Debug)
+
+# Set compiler options for warnings and AddressSanitizer
+# if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+#     # add_compile_options(-Wall -Wextra -pedantic -fsanitize=address -g)
+#     add_compile_options(-Wall -Wextra -pedantic -fsanitize=address -g -O0)
+#     add_link_options(-fsanitize=address)
+# endif()
+
 add_compile_options("-DDEBUG")
-ENDIF(CMAKE_BUILD_TYPE MATCHES DEBUG)
+ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 
 file (GLOB_RECURSE SOURCE_FILE CONFIGURE_DEPENDS  "mstatspop/*.c")
 ## explude mstatspop/tfa_index.c and mstatspop/tfa_convert.c

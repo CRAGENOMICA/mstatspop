@@ -196,5 +196,6 @@ void log_start(const char *program_name,int argc, char *argv[]) {
     strcat(cmdline, " ");
   }
   log_info("Command: %s", cmdline);
+  free(cmdline);
 
 }

@@ -327,6 +327,7 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
           if ((tfasta->names[nseq] = (char *)calloc(50, sizeof(char))) == 0)
           {
             log_fatal("Error: memory not allocated, samples names init_tfasta_file");
+            free(str.s);
             return TFA_ERROR;
           }
 
@@ -338,11 +339,13 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
             if (maxsam > 32767)
             {
               log_error("Sorry, no more than 32767 samples are allowed.");
+              free(str.s);
               return TFA_ERROR;
             }
             if ((tfasta->names = (char **)realloc(tfasta->names, maxsam * sizeof(char *))) == 0)
             {
               log_fatal("Error: memory not reallocated, names assigna.1");
+              free(str.s);
               return TFA_ERROR;
             }
             // for (int x = nseq; x < maxsam; x++)
@@ -359,8 +362,10 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
       }
       tfasta->n_sam = nseq;
     }
+    
   }
-
+  // free kstring_t str
+  free(str.s);
   // if n_sam is 0, then the file does not contain any samples 
   if (tfasta->n_sam == 0)
   {
@@ -398,6 +403,7 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
   // log_debug("Format of the indexed file: %s\n", get_format_name(format));
 
   tfasta->is_initialized = true;
+  free(seqnames);
   return TFA_OK;
 }
 
@@ -591,14 +597,19 @@ int read_tfasta_DNA(
   sprintf(region, "%s:%ld-%ld", chr_name, init_site, end_site);
 
   hts_itr_t *iter = tbx_itr_querys(tfasta->tbx, region);
+
+  // no need for the region string anymore
+  free(region);
+
   if (iter == NULL)
   {
     // it is possible that the region is not found in the index
     //fprintf(stderr, "Failed to parse region: %s\n", chr_name);
     log_error("Failed to parse region: %s", chr_name);
-    // hts_close(tfasta.fp);
-    // tbx_destroy(tfasta.tbx);
+
     // reset the position to 0
+    // free iter
+    hts_itr_destroy(iter);
     
     position = 1;
     return 0;
@@ -675,6 +686,7 @@ int read_tfasta_DNA(
           if(dna_char == -1) {
             log_error("Unexpected value in tfa file: position %ld, sample %d \n%c", position, i, cc[i]);
             free(DNA_matr2);
+            hts_itr_destroy(iter);
             return (-1);
           }
           if(dna_char > 0) {
@@ -706,10 +718,13 @@ int read_tfasta_DNA(
   // if *n_site == 0, then the region is not found in the file
   if(*n_site == 0) {
    
+    hts_itr_destroy(iter);
+    free(DNA_matr2);
+    free(str.s);
     return 1;
   }
 
-  free(region);
+  
   free(str.s);
 
   // possible side effect, memory was allocated for DNA_matr2 before
@@ -722,6 +737,7 @@ int read_tfasta_DNA(
     // fprintf(file_logerr,"\nError: memory not reallocated. get_tfadata.23d2 \n");
     log_fatal("Error: memory not reallocated, DNA_matr get_tfadata.23d2");
     free(DNA_matr2);
+    hts_itr_destroy(iter);
     return (0);
   }
 
@@ -732,7 +748,7 @@ int read_tfasta_DNA(
     }
   }
   free(DNA_matr2);
-
+  hts_itr_destroy(iter);
 
   return (1);
 }

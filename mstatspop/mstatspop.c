@@ -408,6 +408,13 @@ int main(int argc, const char *argv[])
 
   // set program name as mstatspop
   const char *program_name = "mstatspop";
+  #ifdef DEBUG
+  log_set_level(LOG_TRACE);
+  #else
+  log_set_level(LOG_INFO);
+  #endif
+  log_trace("Parsing command line arguments");
+
   log_start(program_name, argc, argv);
 
   arg = 1;
@@ -2564,12 +2571,13 @@ int main(int argc, const char *argv[])
         log_fatal("Error allocating memory, statistics[0].svT");
         exit(1);
       }
-      if ((statistics[0].popfreq[x] = (double *)calloc(args.int_total_nsam + 1, sizeof(double))) == 0)
-      {
+      
+    }
+    if ((statistics[0].popfreq[x] = (double *)calloc(args.int_total_nsam + 1, sizeof(double))) == 0)
+    {
         // fprintf(file_logerr,"\n  Error allocating memory.");
-        log_fatal("Error allocating memory, statistics[0].popfreq");
-        exit(1);
-      }
+      log_fatal("Error allocating memory, statistics[0].popfreq");
+      exit(1);
     }
   }
   for (x = 0; x < args.int_total_nsam; x++)
@@ -3693,284 +3701,546 @@ int main(int argc, const char *argv[])
         exit(1);
       }
       /* TODO: Check cleaning the house */
+      log_trace("Cleaning matrix_perm");
       free(matrix_pol);
       // if (!(args.formatfile == 1 || args.formatfile == 2))
-      if (!(args.formatfile == MS_FORMAT || args.formatfile == MS_X_FORMAT))
+      if (!(args.formatfile == MS_FORMAT || args.formatfile == MS_X_FORMAT)) {
+        log_trace("Cleaning matrix_pol_tcga");
         free(matrix_pol_tcga);
+      }
+      log_trace("Cleaning matrix_freq");
       free(matrix_freq);
+      log_trace("Cleaning matrix_pos");
       free(matrix_pos);
       /*free(matrix_GC);*/
+      log_trace("Cleaning matrix_sv");
       free(matrix_sv);
+      log_trace("Cleaning sites_matrix");
       free(sites_matrix);
 
       for (x = 0; x < args.npops; x++)
       {
+        log_trace("Cleaning jfd[%d]",x);
         free(jfd[x]);
+        log_trace("Cleaning nfd[%d]",x);
         free(nfd[x]);
       }
+      log_trace("Cleaning jfd");
       free(jfd);
+      log_trace("Cleaning nfd");
       free(nfd);
       // if (/*include_unknown && */ args.file_mas[0] == '-' && (args.formatfile == 1 || args.formatfile == 2))
       if (/*include_unknown && */ args.file_mas[0] == '-' && (args.formatfile == MS_FORMAT || args.formatfile == MS_X_FORMAT))
-
+      {
+        log_trace("Cleaning sum_sam_mask");
         free(sum_sam_mask);
-
+      }
       li++;
     } // end of while( li < args.niterdata)
     // if (args.formatfile == 3)
     if (args.formatfile == TFA_FORMAT)
     {
       log_info("Processing scaffold %s Done", chr_name);
-      if (file_wcoor)
-        free(wgenes);
+      if (file_wcoor) {
+        log_trace("cleaning wgenes");
+          free(wgenes);
+        }
     }
   }
   // if (file_ws)
   //   fzclose(file_ws, &file_ws_gz);
-  if(wtfasta)
+  
+
+  if(wtfasta) {
+    log_trace("Cleaning tfasta weight file");
     close_wtfasta_file(wtfasta);
+  }
+    
+  
 
   // if (/*include_unknown && */ args.file_mas[0] != '-' && (args.formatfile == 1 || args.formatfile == 2))
   if (/*include_unknown && */ args.file_mas[0] != '-' && (args.formatfile == MS_FORMAT || args.formatfile == MS_X_FORMAT))
+  {
+    log_trace("Clearning sum_sam_mask");
     free(sum_sam_mask);
-
+  }
   if (args.formatfile > 0)
   {
+    log_trace("Cleaning file_input and file_input_gz");
     fzclose(file_input, &file_input_gz);
   }
+  log_trace("cleaning file_output");
   if (file_output)
     fclose(file_output);
 
   for (x = 0; x < nscaffolds; x++)
   {
+    log_trace("cleaning chr_name_array[%d]",x);
     free(chr_name_array[x]);
+    log_trace("cleaning chr_length_array[%d]",x);
     free(chr_length_array[x]);
   }
+  
+  log_trace("cleaning chr_name_array");
   free(chr_name_array);
+  log_trace("cleaning chr_length_array");
   free(chr_length_array);
 
+  log_trace("cleaning args.chr_name");
   free(args.sort_nsam);
+
+  log_trace("cleaning nsites1_pop");
   free(nsites1_pop);
+  
+  log_trace("cleaning nsites2_pop");
   free(nsites2_pop);
+
+  log_trace("cleaning nsites3_pop");
   free(nsites3_pop);
+
+  log_trace("cleaning nsites1_pop_outg");
   free(nsites1_pop_outg);
+
+  log_trace("cleaning nsites2_pop_outg");
   free(nsites2_pop_outg);
+
+  log_trace("cleaning nsites3_pop_outg");
   free(nsites3_pop_outg);
+
+  log_trace("cleaning anx");
   free(anx);
+
+  log_trace("cleaning bnx");
   free(bnx);
+
+  log_trace("cleaning anxo");
   free(anxo);
+
+  log_trace("cleaning bnxo");
   free(bnxo);
   for (x = 0; x < args.npops; x++)
   {
+    log_trace("cleaning lengthamng[%d]",x);
     free(lengthamng[x]);
+    log_trace("cleaning lengthamng_outg[%d]",x);
     free(lengthamng_outg[x]);
   }
+  log_trace("cleaning lengthamng");
   free(lengthamng);
+  log_trace("cleaning lengthamng_outg");
   free(lengthamng_outg);
+
+  log_trace("cleaning args.vint_perpop_nsam");
   free(args.vint_perpop_nsam);
 
   if (H1frq)
   {
     for (x = 0; x < npf; x++)
-      free(freqspH1[x]);
+      {
+        log_trace("cleaning freqspH1[%d]",x);
+        free(freqspH1[x]);
+      }
+    log_trace("cleaning freqspH1");
     free(freqspH1);
+    log_trace("cleaning thetaH1");
     free(thetaH1);
-    for (x = 0; x < npf; x++)
+    for (x = 0; x < npf; x++){
+      log_trace("cleaning freqspH0[%d]",x);
       free(freqspH0[x]);
+    }
+    log_trace("cleaning freqspH0");
     free(freqspH0);
+    log_trace("cleaning thetaH0");
     free(thetaH0);
   }
 
+  log_trace("cleaning statistics[0].Sanc");
   free(statistics[0].Sanc);
+  log_trace("cleaning statistics[0].piw");
   free(statistics[0].piw);
+  log_trace("cleaning statistics[0].pia");
   free(statistics[0].pia);
+  log_trace("cleaning statistics[0].piT");
   free(statistics[0].piT);
+  log_trace("cleaning statistics[0].piant");
   free(statistics[0].piant);
+  log_trace("cleaning statistics[0].piTnt");
   free(statistics[0].piTnt);
+  log_trace("cleaning statistics[0].fst");
   free(statistics[0].fst);
+  log_trace("cleaning statistics[0].piwHKY");
   free(statistics[0].piwHKY);
+  log_trace("cleaning statistics[0].piaHKY");
   free(statistics[0].piaHKY);
+  log_trace("cleaning statistics[0].piTHKY");
   free(statistics[0].piTHKY);
+  log_trace("cleaning statistics[0].fstHKY");
   free(statistics[0].fstHKY);
+  log_trace("cleaning statistics[0].fst1all");
   free(statistics[0].fst1all);
+  log_trace("cleaning statistics[0].hapw");
   free(statistics[0].hapw);
+  log_trace("cleaning statistics[0].hapa");
   free(statistics[0].hapa);
+  log_trace("cleaning statistics[0].hapT");
   free(statistics[0].hapT);
+  log_trace("cleaning statistics[0].fsth");
   free(statistics[0].fsth);
+  log_trace("cleaning statistics[0].fsth1all");
   free(statistics[0].fsth1all);
+  log_trace("cleaning statistics[0].Gst");
   free(statistics[0].Gst);
 
+  log_trace("cleaning statistics[0].S");
   free(statistics[0].S);
+  log_trace("cleaning statistics[0].thetaS");
   free(statistics[0].thetaS);
+  log_trace("cleaning statistics[0].thetaT");
   free(statistics[0].thetaT);
+  log_trace("cleaning statistics[0].So");
   free(statistics[0].So);
+  log_trace("cleaning statistics[0].thetaSo");
   free(statistics[0].thetaSo);
+  log_trace("cleaning statistics[0].thetaTo");
   free(statistics[0].thetaTo);
+  log_trace("cleaning statistics[0].thetaTHKY");
   free(statistics[0].thetaTHKY);
+  log_trace("cleaning statistics[0].thetaFL");
   free(statistics[0].thetaFL);
+  log_trace("cleaning statistics[0].thetaFW");
   free(statistics[0].thetaFW);
+  log_trace("cleaning statistics[0].thetaL");
   free(statistics[0].thetaL);
+  log_trace("cleaning statistics[0].thetaSA");
   free(statistics[0].thetaSA);
+  log_trace("cleaning statistics[0].thetaTA");
   free(statistics[0].thetaTA);
+  log_trace("cleaning statistics[0].K");
   free(statistics[0].K);
+  log_trace("cleaning statistics[0].KHKY");
   free(statistics[0].KHKY);
+  log_trace("cleaning statistics[0].Dtaj");
   free(statistics[0].Dtaj);
+  log_trace("cleaning statistics[0].Dfl");
   free(statistics[0].Dfl);
+  log_trace("cleaning statistics[0].Ffl");
   free(statistics[0].Ffl);
+  log_trace("cleaning statistics[0].Hnfw");
   free(statistics[0].Hnfw);
+  log_trace("cleaning statistics[0].Ez");
   free(statistics[0].Ez);
+  log_trace("cleaning statistics[0].Yach");
   free(statistics[0].Yach);
+  log_trace("cleaning statistics[0].FH");
   free(statistics[0].FH);
+  log_trace("cleaning statistics[0].R2");
   free(statistics[0].R2);
+  log_trace("cleaning statistics[0].Fs");  
   free(statistics[0].Fs);
+  log_trace("cleaning statistics[0].nhpop");
   free(statistics[0].nhpop);
+  log_trace("cleaning statistics[0].length");
   free(statistics[0].length);
+  log_trace("cleaning statistics[0].total_length");
   free(statistics[0].total_tcga);
+  log_trace("cleaning statistics[0].ToH0_ii");
   free(statistics[0].ToH0_ii);
+  log_trace("cleaning statistics[0].To_ii");
   free(statistics[0].To_ii);
+  log_trace("cleaning statistics[0].To_00");
   free(statistics[0].To_00);
+  log_trace("cleaning statistics[0].To_i0");
   free(statistics[0].To_i0);
+  log_trace("cleaning statistics[0].ToH0_00");
   free(statistics[0].ToH0_00);
+  log_trace("cleaning statistics[0].To_Qc_ii");
   free(statistics[0].To_Qc_ii);
+  log_trace("cleaning statistics[0].To_Qw_ii");
   free(statistics[0].To_Qw_ii);
+  log_trace("cleaning statistics[0].To_Lc_ii");
   free(statistics[0].To_Lc_ii);
 
+
+  log_trace("cleaning statistics[0].Rm");
   free(statistics[0].Rm);
+  log_trace("cleaning statistics[0].ZnA");
   free(statistics[0].ZnA);
 
+  log_trace("cleaning statistics[0].mdsd");
   free(statistics[0].mdsd);
+
+  log_trace("cleaning statistics[0].mdg1");
   free(statistics[0].mdg1);
+
+  log_trace("cleaning statistics[0].mdg2");
   free(statistics[0].mdg2);
 
+  log_trace("cleaning statistics[0].anx");
   free(statistics[0].anx);
+
+  log_trace("cleaning statistics[0].bnx");
   free(statistics[0].bnx);
+
+  log_trace("cleaning statistics[0].anxo");
   free(statistics[0].anxo);
+
+  log_trace("cleaning statistics[0].bnxo");
   free(statistics[0].bnxo);
 
   for (x = 0; x < args.npops; x++)
   {
+    log_trace("cleaning statistics[0].freq[%d]",x);
     free(statistics[0].freq[x]);
+    log_trace("cleaning statistics[0].freqh[%d]",x);
     free(statistics[0].freqh[x]);
+    log_trace("cleaning statistics[0].tcga[%d]",x);
     free(statistics[0].tcga[x]);
+    log_trace("cleaning statistics[0].mdw[%d]",x);
     free(statistics[0].mdw[x]);
+    log_trace("cleaning statistics[0].lengthamng[%d]",x);
     free(statistics[0].lengthamng[x]);
+    log_trace("cleaning statistics[0].lengthamng_outg[%d]",x);
     free(statistics[0].lengthamng_outg[x]);
     for (y = 0; y < args.npops; y++)
     {
+      log_trace("cleaning statistics[0].sv[%d][%d]",x,y);
       free(statistics[0].sv[x][y]);
+      log_trace("cleaning statistics[0].svT[%d][%d]",x,y);
       free(statistics[0].svT[x][y]);
     }
+    log_trace("cleaning statistics[0].sv[%d]",x);
     free(statistics[0].sv[x]);
+    log_trace("cleaning statistics[0].svT[%d]",x);
     free(statistics[0].svT[x]);
   }
+
+  log_trace("cleaning statistics[0].length2");
   free(statistics[0].length2);
+  log_trace("cleaning statistics[0].lengthamng");
   free(statistics[0].lengthamng);
+  log_trace("cleaning statistics[0].lengthamng_outg");
   free(statistics[0].lengthamng_outg);
 
   for (x = 0; x < args.int_total_nsam; x++)
   {
+    log_trace("cleaning statistics[0].linefreq[%d]",x);
     free(statistics[0].linefreq[x]);
   }
   for (x = 0; x < args.npops; x++)
   {
+    log_trace("cleaning statistics[0].popfreq[%d]",x);
     free(statistics[0].popfreq[x]);
   }
   for (x = 0; x < args.r2i_ploidies[0]; x++)
   {
+    log_trace("cleaning statistics[0].R2p[%d]",x);
     free(statistics[0].R2p[x]);
   }
+
+  log_trace("cleaning statistics[0].R2p");
   free(statistics[0].R2p);
 
+  log_trace("cleaning statistics[0].freq");
   free(statistics[0].freq);
+
+  log_trace("cleaning statistics[0].freqh");
   free(statistics[0].freqh);
+
+  log_trace("cleaning statistics[0].tcga");
   free(statistics[0].tcga);
+
+  log_trace("cleaning statistics[0].sv");
   free(statistics[0].sv);
+
+  log_trace("cleaning statistics[0].svT");
   free(statistics[0].svT);
+
+  log_trace("cleaning statistics[0].mdw");
   free(statistics[0].mdw);
+
+  log_trace("cleaning statistics[0].linefreq");
   free(statistics[0].linefreq);
+
+  log_trace("cleaning statistics[0].popfreq");
   free(statistics[0].popfreq);
+
+  log_trace("cleaning statistics");
   free(statistics);
+
+  log_trace("cleaning sum_sam");
   free(sum_sam);
-  for (x = 0; x < args.int_total_nsam + (!args.outgroup_presence); x++)
+  for (x = 0; x < args.int_total_nsam + (!args.outgroup_presence); x++) {
+    log_trace("cleaning tcga[%d]",x);  
     free(tcga[x]);
+  }
+  log_trace("cleaning tcga");
   free(tcga);
   // if (!(args.formatfile == 0 || (args.formatfile == 3 && ((args.slide == 0 && args.window == 0) && args.file_Wcoord[0] == '\0'))))
   if (!(args.formatfile == FASTA_FORMAT || (args.formatfile == TFA_FORMAT && ((args.slide == 0 && args.window == 0) && args.file_Wcoord[0] == '\0'))))
 
   {
+    log_trace("cleaning matrix_mask");
     free(matrix_mask);
+    log_trace("cleaning vector_mask");
     free(vector_mask);
   }
 
   if (args.niter && args.npops > 2)
   {
+    log_trace("cleaning matrix_perm");
     free(matrix_perm);
 
+    log_trace("cleaning stats_iter[0].piw");
     free(stats_iter[0].piw);
+
+    log_trace("cleaning stats_iter[0].pia");
     free(stats_iter[0].pia);
+
+    log_trace("cleaning stats_iter[0].piT");
     free(stats_iter[0].piT);
+
+    log_trace("cleaning stats_iter[0].piant");
     free(stats_iter[0].piant);
+
+    log_trace("cleaning stats_iter[0].piTnt");
     free(stats_iter[0].piTnt);
+
+    log_trace("cleaning stats_iter[0].fst");
     free(stats_iter[0].fst);
+
+    log_trace("cleaning stats_iter[0].piwHKY");
     free(stats_iter[0].piwHKY);
+
+    log_trace("cleaning stats_iter[0].thetaTHKY");
     free(stats_iter[0].thetaTHKY);
+
+    log_trace("cleaning stats_iter[0].piaHKY");
     free(stats_iter[0].piaHKY);
+
+    log_trace("cleaning stats_iter[0].piTHKY");
     free(stats_iter[0].piTHKY);
+
+    log_trace("cleaning stats_iter[0].fstHKY");
     free(stats_iter[0].fstHKY);
+
+    log_trace("cleaning stats_iter[0].fst1all");
     free(stats_iter[0].fst1all);
+
+    log_trace("cleaning stats_iter[0].hapw");
     free(stats_iter[0].hapw);
+
+    log_trace("cleaning stats_iter[0].hapa");
     free(stats_iter[0].hapa);
+
+    log_trace("cleaning stats_iter[0].hapT");
     free(stats_iter[0].hapT);
+
+    log_trace("cleaning stats_iter[0].fsth");
     free(stats_iter[0].fsth);
+
+    log_trace("cleaning stats_iter[0].fsth1all");
     free(stats_iter[0].fsth1all);
+
+    log_trace("cleaning stats_iter[0].Gst");
     free(stats_iter[0].Gst);
+
+    log_trace("cleaning stats_iter[0].K");
     free(stats_iter[0].K);
+
+    log_trace("cleaning stats_iter[0].KHKY");
     free(stats_iter[0].KHKY);
+
+    log_trace("cleaning stats_iter[0].length");
     free(stats_iter[0].length);
+
+    log_trace("cleaning stats_iter[0].length2");
     free(stats_iter[0].length2);
 
     for (x = 0; x < args.npops; x++)
     {
+      log_trace("cleaning stats_iter[0].freqh[%d]",x);
       free(stats_iter[0].freqh[x]);
+      log_trace("cleaning stats_iter[0].tcga[%d]",x);
       free(stats_iter[0].tcga[x]);
       for (y = 0; y < args.npops; y++)
       {
+        log_trace("cleaning stats_iter[0].sv[%d][%d]",x,y);
         free(stats_iter[0].sv[x][y]);
+        log_trace("cleaning stats_iter[0].svT[%d][%d]",x,y);
         free(stats_iter[0].svT[x][y]);
       }
+      log_trace("cleaning stats_iter[0].sv[%d]",x);
       free(stats_iter[0].sv[x]);
+      log_trace("cleaning stats_iter[0].svT[%d]",x);
       free(stats_iter[0].svT[x]);
+      log_trace("cleaning stats_iter[0].lengthamng[%d]",x);
       free(stats_iter[0].lengthamng[x]);
+      log_trace("cleaning stats_iter[0].lengthamng_outg[%d]",x);
       free(stats_iter[0].lengthamng_outg[x]);
     }
+    log_trace("cleaning stats_iter[0].freqh");
     free(stats_iter[0].freqh);
+    log_trace("cleaning stats_iter[0].nhpop");
     free(stats_iter[0].nhpop);
+    log_trace("cleaning stats_iter[0].tcga");
     free(stats_iter[0].tcga);
+    log_trace("cleaning stats_iter[0].sv");
     free(stats_iter[0].sv);
+    log_trace("cleaning stats_iter[0].svT");
     free(stats_iter[0].svT);
+    log_trace("cleaning stats_iter[0].lengthamng");
     free(stats_iter[0].lengthamng);
+    log_trace("cleaning stats_iter[0].lengthamng_outg");
     free(stats_iter[0].lengthamng_outg);
 
+    log_trace("cleaning stats_iter");
     free(stats_iter);
 
+    log_trace("cleaning piter[0].i1");
     free(piter[0].i1);
+
+    log_trace("cleaning piter[0].ih1");
     free(piter[0].ih1);
+
+    log_trace("cleaning piter[0].i");
     free(piter[0].i);
+
+    log_trace("cleaning piter[0].ih");
     free(piter[0].ih);
+
+    log_trace("cleaning piter[0].igh");
     free(piter[0].igh);
 
+    log_trace("cleaning piter[0].niteri1");
     free(piter[0].niteri1);
+    log_trace("cleaning piter[0].niterih1");
     free(piter[0].niterih1);
+
+    log_trace("cleaning piter[0].niteri");
     free(piter[0].niteri);
+
+    log_trace("cleaning piter[0].niterih");
     free(piter[0].niterih);
+
+    log_trace("cleaning piter[0].niterigh");
     free(piter[0].niterigh);
 
-    if (npriors)
+    if (npriors) {
+      log_trace("cleaning vector_priors");
       free(vector_priors);
-
+    }
+    log_trace("cleaning piter");
     free(piter);
   }
-  free(f);
+  // fix issue : free f if formatfile is not tfa
+  if (args.formatfile != TFA_FORMAT) 
+  {
+    log_trace("cleaning f");
+    free(f);
+  }
+
+
+  log_trace("cleaning args.r2i_ploidies");
   free(args.r2i_ploidies);
 
   // if(file_logerr) fprintf(file_logerr,"\nProgram Ended\n");
@@ -4108,6 +4378,7 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds, char ***chr_n
     {
       // printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
       log_error("Error reading the scaffold names file %s:\n scaffold (%s) without length information.", chr_name_all, chr_name_array[0][*nscaffolds - 1]);
+      free(buf);
       return (1);
     }
     do
@@ -4118,6 +4389,7 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds, char ***chr_n
     {
       // printf("Error reading the scaffold names file %s:\n scaffold (%s) without length information.\n",chr_name_all, chr_name_array[0][*nscaffolds-1]);
       log_error("Error reading the scaffold names file %s:\n scaffold (%s) without length information.", chr_name_all, chr_name_array[0][*nscaffolds - 1]);
+      free(buf);
       return (1);
     }
     k = 0;
@@ -4150,6 +4422,7 @@ int read_index_file(char *chr_name_all, unsigned long *nscaffolds, char ***chr_n
     chr_length_array[0] = (char **)realloc(chr_length_array[0], *nscaffolds * sizeof(char *));
     chr_length_array[0][*nscaffolds - 1] = (char *)calloc(MSP_MAX_NAME, sizeof(char));
   }
+  free(buf);
   fclose(file_scaffolds);
 
   return (0);
