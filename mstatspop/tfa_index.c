@@ -27,7 +27,7 @@ typedef struct
 } tfa_index_args_t;
 
 
-const tbx_conf_t tfasta_conf = {TBX_GENERIC, 1, 2, 2, '#', 0};
+// const tbx_conf_t tfasta_conf = {TBX_GENERIC, 1, 2, 2, '#', 0};
 
 
 /**
@@ -318,45 +318,45 @@ int convert_wtfa_v1_to_v2(const char *input_filename, const char *v2_filename)
   return 0;
 }
 
-// function to create an index file
-/**
- * Creates an index for the given input file and saves it to the specified output file.
- *
- * @param input_filename The path to the input file.
- * @param output_filename The path to the output file where the index will be saved.
- * @param n_threads The number of threads to use for creating the index.
- * @param min_shift The minimum shift value for the index, 0 for TBI and use 14 for CSI. CSI not implemented yet.
- * @param conf The configuration settings for creating the index.
- * @return Returns 0 on success, or a negative value on failure.
- */
-int create_index(
-    const char *input_filename,
-    const char *output_filename,
-    int n_threads,
-    int min_shift,
-    const tbx_conf_t conf)
-{
-  tbx_t *tbx;
-  BGZF *fp;
-  int ret;
-  if ((fp = bgzf_open(input_filename, "r")) == 0)
-    return -1;
-  if (n_threads)
-    bgzf_mt(fp, n_threads, 256);
-  if (bgzf_compression(fp) != bgzf)
-  {
-    log_error("%s is not compressed with bgzf format", input_filename);
-    bgzf_close(fp);
-    return -2;
-  }
-  tbx = tbx_index(fp, min_shift, &conf);
-  bgzf_close(fp);
-  if (!tbx)
-    return -1;
-  ret = hts_idx_save_as(tbx->idx, input_filename, NULL, HTS_FMT_TBI);
-  tbx_destroy(tbx);
-  return ret;
-}
+// // function to create an index file
+// /**
+//  * Creates an index for the given input file and saves it to the specified output file.
+//  *
+//  * @param input_filename The path to the input file.
+//  * @param output_filename The path to the output file where the index will be saved.
+//  * @param n_threads The number of threads to use for creating the index.
+//  * @param min_shift The minimum shift value for the index, 0 for TBI and use 14 for CSI. CSI not implemented yet.
+//  * @param conf The configuration settings for creating the index.
+//  * @return Returns 0 on success, or a negative value on failure.
+//  */
+// int create_index(
+//     const char *input_filename,
+//     const char *output_filename,
+//     int n_threads,
+//     int min_shift,
+//     const tbx_conf_t conf)
+// {
+//   tbx_t *tbx;
+//   BGZF *fp;
+//   int ret;
+//   if ((fp = bgzf_open(input_filename, "r")) == 0)
+//     return -1;
+//   if (n_threads)
+//     bgzf_mt(fp, n_threads, 256);
+//   if (bgzf_compression(fp) != bgzf)
+//   {
+//     log_error("%s is not compressed with bgzf format", input_filename);
+//     bgzf_close(fp);
+//     return -2;
+//   }
+//   tbx = tbx_index(fp, min_shift, &conf);
+//   bgzf_close(fp);
+//   if (!tbx)
+//     return -1;
+//   ret = hts_idx_save_as(tbx->idx, input_filename, NULL, HTS_FMT_TBI);
+//   tbx_destroy(tbx);
+//   return ret;
+// }
 
 // set program name as tfa_index
 const char *program_name = "tfa_index";
@@ -447,7 +447,10 @@ int tfa_main(char *input_fname, tfa_index_args_t *args){
       {
         if (strlen(output_basename) == 0)
         {
-          ksprintf(&output_fname, "%s%s.tfa.gz", args->output_fname, input_basename);
+          output_basename = strdup(tfa_info.basename);
+          output_extension = strdup(tfa_info.extension);
+          ksprintf(&output_fname, "%s%s.%s.gz", args->output_fname,output_basename, output_extension);
+          // ksprintf(&output_fname, "%s%s.tfa.gz", args->output_fname, input_basename);
         }
         else
         {
@@ -547,7 +550,7 @@ int tfa_main(char *input_fname, tfa_index_args_t *args){
     log_info("%s File will be converted to TFAv2.0 with bgzf format", input_fname);
     log_info("Output file: %s", output_fname.s);
     convert_tfa_v1_to_v2(input_fname, output_fname.s);
-    create_index(output_fname.s, output_fname.s, 2, 0, tfasta_conf);
+    create_index(output_fname.s, 2, 0, tfasta_conf);
     log_info("File converted and index was created successfully");
   }
   else if (strcmp(format, TFAv2.version) == 0)
@@ -571,7 +574,7 @@ int tfa_main(char *input_fname, tfa_index_args_t *args){
       log_info("File compressed successfully : %s", output_fname.s);
     }
 
-    int status = create_index(output_fname.s, output_fname.s, 2, 0, tfasta_conf);
+    int status = create_index(output_fname.s, 2, 0, tfasta_conf);
     if (status != 0)
     {
       log_error("Failed to create index file");
@@ -772,7 +775,7 @@ int wtfa_main(char *input_fname, tfa_index_args_t *args){
     log_info("%s File will be converted to wTFAv2.0 with bgzf format", input_fname);
     log_info("Output file: %s", output_fname.s);
     convert_wtfa_v1_to_v2(input_fname, output_fname.s);
-    create_index(output_fname.s, output_fname.s, 2, 0, tfasta_conf);
+    create_index(output_fname.s, 2, 0, tfasta_conf);
     log_info("File converted and index was created successfully");
   }
   else if (strcmp(format, wTFAv2.version) == 0)
@@ -796,7 +799,7 @@ int wtfa_main(char *input_fname, tfa_index_args_t *args){
       log_info("File compressed successfully : %s", output_fname.s);
     }
 
-    int status = create_index(output_fname.s, output_fname.s, 2, 0, tfasta_conf);
+    int status = create_index(output_fname.s, 2, 0, tfasta_conf);
     if (status != 0)
     {
       log_error("Failed to create index file");

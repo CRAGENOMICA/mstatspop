@@ -99,6 +99,11 @@ static const int NSAM_INC = 5;
  */
 static int maxsam = NSAM_INC;
 
+static const tbx_conf_t tfasta_conf = {TBX_GENERIC, 1, 2, 2, '#', 0};
+
+
+
+
 /**
  * Returns the name of the index format based on the given format code.
  * Mostly used for debugging purposes as we are only using the TFA index format.
@@ -176,6 +181,25 @@ int read_tfasta_DNA(
     //char ***names,
     char **DNA_matr    
     );
+
+
+
+int read_tfasta_DNA_lite(
+    tfasta_file *tfasta,
+    char *chr_name,
+    long int init_site,
+    long int end_site,
+    int *n_sam,
+    long long *n_site,
+    //char ***names,
+    char **DNA_matr    
+    );
+
+int create_index(
+    const char *input_filename,
+    int n_threads,
+    int min_shift,
+    const tbx_conf_t conf);
 
 #ifdef __cplusplus
 }
