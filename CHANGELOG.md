@@ -1,3 +1,19 @@
+# Change log Version 1.1.0
+
+## New Features
+- tfa_merge: merge two tfasta files into one.
+### tfa_merge command line usage
+```bash
+tfa_merge -i file1.tfa.gz -i file2.tfa.gz -o merged.tfa.gz
+###
+### Options:
+- `-i, --input FILE`: Input file (specify twice for two files)
+- `-o, --output FILE`: Output file name
+- `-f, --force`: Force overwrite of output file
+- `-h, --help`: Show help message
+```
+
+
 # Change log Version 1.0.0
 
 mstatspop now accept tfasta file in version 2 compressed with htslib (bgzip) and indexed format (.tbi).

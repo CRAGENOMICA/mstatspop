@@ -1215,7 +1215,7 @@ int read_weights_positions_file(
 	long int end_site = init_site + *window_size - 1;
 
   sprintf(region, "%s:%ld-%ld", chr_name, init_site, end_site);
-	 hts_itr_t *iter = tbx_itr_querys(wtfasta->tbx, region);
+	hts_itr_t *iter = tbx_itr_querys(wtfasta->tbx, region);
   if (iter == NULL)
   {
     // it is possible that the region is not found in the index

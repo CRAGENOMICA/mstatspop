@@ -6,11 +6,12 @@
 
 // #include "common.h"
 // #include <stdio.h>
-
+#include <stdio.h>      // Add this for printf
 #include <htslib/tbx.h>
 #include <htslib/bgzf.h>
 #include <htslib/kstring.h> 
 #include <htslib/kseq.h>
+#include <inttypes.h>
 #include "files_util.h"
 #ifdef __cplusplus
 extern "C"
@@ -46,7 +47,7 @@ static const VersionInfo TFAv1 = {"TFAv1.0", "Handling TFA version 1.0"};
 // weights for a TFA file
 static const VersionInfo wTFAv1 = {"wTFAv1.0", "Handling wTFA version 1.0"};
 static const VersionInfo wTFAv2 = {"wTFAv2.0", "Handling wTFA version 2.0"};
-
+static const char *v2_header = "##fileformat=TFAv2.0\n";
 
 // error codes for init_tfasta_file
 static const int TFA_OK = 1;
@@ -66,6 +67,14 @@ typedef struct
   char **names;
   // number of samples
   long long n_sam;
+
+  // number of sequences
+  int nseq;
+  // sequence names
+  char **seq_names;
+  // number of records per sequence
+  uint64_t *n_records;
+
   tbx_t *tbx;
   htsFile *fp;
   int is_initialized;
@@ -98,6 +107,11 @@ static const int NSAM_INC = 5;
  * The initial value is set to NSAM_INC.
  */
 static int maxsam = NSAM_INC;
+
+static const tbx_conf_t tfasta_conf = {TBX_GENERIC, 1, 2, 2, '#', 0};
+
+
+
 
 /**
  * Returns the name of the index format based on the given format code.
@@ -176,6 +190,25 @@ int read_tfasta_DNA(
     //char ***names,
     char **DNA_matr    
     );
+
+
+
+int read_tfasta_DNA_lite(
+    tfasta_file *tfasta,
+    char *chr_name,
+    long int init_site,
+    long int end_site,
+    int *n_sam,
+    long long *n_site,
+    //char ***names,
+    char **DNA_matr    
+    );
+
+int create_index(
+    const char *input_filename,
+    int n_threads,
+    int min_shift,
+    const tbx_conf_t conf);
 
 #ifdef __cplusplus
 }

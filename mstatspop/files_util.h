@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
-
+#include <sys/stat.h>
 #ifdef __cplusplus
 extern "C"
 {
@@ -24,6 +24,13 @@ extern "C"
 
     char *get_extension(const char *filepath);
     bool ends_with(const char *str, const char *suffix);
+
+    /**
+     * @brief Check if a file exists
+     * @param filename The path to the file to check
+     * @return 1 if the file exists, 0 otherwise
+     */
+    int file_exists(const char *filename);
 
 #ifdef __cplusplus
 }
