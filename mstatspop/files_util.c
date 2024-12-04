@@ -1,5 +1,3 @@
-
-
 #include "files_util.h"
 
 
@@ -74,4 +72,10 @@ bool ends_with(const char *str, const char *suffix) {
         return false;
     }
     return strncmp(str + str_len - suffix_len, suffix, suffix_len) == 0;
+}
+
+
+int file_exists(const char *filename) {
+    struct stat buffer;
+    return (stat(filename, &buffer) == 0);
 }

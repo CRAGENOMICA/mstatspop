@@ -1,5 +1,10 @@
 cmake_minimum_required(VERSION 3.5.0)
-project(mstatspop VERSION 1.0.1 LANGUAGES C CXX)
+project(mstatspop VERSION 1.1.0 LANGUAGES C CXX)
+
+# Set default build type if not specified
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build (Debug or Release)" FORCE)
+endif()
 
 # include(CTest)
 # enable_testing()
@@ -46,6 +51,7 @@ ENDIF(CMAKE_BUILD_TYPE MATCHES Debug)
 file (GLOB_RECURSE SOURCE_FILE CONFIGURE_DEPENDS  "mstatspop/*.c")
 ## explude mstatspop/tfa_index.c and mstatspop/tfa_convert.c
 list(REMOVE_ITEM SOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/mstatspop/tfa_index.c")
+list(REMOVE_ITEM SOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/mstatspop/tfa_merge.c")
 list(REMOVE_ITEM SOURCE_FILE "${CMAKE_CURRENT_SOURCE_DIR}/mstatspop/tfa_convert.c")
 
 # log library
@@ -131,6 +137,11 @@ target_include_directories(tfa_index PRIVATE "lib")
 target_include_directories(tfa_index PRIVATE ${HTSLIB_INCLUDE_DIR})
 target_link_libraries(tfa_index PRIVATE ${HTSLIB_LIBRARY} logging)
 
+## tfa_merge
+add_executable(tfa_merge mstatspop/tfa_merge.c mstatspop/tfasta.c mstatspop/files_util.c)
+target_include_directories(tfa_merge PRIVATE "lib")
+target_include_directories(tfa_merge PRIVATE ${HTSLIB_INCLUDE_DIR})
+target_link_libraries(tfa_merge PRIVATE ${HTSLIB_LIBRARY} logging)
 
 ## ms
 add_executable(ms sources_msHudson/ms.c  sources_msHudson/streec.c sources_msHudson/rand2.c)

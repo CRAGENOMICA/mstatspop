@@ -289,6 +289,8 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
   tfasta->tfasta_fname = tfasta_fname;
   tfasta->n_sam = 0;
   tfasta->names = NULL;
+  tfasta->nseq = 0;
+  tfasta->seq_names = NULL;
   tfasta->tbx = tbx_index_load(tfasta_fname);
   if (tfasta->tbx == NULL)
   {
@@ -321,7 +323,8 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
     {
       // collect names
       int nseq = 0;
-      char *cc = strtok(str.s, ">\n\r ");
+      char *delimiters = ">\n\r\t ";
+      char *cc = strtok(str.s, delimiters);
       while (cc != NULL)
       {
         if (strstr(cc, "#NAMES:") == 0)
@@ -365,7 +368,7 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
             // }
           }
         }
-        cc = strtok(NULL, ">\n\r ");
+        cc = strtok(NULL, delimiters);
       }
       tfasta->n_sam = nseq;
     }
@@ -380,37 +383,36 @@ int init_tfasta_file(tfasta_file *tfasta, char *tfasta_fname)
     return TFA_ERROR;
   }
 
-  int nseq;
-  const char **seqnames = tbx_seqnames(tfasta->tbx, &nseq);
-  if (seqnames == NULL)
+ 
+  tfasta->seq_names = (char **)tbx_seqnames(tfasta->tbx, &tfasta->nseq);
+  if (tfasta->seq_names == NULL)
   {
     fprintf(stderr, "Failed to retrieve sequence names.\n");
     tbx_destroy(tfasta->tbx);
     return TFA_ERROR;
   }
-  // Print sequence names
-  for (int i = 0; i < nseq; i++)
-  {
-    // printf("%s\n", seqnames[i]);
-    log_debug("Sequence Name : %s", seqnames[i]);
+
+  // Allocate and populate n_records_per_seq
+  tfasta->n_records = (uint64_t *)calloc(tfasta->nseq, sizeof(uint64_t));
+  if (tfasta->n_records == NULL) {
+    fprintf(stderr, "Failed to allocate memory for record counts.\n");
+    tbx_destroy(tfasta->tbx);
+    return TFA_ERROR;
   }
 
-  // Print sequence names and their interval counts
+  // Print sequence names and store their interval counts
   log_debug("Sequence names and interval counts:");
   uint64_t n_records;
   uint64_t unmaped;
-  for (int i = 0; i < nseq; i++)
+  for (int i = 0; i < tfasta->nseq; i++)
   {
     hts_idx_get_stat(tfasta->tbx->idx, i, &n_records, &unmaped);
-    printf("\t\t%s: %lu intervals\n", seqnames[i], n_records);
+    tfasta->n_records[i] = n_records;
+    printf("\t\t%s: %lu intervals\n", tfasta->seq_names[i], n_records);
   }
 
-  // Print the format of the indexed file
-  int format = tfasta->tbx->conf.preset;
-  // log_debug("Format of the indexed file: %s\n", get_format_name(format));
-
   tfasta->is_initialized = true;
-  free(seqnames);
+  // free(seqnames);
   return TFA_OK;
 }
 
@@ -437,6 +439,13 @@ void close_tfasta_file(tfasta_file *tfasta)
     }
     free(tfasta->names);
   }
+  if (tfasta->seq_names != NULL) {
+    free(tfasta->seq_names);
+  }
+  if (tfasta->n_records != NULL) {
+    free(tfasta->n_records);
+  }
+  
   tfasta->is_initialized = false;
 }
 
