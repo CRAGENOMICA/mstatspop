@@ -121,7 +121,9 @@
             // Resolved by CMake Tools:
             //"program": "${command:cmake.launchTargetPath}",
             "program": "${command:cmake.buildDirectory}/tfa_index",
-             "args": ["../Examples/100Kchr10.tfa.gz" , "-f" ],
+            // "args": ["../Examples/100Kchr10.tfa.gz" , "-f" ],
+            "args": ["/home/data/git/spiga/fastaconvtr/Examples/100Kallchr.tfa", "-f", "-o","/home/data/git/spiga/fastaconvtr/Examples/"  ],
+            
             // "args": ["100Kchr10_t.tfa"],
             // 
             // "args": ["100Kchr10_t.tfa" , "-o" , "xxx"],
@@ -168,6 +170,27 @@
             ]
         },
         
+        {
+            "name": "tfa_merge",
+            "type": "cppdbg",
+            "request": "launch",
+            // Resolved by CMake Tools:
+            //"program": "${command:cmake.launchTargetPath}",
+            "program": "${command:cmake.buildDirectory}/tfa_merge",
+            // ./build/tfa_merge -i ./Examples/tfa_merge/example_1.tfa.gz -i ./Examples/tfa_merge/pileup_1.tfa.bgz -o ./Examples/tfa_merge/merged.tfa.gz
+            "args": ["-i", "example_1.tfa.gz", "-i", "pileup_1.tfa.bgz", "-o", "merged.tfa.gz"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}/Examples/tfa_merge",
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        },
         {
             "name": "tfa_tabix",
             "type": "cppdbg",
