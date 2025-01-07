@@ -27,7 +27,7 @@ extern "C" {
 #define FULL_VERSION "v." VERSION_NUMBER " (" BUILD_NUMBER ")"
 
 #define MSTATSPOP "mstatspop " FULL_VERSION "\n" \
-		   "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera\n" \
+		   "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene,  Gonzalo Vera and Ahmed Hafez\n" \
 		   "Variability Analyses of multiple populations: " \
 		   "Calculation and estimation of statistics and neutrality tests.\n"
 

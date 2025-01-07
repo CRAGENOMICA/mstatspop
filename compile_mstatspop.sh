@@ -1,3 +1,13 @@
+#To compile:
+brew install gsl
+brew install htslib
+brew install zlib
+sh build.sh
+cp ./build/mstatspop ./bin
+cp ./build/tfa_merge ./bin
+cp ./build/tfa_index ./bin
+cp ./build/ms ./bin
+
 #mstatspop v.0.1beta (20170224)
 
 #zlib 1.2.8 installation (dependency)
@@ -31,6 +41,6 @@
 #for osx 10.12 add:-I/usr/local/include -L/usr/local/lib
 #gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz 
 #or
-gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz -L/opt/homebrew/Cellar/gsl/2.7.1/lib/ /opt/homebrew/Cellar/gsl/2.7.1/lib/libgsl.a -I/opt/homebrew/Cellar/gsl/2.7.1/include
+#gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz -L/opt/homebrew/Cellar/gsl/2.7.1/lib/ /opt/homebrew/Cellar/gsl/2.7.1/lib/libgsl.a -I/opt/homebrew/Cellar/gsl/2.7.1/include
 #for linux:
 #gcc ./sources/*.c -lgsl -lgslcblas -lm -o ./bin/mstatspop -Wall -DinGSL=1 -O3 -lz

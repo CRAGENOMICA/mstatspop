@@ -1507,7 +1507,7 @@ int main(int argc, const char *argv[])
   if (args.output == OUTPUT_EXTENDED || args.output == OUTPUT_FULL_EXTENDED)
   {
 
-    fprintf(file_output, MSTATSPOP);
+    fprintf(file_output, MSTATSPOP );
     fprintf(file_output, "\nmstatspop ");
     for (x = 1; x < arg; x++)
     {
@@ -4253,7 +4253,7 @@ int main(int argc, const char *argv[])
 
 void usage(void)
 {
-  printf(MSTATSPOP);
+  printf( MSTATSPOP );
   printf("Flags:\n");
   printf("      -f [input format file: ms, fasta OR tfa (gz file indexed)]\n");
   printf("      -i [path and name of the input file]\n");

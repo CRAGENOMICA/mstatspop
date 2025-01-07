@@ -85,15 +85,18 @@ ALGORITHM MergeTFAFiles(file1, file2, outputFile):
 ## File Format
 
 ### Input Files
+
 - Must be in TFAv2.0 format
 - Must be tabix-indexed
 - Must contain compatible sequences and positions
 
 ### Output Format
+
 Each line in the output file follows this format:
 sequence_name position merged_DNA_sequences
 
 Where:
+
 - `sequence_name`: Name of the chromosome or scaffold
 - `position`: Position in the sequence (1-based)
 - `merged_DNA_sequences`: Concatenated DNA sequences from both input files
@@ -101,9 +104,10 @@ Where:
 ## Error Conditions
 
 The algorithm will fail if:
-1. Input files have different number of sequences
-2. A sequence exists in one file but not in the other
-3. Matching sequences have different record counts
+
+1. Input files have different number of scaffolds
+2. A scaffold exists in one file but not in the other
+3. Matching scaffolds have different record counts
 4. Position values don't match during merging
 5. Input files are not in TFAv2.0 format
 6. Input files are not properly indexed
@@ -111,8 +115,8 @@ The algorithm will fail if:
 ## Implementation Notes
 
 1. Sequence Order
-   - Files may have sequences in different orders
-   - The sequence mapping handles this difference
+   - Files may have scaffolds in different orders
+   - The scaffold mapping handles this difference
    - Output follows the sequence order of the first file
 
 2. Sample Names

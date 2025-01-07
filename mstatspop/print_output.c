@@ -57,7 +57,7 @@ int print_output(
 		// char *file_H0f,
 		double *vector_priors,
 		int npriors,
-		// int formatfile,
+        //int formatfile,
 		// int outgroup_presence,
 		// int force_outgroup,
 		// double freq_missing_ms,
@@ -188,7 +188,7 @@ int print_output(
 		fprintf(file_out, "\nLenght of the Total alignment (including gaps): %ld", args->length);
 		fprintf(file_out, "\nLenght of the Total alignment (excluding fixed gaps (or missing outgroup, if considered) but counting all positions as 1, eg. Syn positions < 1 count as 1): %ld", length_al_real);
 		fprintf(file_out, "\nmultiple hits: %ld", statistics[0].nmhits);
-		fprintf(file_out, "\nLenght of the Selected alignment (including unknown bp if selected, excluding bp with no outgroup, if considerd): %.2f", length_al);
+		fprintf(file_out, "\nLenght of the Selected alignment (including unknown bp if selected, excluding bp with no outgroup, if considered): %.2f", length_al);
 		fprintf(file_out, "\nNumber of Variant (biallelic) sites (including unknown bp if selected and excluding codons with more than two variants, if considered, excluding bp with no outgroup, if considered): %ld", length_seg);
 
 		if (svratio > -10000)
@@ -1530,35 +1530,38 @@ int print_output(
 				}
 			}
 			/*BEGIN SECTION popfreq: print matrix npop x sumnsam*/
-			fprintf(file_out, "\n\n-rSFS- Frequency of variants for each pop in relation to the whole pops:\n");
-			if (outgroup_presence == 0)
-			{
-				for (ss = 1; ss < (long int)floor((sumnsam - args->vint_perpop_nsam[args->npops - 1]) / 2); ss++)
-					fprintf(file_out, "\trSFS[%d]", ss);
-				for (x = 0; x < args->npops - oo; x++)
-				{
-					fprintf(file_out, "\nPop[%d]\t", x);
-					for (z1 = 1; z1 < (long int)floor((sumnsam - args->vint_perpop_nsam[args->npops - 1]) / 2); z1++)
-					{
-						fprintf(file_out, "%ld\t", (long int)statistics[0].popfreq[x][z1]);
-					}
-					/*fprintf(file_out,"\n");*/
-				}
-			}
-			else
-			{
-				for (ss = 1; ss < sumnsam - args->vint_perpop_nsam[args->npops - 1]; ss++)
-					fprintf(file_out, "\trSFS[%d]", ss);
-				for (x = 0; x < args->npops - oo; x++)
-				{
-					fprintf(file_out, "\nPop[%d]\t", x);
-					for (z1 = 1; z1 < sumnsam - args->vint_perpop_nsam[args->npops - 1]; z1++)
-					{
-						fprintf(file_out, "%ld\t", (long int)statistics[0].popfreq[x][z1]);
-					}
-					/*fprintf(file_out,"\n");*/
-				}
-			}
+            if(args->npops > 2) {
+                fprintf(file_out, "\n\n-rSFS: relative Site Frequency Spectrum -Frequency of variants for each pop in relation to the whole sample - and excluding ougroup if defined - :\n");
+                if (outgroup_presence == 0 )
+                {
+                    for (ss = 1; ss < (long int)floor((sumnsam - args->vint_perpop_nsam[args->npops - 1]) / 2); ss++)
+                        fprintf(file_out, "\trSFS[%d]", ss);
+                    for (x = 0; x < args->npops - oo; x++)
+                    {
+                        fprintf(file_out, "\nPop[%d]\t", x);
+                        for (z1 = 1; z1 < (long int)floor((sumnsam - args->vint_perpop_nsam[args->npops - 1]) / 2); z1++)
+                        {
+                            fprintf(file_out, "%ld\t", (long int)statistics[0].popfreq[x][z1]);
+                        }
+                        /*fprintf(file_out,"\n");*/
+                    }
+                }
+                else
+                {
+                    for (ss = 1; ss < sumnsam - args->vint_perpop_nsam[args->npops - 1]; ss++)
+                        fprintf(file_out, "\trSFS[%d]", ss);
+                    for (x = 0; x < args->npops - oo; x++)
+                    {
+                        fprintf(file_out, "\nPop[%d]\t", x);
+                        for (z1 = 1; z1 < sumnsam - args->vint_perpop_nsam[args->npops - 1]; z1++)
+                        {
+                            fprintf(file_out, "%ld\t", (long int)statistics[0].popfreq[x][z1]);
+                        }
+                        /*fprintf(file_out,"\n");*/
+                    }
+                }
+                fprintf(file_out,"\n");
+            }
 			/*END SECTION popfreq*/
 		}
 
@@ -1568,91 +1571,98 @@ int print_output(
 				oo = 0;
 			else
 				oo = 1;
-			/*header*/
-			fprintf(file_out, "\n#dadi format for joint frequency spectrum.\n");
-			/*fprintf(file_out,"#Note: All alleles are defined arbitrarily to A and T.\n");*/
-			fprintf(file_out, "Ref_int\tRef_out\tAllele1\t");
-			for (x = 0; x < args->npops - oo; x++)
-				fprintf(file_out, "Pop_%03d\t", x);
-			fprintf(file_out, "Allele2\t");
-			for (x = 0; x < args->npops - oo; x++)
-				fprintf(file_out, "Pop_%03d\t", x);
-			fprintf(file_out, "Position");
-			fprintf(file_out, "\n");
-			/*table*/
-			for (zz = 0; zz < length_seg; zz++)
-			{
-				ss = 0;
-				sf = 0.0;
-				for (x = 0; x < args->npops - oo; x++)
-				{
-					ss += nfd[x][zz];
-					sf += jfd[x][zz];
-				}
-				if (ss && sf > 0.0 && sf < 1.0)
-				{
-					/*Define nucleotide*/
-					for (y = 0; y < sumnsam; y++)
-					{
-						if (matrix_pol[zz * sumnsam + y] == '0')
-						{
-							if (matrix_pol_tcga[zz * sumnsam + y] == '1')
-								nt1[0] = 'T';
-							if (matrix_pol_tcga[zz * sumnsam + y] == '2')
-								nt1[0] = 'C';
-							if (matrix_pol_tcga[zz * sumnsam + y] == '3')
-								nt1[0] = 'G';
-							if (matrix_pol_tcga[zz * sumnsam + y] == '4')
-								nt1[0] = 'A';
-							break;
-						}
-					}
-					for (y = 0; y < sumnsam; y++)
-					{
-						if (matrix_pol[zz * sumnsam + y] == '1')
-						{
-							if (matrix_pol_tcga[zz * sumnsam + y] == '1')
-								nt2[0] = 'T';
-							if (matrix_pol_tcga[zz * sumnsam + y] == '2')
-								nt2[0] = 'C';
-							if (matrix_pol_tcga[zz * sumnsam + y] == '3')
-								nt2[0] = 'G';
-							if (matrix_pol_tcga[zz * sumnsam + y] == '4')
-								nt2[0] = 'A';
-							break;
-						}
-					}
-					fprintf(file_out, "-%c-\t", nt1[0]);
-					if (outgroup_presence)
-						fprintf(file_out, "-%c-\t", nt2[0]);
-					else
-						fprintf(file_out, "---\t");
-					/*Allele1*/
-					fprintf(file_out, "%c\t", nt1[0]);
-					for (x = 0; x < args->npops - oo; x++)
-					{
-						if (nfd[x][zz])
-							fprintf(file_out, "%.0f\t", (jfd[x][zz]) * nfd[x][zz]);
-						else
-							fprintf(file_out, "NA\t");
-					}
-					/*Allele2*/
-					fprintf(file_out, "%c\t", nt2[0]);
-					for (x = 0; x < args->npops - oo; x++)
-					{
-						if (nfd[x][zz])
-							fprintf(file_out, "%.0f\t", (1.0 - jfd[x][zz]) * nfd[x][zz]);
-						else
-							fprintf(file_out, "NA\t");
-					}
-					/*position*/
-					if (args->formatfile == 3)
-						fprintf(file_out, "%ld", labs(matrix_pos[zz]) + (long int)vector_priors[0] - 1);
-					else
-						fprintf(file_out, "%ld", labs(matrix_pos[zz]));
-					fprintf(file_out, "\n");
-				}
-			}
+            
+            /*header*/
+            fprintf(file_out, "\n#dadi format for joint frequency spectrum.\n");
+            /*fprintf(file_out,"#Note: All alleles are defined arbitrarily to A and T.\n");*/
+            fprintf(file_out, "Ref_int\tRef_out\tAllele1\t");
+            for (x = 0; x < args->npops - oo; x++)
+                fprintf(file_out, "Pop_%03d\t", x);
+            fprintf(file_out, "Allele2\t");
+            for (x = 0; x < args->npops - oo; x++)
+                fprintf(file_out, "Pop_%03d\t", x);
+            fprintf(file_out, "Position");
+            fprintf(file_out, "\n");
+            /*table*/
+            for (zz = 0; zz < length_seg; zz++)
+            {
+                ss = 0;
+                sf = 0.0;
+                for (x = 0; x < args->npops - oo; x++)
+                {
+                    ss += nfd[x][zz];
+                    sf += jfd[x][zz];
+                }
+                if (ss && sf > 0.0 && sf < 1.0)
+                {
+                    /*Define nucleotide*/
+                    if(args->formatfile!=MS_FORMAT) {
+                        for (y = 0; y < sumnsam; y++)
+                        {
+                            if (matrix_pol[zz * sumnsam + y] == '0')
+                            {
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '1')
+                                    nt1[0] = 'T';
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '2')
+                                    nt1[0] = 'C';
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '3')
+                                    nt1[0] = 'G';
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '4')
+                                    nt1[0] = 'A';
+                                break;
+                            }
+                        }
+                        for (y = 0; y < sumnsam; y++)
+                        {
+                            if (matrix_pol[zz * sumnsam + y] == '1')
+                            {
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '1')
+                                    nt2[0] = 'T';
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '2')
+                                    nt2[0] = 'C';
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '3')
+                                    nt2[0] = 'G';
+                                if (matrix_pol_tcga[zz * sumnsam + y] == '4')
+                                    nt2[0] = 'A';
+                                break;
+                            }
+                        }
+                    }
+                    else {
+                        nt1[0] = 'A';
+                        nt2[0] = 'B';
+                    }
+                    fprintf(file_out, "-%c-\t", nt1[0]);
+                    if (outgroup_presence)
+                        fprintf(file_out, "-%c-\t", nt2[0]);
+                    else
+                        fprintf(file_out, "---\t");
+                    /*Allele1*/
+                    fprintf(file_out, "%c\t", nt1[0]);
+                    for (x = 0; x < args->npops - oo; x++)
+                    {
+                        if (nfd[x][zz])
+                            fprintf(file_out, "%.0f\t", (jfd[x][zz]) * nfd[x][zz]);
+                        else
+                            fprintf(file_out, "NA\t");
+                    }
+                    /*Allele2*/
+                    fprintf(file_out, "%c\t", nt2[0]);
+                    for (x = 0; x < args->npops - oo; x++)
+                    {
+                        if (nfd[x][zz])
+                            fprintf(file_out, "%.0f\t", (1.0 - jfd[x][zz]) * nfd[x][zz]);
+                        else
+                            fprintf(file_out, "NA\t");
+                    }
+                    /*position*/
+                    if (args->formatfile == 3)
+                        fprintf(file_out, "%ld", labs(matrix_pos[zz]) + (long int)vector_priors[0] - 1);
+                    else
+                        fprintf(file_out, "%ld", labs(matrix_pos[zz]));
+                    fprintf(file_out, "\n");
+                }
+            }
 			/*fprintf(file_out,"\n");*/
 
 			fprintf(file_out, "\n\nAll pairwise comparisons (mismatch distribution) per population:");
@@ -3646,6 +3656,26 @@ else fprintf(file_out,"PiW[%d]:\tNA\t",x);
 								 }
 						 }
 						 */
+                        if (args->include_unknown == 0 && outgroup_presence == 0 && args->npops > 2)
+                        {
+                            for (x = 0; x < args->npops - oo; x++)
+                            {
+                                for (z1 = 1; z1 < (long int)floor((sumnsam - args->vint_perpop_nsam[args->npops - 1]) / 2); z1++)
+                                {
+                                    fprintf(file_out, "rSFS[%d,%d]:\t%ld\t", x, z1,(long int)statistics[0].popfreq[x][z1]);
+                                }
+                            }
+                        }
+                        if (args->include_unknown == 0 && outgroup_presence == 1 && args->npops > 2)
+                        {
+                             for (x = 0; x < args->npops - oo; x++)
+                            {
+                                for (z1 = 1; z1 < sumnsam - args->vint_perpop_nsam[args->npops - 1]; z1++)
+                                {
+                                    fprintf(file_out, "rSFS[%d,%d]:\t%ld\t", x,  z1,(long int)statistics[0].popfreq[x][z1]);
+                                }
+                            }
+                        }
 						fprintf(file_out, "\n");
 					}
 				}
