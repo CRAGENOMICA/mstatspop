@@ -101,3 +101,18 @@ Create an index example
   # use -f to force create the index file if it already exists
   tfa_index  ./Examples/V1.0.0/100Kchr10.tfa.gz -f
 ```
+
+
+### Merge multiple tfa files
+
+use `tfa_merge` to merge two tfasta files into one.
+### tfa_merge command line usage
+```bash
+tfa_merge -i file1.tfa.gz -i file2.tfa.gz -o merged.tfa.gz
+###
+### Options:
+- `-i, --input FILE`: Input file (specify twice for two files)
+- `-o, --output FILE`: Output file name
+- `-f, --force`: Force overwrite of output file
+- `-h, --help`: Show help message
+```

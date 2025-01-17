@@ -1,0 +1,356 @@
+mstatspop v.1.1.0 (20250107192157)
+Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene,  Gonzalo Vera and Ahmed Hafez
+Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
+
+mstatspop -f fasta -i ./MC1R_PigsOutg_aligned.fas -o 0 -p 1 -u 0 -s 123456 -G 1 -N 3 48 46 1 -A ./MC1R_H1frq.txt -S ./MC1R_H0frq.txt -T ./MC1R_PigsOutg_NSyn_Opttest_H0.txt -n MC1R.txt 
+
+
+****************************************************************************
+*  NUCLEOTIDE VARIABILITY, NEUTRALITY TEST AND POPULATION DIFFERENTIATION  *
+****************************************************************************
+
+
+ Names from individuals selected by the user (the first 95 -individuals can contain two samples if diploid-):
+
+ Population[0]:
+
+ EUROPACOMMERCIALHA
+ EUROPACOMMERCIALHA2
+ EUROPACOMMERCIALLR05
+ EUROPACOMMERCIALLR052
+ EUROPACOMMERCIALLR09
+ EUROPACOMMERCIALLR092
+ EUROPACOMMERCIALLR10
+ EUROPACOMMERCIALLR102
+ EUROPACOMMERCIALLR111
+ EUROPACOMMERCIALLR1112
+ EUROPACOMMERCIALLR112
+ EUROPACOMMERCIALLR1122
+ EUROPACOMMERCIALLR121
+ EUROPACOMMERCIALLR1212
+ EUROPACOMMERCIALLR122
+ EUROPACOMMERCIALLR1222
+ EUROPACOMMERCIALLR123
+ EUROPACOMMERCIALLR1232
+ EUROPACOMMERCIALLR14
+ EUROPACOMMERCIALLR142
+ EUROPACOMMERCIALLW05
+ EUROPACOMMERCIALLW052
+ EUROPACOMMERCIALLW061
+ EUROPACOMMERCIALLW0612
+ EUROPACOMMERCIALLW062
+ EUROPACOMMERCIALLW0622
+ EUROPACOMMERCIALLW07
+ EUROPACOMMERCIALLW072
+ EUROPACOMMERCIALPI03
+ EUROPACOMMERCIALPI032
+ EUROPACOMMERCIALPI04
+ EUROPACOMMERCIALPI042
+ EUROPACOMMERCIALDU02
+ EUROPACOMMERCIALDU022
+ EUROPACOMMERCIALDU03
+ EUROPACOMMERCIALDU032
+ EUROPACOMMERCIALLR04
+ EUROPACOMMERCIALLR042
+ EUROPACOMMERCIALLR08
+ EUROPACOMMERCIALLR082
+ EUROPACOMMERCIALLW021
+ EUROPACOMMERCIALLW0212
+ EUROPACOMMERCIALLW022
+ EUROPACOMMERCIALLW0222
+ EUROPACOMMERCIALLW023
+ EUROPACOMMERCIALLW0232
+ EUROPACOMMERCIALLW024
+ EUROPACOMMERCIALLW0242
+
+ Population[1]:
+
+ ASIALOCALBM
+ ASIALOCALBM2
+ ASIALOCALHZ1
+ ASIALOCALHZ12
+ ASIALOCALHZ2
+ ASIALOCALHZ22
+ ASIALOCALJQH
+ ASIALOCALJQH2
+ ASIALOCALMS02
+ ASIALOCALMS022
+ ASIALOCALLW
+ ASIALOCALLW2
+ ASIALOCALLP
+ ASIALOCALLP2
+ ASIALOCALRC1
+ ASIALOCALRC12
+ ASIALOCALRC2
+ ASIALOCALRC22
+ ASIALOCALNJ1
+ ASIALOCALNJ12
+ ASIALOCALNJ2
+ ASIALOCALNJ22
+ ASIALOCALQB
+ ASIALOCALQB2
+ ASIALOCALSG
+ ASIALOCALSG2
+ ASIALOCALTC
+ ASIALOCALTC2
+ ASIALOCALXP
+ ASIALOCALXP2
+ ASIALOCALYM
+ ASIALOCALYM2
+ ASIALOCALYS
+ ASIALOCALYS2
+ ASIALOCALZP
+ ASIALOCALZP2
+ ASIALOCALJH
+ ASIALOCALJH2
+ ASIALOCALXX
+ ASIALOCALXX2
+ ASIALOCALSX
+ ASIALOCALSX2
+ ASIALOCALMP
+ ASIALOCALMP2
+ ASIALOCALJZ
+ ASIALOCALJZ2
+
+ Outgroup: 
+
+ Babyrousa_babyrussa
+
+Calculating statistics...
+
+Input file: ./MC1R_PigsOutg_aligned.fas
+H1 model frequency file: ./MC1R_H1frq.txt
+H0 model frequency file: ./MC1R_H0frq.txt
+
+Include Unknown positions [1/0]: 0
+Lenght of the Total alignment (including gaps): 965
+Lenght of the Total alignment (excluding fixed gaps (or missing outgroup, if considered) but counting all positions as 1, eg. Syn positions < 1 count as 1): 944
+multiple hits: 0
+Lenght of the Selected alignment (including unknown bp if selected, excluding bp with no outgroup, if considered): 944.00
+Number of Variant (biallelic) sites (including unknown bp if selected and excluding codons with more than two variants, if considered, excluding bp with no outgroup, if considered): 18
+Ratio_S/V: 5.000
+Ratio_Missing (if outgroup, counting only positions where outgroup is present): NA
+
+Number of populations: 3
+Number of samples for each population:
+nsam[0]: 48
+nsam[1]: 46
+nsam[2]: 1
+
+Effective length for each population (with at least one sequence, two or three sequences per pop) and excluding or including outgroup (if defined):
+Eff_length1_pop_outg[0]: 944.00	Eff_length2_pop_outg[0]: 944.00	Eff_length3_pop_outg[0]: 944.00
+Eff_length1_pop_outg[1]: 944.00	Eff_length2_pop_outg[1]: 944.00	Eff_length3_pop_outg[1]: 944.00
+
+STATISTICS:
+
+Estimates of variability for each population (an and bn for the variant positions):
+S[0]: 5	Theta(Wat)[0]: 1.126643	Theta(Taj)[0]: 0.707447	Theta(Fu&Li)[0]: 0.000000	Theta(Fay&Wu)[0]: 1.760638	Theta(Zeng)[0]: 1.234043	Theta(Achaz,Wat)[0]: 1.454349	Theta(Achaz,Taj)[0]: 0.738205	Divergence[0]: 8.208333	an_xo[0]: 4.437964	bn_xo[0]: 1.623882	
+S[1]: 11	Theta(Wat)[1]: 2.502874	Theta(Taj)[1]: 1.008696	Theta(Fu&Li)[1]: 3.000000	Theta(Fay&Wu)[1]: 7.169082	Theta(Zeng)[1]: 4.088889	Theta(Achaz,Wat)[1]: 2.356442	Theta(Achaz,Taj)[1]: 0.918182	Divergence[1]: 10.000000	an_xo[1]: 4.394948	bn_xo[1]: 1.622957	
+
+Estimates of NUCLEOTIDE variability for each population (if missing, corrected by the averaged effective positions):
+S[0]: 5	Theta/nt(Wat)[0]: 0.001193	Theta/nt(Taj)[0]: 0.000749	Theta/nt(Fu&Li)[0]: 0.000000	Theta/nt(Fay&Wu)[0]: 0.001865	Theta/nt(Zeng)[0]: 0.001307	Theta/nt(Achaz,Wat)[0]: 0.001541	Theta/nt(Achaz,Taj)[0]: 0.000782	Divergence[0]: 0.008695	Theta/nt(Taj)HKY[0]: 0.000750	Divergence/nt_HKY[0]: 0.008757
+S[1]: 11	Theta/nt(Wat)[1]: 0.002651	Theta/nt(Taj)[1]: 0.001069	Theta/nt(Fu&Li)[1]: 0.003178	Theta/nt(Fay&Wu)[1]: 0.007594	Theta/nt(Zeng)[1]: 0.004331	Theta/nt(Achaz,Wat)[1]: 0.002496	Theta/nt(Achaz,Taj)[1]: 0.000973	Divergence[1]: 0.010593	Theta/nt(Taj)HKY[1]: 0.001070	Divergence/nt_HKY[1]: 0.010690
+
+Haplotype diversity and number of haplotypes for each population:
+HapW[0]: 0.366135	nHap[0]: 4
+HapW[1]: 0.282126	nHap[1]: 6
+
+Neutrality tests for each population:
+Tajima D[0]: -0.909499	Fu&Li D[0]: 1.119117	Fu&Li F[0]: 0.533987	Fay&Wu norm H[0]: -1.022465	Zeng E[0]: 0.168962	Achaz Y[0]: -1.524666	Ferretti L[0]: -0.597429	Fs[0]: -0.043125	R2[0]: 0.070745	
+Tajima D[1]: -1.764589	Fu&Li D[1]: -0.300515	Fu&Li F[1]: -0.887976	Fay&Wu norm H[1]: -3.315717	Zeng E[1]: 1.468229	Achaz Y[1]: -2.098958	Ferretti L[1]: -2.552193	Fs[1]: -1.101943	R2[1]: 0.092551	
+
+Alternative Expected Frequency Spectrum of variants for each population:
+frH1[0,1]: 2.00000	frH1[0,2]: 1.00000	frH1[0,3]: 0.66667	frH1[0,4]: 0.50000	frH1[0,5]: 0.40000	frH1[0,6]: 0.33333	frH1[0,7]: 0.28571	frH1[0,8]: 0.25000	frH1[0,9]: 0.22222	frH1[0,10]: 0.20000	frH1[0,11]: 0.18182	frH1[0,12]: 0.16667	frH1[0,13]: 0.15385	frH1[0,14]: 0.14286	frH1[0,15]: 0.13333	frH1[0,16]: 0.12500	frH1[0,17]: 0.11765	frH1[0,18]: 0.11111	frH1[0,19]: 0.10526	frH1[0,20]: 0.10000	frH1[0,21]: 0.09524	frH1[0,22]: 0.09091	frH1[0,23]: 0.08696	frH1[0,24]: 0.08333	frH1[0,25]: 0.08000	frH1[0,26]: 0.07692	frH1[0,27]: 0.07407	frH1[0,28]: 0.07143	frH1[0,29]: 0.06897	frH1[0,30]: 0.06667	frH1[0,31]: 0.06452	frH1[0,32]: 0.06250	frH1[0,33]: 0.06061	frH1[0,34]: 0.05882	frH1[0,35]: 0.05714	frH1[0,36]: 0.05556	frH1[0,37]: 0.05405	frH1[0,38]: 0.05263	frH1[0,39]: 0.05128	frH1[0,40]: 0.05000	frH1[0,41]: 0.04878	frH1[0,42]: 0.04762	frH1[0,43]: 0.04651	frH1[0,44]: 0.04545	frH1[0,45]: 0.04444	frH1[0,46]: 0.04348	frH1[0,47]: 0.04255	
+frH1[1,1]: 3.00000	frH1[1,2]: 1.50000	frH1[1,3]: 1.00000	frH1[1,4]: 0.75000	frH1[1,5]: 0.60000	frH1[1,6]: 0.50000	frH1[1,7]: 0.42857	frH1[1,8]: 0.37500	frH1[1,9]: 0.33333	frH1[1,10]: 0.30000	frH1[1,11]: 0.27273	frH1[1,12]: 0.25000	frH1[1,13]: 0.23077	frH1[1,14]: 0.21429	frH1[1,15]: 0.20000	frH1[1,16]: 0.18750	frH1[1,17]: 0.17647	frH1[1,18]: 0.16667	frH1[1,19]: 0.15789	frH1[1,20]: 0.15000	frH1[1,21]: 0.14286	frH1[1,22]: 0.13636	frH1[1,23]: 0.13043	frH1[1,24]: 0.12500	frH1[1,25]: 0.12000	frH1[1,26]: 0.11538	frH1[1,27]: 0.11111	frH1[1,28]: 0.10714	frH1[1,29]: 0.10345	frH1[1,30]: 0.10000	frH1[1,31]: 0.09677	frH1[1,32]: 0.09375	frH1[1,33]: 0.09091	frH1[1,34]: 0.08824	frH1[1,35]: 0.08571	frH1[1,36]: 0.08333	frH1[1,37]: 0.08108	frH1[1,38]: 0.07895	frH1[1,39]: 0.07692	frH1[1,40]: 0.07500	frH1[1,41]: 0.07317	frH1[1,42]: 0.07143	frH1[1,43]: 0.06977	frH1[1,44]: 0.06818	frH1[1,45]: 0.06667	
+
+Optimal tests given SNM as null model: To[inf,inf], To[0,0], To[inf,0], ToQc[inf,inf], ToQw[inf,inf].
+To_ii[0]: -1.806923	To_00[0]: -0.022995	To_i0[0]: -1.317738	To_Qc_ii[0]: -0.050478	To_Qw_ii[0]: -0.597433	
+To_ii[1]: 1.885580	To_00[1]: 0.025419	To_i0[1]: 1.072861	To_Qc_ii[1]: NA	To_Qw_ii[1]: -0.650337	
+
+NULL Expected Frequency Spectrum of variants for each population:
+frH1[0,1]: 10.00000	frH1[0,2]: 7.00000	frH1[0,3]: 3.00000	frH1[0,4]: 2.00000	frH1[0,5]: 0.40000	frH1[0,6]: 0.33333	frH1[0,7]: 0.28571	frH1[0,8]: 0.25000	frH1[0,9]: 0.22222	frH1[0,10]: 0.20000	frH1[0,11]: 0.18182	frH1[0,12]: 0.16667	frH1[0,13]: 0.15385	frH1[0,14]: 0.14286	frH1[0,15]: 0.13333	frH1[0,16]: 0.12500	frH1[0,17]: 0.11765	frH1[0,18]: 0.11111	frH1[0,19]: 0.10526	frH1[0,20]: 0.10000	frH1[0,21]: 0.09524	frH1[0,22]: 0.09091	frH1[0,23]: 0.08696	frH1[0,24]: 0.08333	frH1[0,25]: 0.08000	frH1[0,26]: 0.07692	frH1[0,27]: 0.07407	frH1[0,28]: 0.07143	frH1[0,29]: 0.06897	frH1[0,30]: 0.06667	frH1[0,31]: 0.06452	frH1[0,32]: 0.06250	frH1[0,33]: 0.06061	frH1[0,34]: 0.05882	frH1[0,35]: 0.05714	frH1[0,36]: 0.05556	frH1[0,37]: 0.05405	frH1[0,38]: 0.05263	frH1[0,39]: 0.05128	frH1[0,40]: 0.05000	frH1[0,41]: 0.04878	frH1[0,42]: 0.04762	frH1[0,43]: 0.04651	frH1[0,44]: 0.04545	frH1[0,45]: 0.04444	frH1[0,46]: 0.04348	frH1[0,47]: 0.04255	
+frH1[1,1]: 5.00000	frH1[1,2]: 4.00000	frH1[1,3]: 3.00000	frH1[1,4]: 1.00000	frH1[1,5]: 0.60000	frH1[1,6]: 0.50000	frH1[1,7]: 0.42857	frH1[1,8]: 0.37500	frH1[1,9]: 0.33333	frH1[1,10]: 0.30000	frH1[1,11]: 0.27273	frH1[1,12]: 0.25000	frH1[1,13]: 0.23077	frH1[1,14]: 0.21429	frH1[1,15]: 0.20000	frH1[1,16]: 0.18750	frH1[1,17]: 0.17647	frH1[1,18]: 0.16667	frH1[1,19]: 0.15789	frH1[1,20]: 0.15000	frH1[1,21]: 0.14286	frH1[1,22]: 0.13636	frH1[1,23]: 0.13043	frH1[1,24]: 0.12500	frH1[1,25]: 0.12000	frH1[1,26]: 0.11538	frH1[1,27]: 0.11111	frH1[1,28]: 0.10714	frH1[1,29]: 0.10345	frH1[1,30]: 0.10000	frH1[1,31]: 0.09677	frH1[1,32]: 0.09375	frH1[1,33]: 0.09091	frH1[1,34]: 0.08824	frH1[1,35]: 0.08571	frH1[1,36]: 0.08333	frH1[1,37]: 0.08108	frH1[1,38]: 0.07895	frH1[1,39]: 0.07692	frH1[1,40]: 0.07500	frH1[1,41]: 0.07317	frH1[1,42]: 0.07143	frH1[1,43]: 0.06977	frH1[1,44]: 0.06818	frH1[1,45]: 0.06667	
+Optimal tests given the null expected frequency Spectrum as null model: ToH0[inf,inf], ToH0[inf,0].
+To_H0_ii[0]: 0.407359	To_H0_i0[0]: 0.924453	
+To_H0_ii[1]: -0.018894	To_H0_i0[1]: 1.785558	
+
+Variants assigned to exclusive, fixed, polymorphic but fixed in rest of pops, and shared.
+Ss[rest] are shared variants between populations but fixed within:
+Sx[0]: 1	Sf[0]: 0	Sxf[0,rest]: 0	Ss[0]: 4
+Sx[1]: 6	Sf[1]: 0	Sxf[1,rest]: 1	Ss[1]: 4
+Sx[outg]: 0	Sf[outg]: 6	Ss[outg,rest]: 0	Ss[rest]:	NA
+
+mismatch distribution statistics:
+SDev[0]: 0.707761	Skewness[0]: -1.001332	Kurtosis[0]: -2.005335	
+SDev[1]: 1.009183	Skewness[1]: -1.001452	Kurtosis[1]: -2.005816	
+
+Fst (calculated as 1-piw/pia):
+
+seed: 123456
+Fst(nucleotide), FstH(haplotype)
+Fst[0,1]: 0.856707	 P-value: NA	
+
+FstH[0,1]: 0.669126	 P-value: NA	
+
+Fst corrected with HKY (Hasegawa, Kishino, and Yano. 1985): 
+FstHKY[0,1]: 0.857621	PiWHKY[0]: 0.000750	PiWHKY[1]: 0.001070	PiAHKY[0,1]: 0.006391	PiTHKY[0,1]: 0.003667	
+
+Nucleotide and haplotype diversity WITHIN populations:
+PiW[0]: 0.707447	HapW[0]: 0.366135	
+PiW[1]: 1.008696	HapW[1]: 0.282126	
+
+Nucleotide and haplotype diversity BETWEEN populations and TOTAL:
+PiA[0,1]: 5.988225	PiA/nt[0,1]: 0.006343	PiT[0,1]: 3.446351	PiT/nt[0,1]: 0.003651	
+
+HapA[0,1]: 0.979620	HapT[0,1]: 0.656143	
+
+Frequency of variants for each population:
+fr[0,1]: 0	fr[0,2]: 0	fr[0,3]: 2	fr[0,4]: 2	fr[0,5]: 0	fr[0,6]: 0	fr[0,7]: 0	fr[0,8]: 0	fr[0,9]: 0	fr[0,10]: 0	fr[0,11]: 0	fr[0,12]: 0	fr[0,13]: 0	fr[0,14]: 0	fr[0,15]: 0	fr[0,16]: 0	fr[0,17]: 0	fr[0,18]: 0	fr[0,19]: 0	fr[0,20]: 0	fr[0,21]: 0	fr[0,22]: 0	fr[0,23]: 0	fr[0,24]: 0	fr[0,25]: 0	fr[0,26]: 0	fr[0,27]: 0	fr[0,28]: 0	fr[0,29]: 0	fr[0,30]: 0	fr[0,31]: 0	fr[0,32]: 0	fr[0,33]: 0	fr[0,34]: 0	fr[0,35]: 0	fr[0,36]: 0	fr[0,37]: 0	fr[0,38]: 0	fr[0,39]: 0	fr[0,40]: 0	fr[0,41]: 0	fr[0,42]: 0	fr[0,43]: 0	fr[0,44]: 1	fr[0,45]: 0	fr[0,46]: 0	fr[0,47]: 0	
+fr[1,1]: 3	fr[1,2]: 3	fr[1,3]: 1	fr[1,4]: 0	fr[1,5]: 0	fr[1,6]: 0	fr[1,7]: 0	fr[1,8]: 0	fr[1,9]: 0	fr[1,10]: 0	fr[1,11]: 0	fr[1,12]: 0	fr[1,13]: 0	fr[1,14]: 0	fr[1,15]: 0	fr[1,16]: 0	fr[1,17]: 0	fr[1,18]: 0	fr[1,19]: 0	fr[1,20]: 0	fr[1,21]: 0	fr[1,22]: 0	fr[1,23]: 0	fr[1,24]: 0	fr[1,25]: 0	fr[1,26]: 0	fr[1,27]: 0	fr[1,28]: 0	fr[1,29]: 0	fr[1,30]: 0	fr[1,31]: 0	fr[1,32]: 0	fr[1,33]: 0	fr[1,34]: 0	fr[1,35]: 0	fr[1,36]: 0	fr[1,37]: 0	fr[1,38]: 0	fr[1,39]: 0	fr[1,40]: 0	fr[1,41]: 0	fr[1,42]: 0	fr[1,43]: 4	fr[1,44]: 0	fr[1,45]: 0	
+
+Frequency of each haplotype in the populations:
+frH[0,hap00]: 38	frH[0,hap01]: 4	frH[0,hap02]: 3	frH[0,hap03]: 3	frH[0,hap04]: 0	frH[0,hap05]: 0	frH[0,hap06]: 0	frH[0,hap07]: 0	
+frH[1,hap00]: 1	frH[1,hap01]: 1	frH[1,hap02]: 1	frH[1,hap03]: 0	frH[1,hap04]: 39	frH[1,hap05]: 2	frH[1,hap06]: 2	frH[1,hap07]: 0	
+
+Positions of each variant (negative indicates it contains any missing 'N' values):
+Sx[0]: 498 
+Sf[0]: 
+Sxf[0]: 
+Ss[0]: 61 372 493 729 
+Sx[1]: 51 285 307 366 374 731 
+Sf[1]: 
+Sxf[1]: 365 
+Ss[1]: 61 372 493 729 
+Ss[rest]: 
+Sx[outg]: 
+Sf[outg]: 12 263 443 534 653 896 
+Sf[outg,rest]: 
+
+Joint frequency distribution for each variant and population (No included variants that are missing or polymorphic in the outgroup):
+	pop[0]	pop[1]
+SNP[MC1R-1:12]	1.000	1.000
+SNP[MC1R-1:51]	0.000	0.935
+SNP[MC1R-1:61]	0.062	0.022
+SNP[MC1R-1:263]	1.000	1.000
+SNP[MC1R-1:285]	0.000	0.935
+SNP[MC1R-1:307]	0.000	0.935
+SNP[MC1R-1:365]	1.000	0.065
+SNP[MC1R-1:366]	0.000	0.043
+SNP[MC1R-1:372]	0.917	0.043
+SNP[MC1R-1:374]	0.000	0.043
+SNP[MC1R-1:443]	1.000	1.000
+SNP[MC1R-1:493]	0.083	0.022
+SNP[MC1R-1:498]	0.062	0.000
+SNP[MC1R-1:534]	1.000	1.000
+SNP[MC1R-1:653]	1.000	1.000
+SNP[MC1R-1:729]	0.083	0.022
+SNP[MC1R-1:731]	0.000	0.935
+SNP[MC1R-1:896]	1.000	1.000
+
+
+
+Frequency of variants for each line and population:
+Pop[0]
+	line[0]	line[1]	line[2]	line[3]	line[4]	line[5]	line[6]	line[7]	line[8]	line[9]	line[10]	line[11]	line[12]	line[13]	line[14]	line[15]	line[16]	line[17]	line[18]	line[19]	line[20]	line[21]	line[22]	line[23]	line[24]	line[25]	line[26]	line[27]	line[28]	line[29]	line[30]	line[31]	line[32]	line[33]	line[34]	line[35]	line[36]	line[37]	line[38]	line[39]	line[40]	line[41]	line[42]	line[43]	line[44]	line[45]	line[46]	line[47]	
+freq[1]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[2]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[3]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	1	1	0	0	0	0	0	0	1	1	
+freq[4]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2	2	2	2	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[5]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[6]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[7]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[8]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[9]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[10]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[11]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[12]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[13]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[14]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[15]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[16]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[17]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[18]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[19]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[20]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[21]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[22]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[23]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[24]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[25]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[26]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[27]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[28]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[29]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[30]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[31]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[32]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[33]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[34]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[35]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[36]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[37]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[38]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[39]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[40]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[41]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[42]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[43]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[44]:	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	1	0	0	0	0	1	1	1	1	1	1	1	1	1	1	1	1	
+freq[45]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[46]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[47]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+
+Pop[1]
+	line[0]	line[1]	line[2]	line[3]	line[4]	line[5]	line[6]	line[7]	line[8]	line[9]	line[10]	line[11]	line[12]	line[13]	line[14]	line[15]	line[16]	line[17]	line[18]	line[19]	line[20]	line[21]	line[22]	line[23]	line[24]	line[25]	line[26]	line[27]	line[28]	line[29]	line[30]	line[31]	line[32]	line[33]	line[34]	line[35]	line[36]	line[37]	line[38]	line[39]	line[40]	line[41]	line[42]	line[43]	line[44]	line[45]	
+freq[1]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	2	0	0	0	0	0	1	
+freq[2]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	1	0	0	0	1	1	1	0	1	
+freq[3]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	1	0	1	
+freq[4]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[5]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[6]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[7]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[8]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[9]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[10]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[11]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[12]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[13]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[14]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[15]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[16]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[17]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[18]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[19]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[20]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[21]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[22]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[23]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[24]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[25]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[26]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[27]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[28]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[29]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[30]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[31]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[32]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[33]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[34]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[35]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[36]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[37]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[38]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[39]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[40]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[41]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[42]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[43]:	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	0	4	4	4	0	4	0	
+freq[44]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+freq[45]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+
+
+-rSFS: relative Site Frequency Spectrum -Frequency of variants for each pop in relation to the whole sample - and excluding ougroup if defined - :
+	rSFS[1]	rSFS[2]	rSFS[3]	rSFS[4]	rSFS[5]	rSFS[6]	rSFS[7]	rSFS[8]	rSFS[9]	rSFS[10]	rSFS[11]	rSFS[12]	rSFS[13]	rSFS[14]	rSFS[15]	rSFS[16]	rSFS[17]	rSFS[18]	rSFS[19]	rSFS[20]	rSFS[21]	rSFS[22]	rSFS[23]	rSFS[24]	rSFS[25]	rSFS[26]	rSFS[27]	rSFS[28]	rSFS[29]	rSFS[30]	rSFS[31]	rSFS[32]	rSFS[33]	rSFS[34]	rSFS[35]	rSFS[36]	rSFS[37]	rSFS[38]	rSFS[39]	rSFS[40]	rSFS[41]	rSFS[42]	rSFS[43]	rSFS[44]	rSFS[45]	rSFS[46]	rSFS[47]	rSFS[48]	rSFS[49]	rSFS[50]	rSFS[51]	rSFS[52]	rSFS[53]	rSFS[54]	rSFS[55]	rSFS[56]	rSFS[57]	rSFS[58]	rSFS[59]	rSFS[60]	rSFS[61]	rSFS[62]	rSFS[63]	rSFS[64]	rSFS[65]	rSFS[66]	rSFS[67]	rSFS[68]	rSFS[69]	rSFS[70]	rSFS[71]	rSFS[72]	rSFS[73]	rSFS[74]	rSFS[75]	rSFS[76]	rSFS[77]	rSFS[78]	rSFS[79]	rSFS[80]	rSFS[81]	rSFS[82]	rSFS[83]	rSFS[84]	rSFS[85]	rSFS[86]	rSFS[87]	rSFS[88]	rSFS[89]	rSFS[90]	rSFS[91]	rSFS[92]	rSFS[93]
+Pop[0]	0	0	1	1	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+Pop[1]	0	2	0	1	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	4	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
+

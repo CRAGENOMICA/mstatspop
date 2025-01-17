@@ -792,7 +792,7 @@ int get_obsstats(
             fprintf(file_output, " %ld", mvbp[x]);
         }
       }
-      fprintf(file_output, "\n\n Names from sample selected by the user (the first %d, if diploid is doubled):", (nsamtot - !args->outgroup_presence) / (int)atoi(args->ploidy));
+      fprintf(file_output, "\n\n Names from individuals selected by the user (the first %d -individuals can contain two samples if diploid-):", (nsamtot - !args->outgroup_presence) / (int)atoi(args->ploidy));
       z = 0;
       for (y = 0; y < args->npops - !args->outgroup_presence; y++)
       {
@@ -846,7 +846,7 @@ int get_obsstats(
           fprintf(file_output, " %ld", mvbp[x]);
         }
       }
-      fprintf(file_output, "\n\n Names from samples selected by the user (the first %d, if diploid is doubled):", (nsamtot - !args->outgroup_presence) / atoi(args->ploidy));
+      fprintf(file_output, "\n\n Names from individuals selected by the user (the first %d -individuals can contain two samples if diploid-):", (nsamtot - !args->outgroup_presence) / atoi(args->ploidy));
       z = 0;
       for (y = 0; y < args->npops - !args->outgroup_presence; y++)
       {

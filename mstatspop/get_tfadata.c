@@ -1298,7 +1298,7 @@ int read_weights_positions_file(
 		}
 
 		if (weight_window)
-			curr_window += wP[0][xx] * wV[0][xx];
+			curr_window += wP[0][n_sites] * wV[0][n_sites];
 		else
 			curr_window += 1.0;
 		// increment the site
