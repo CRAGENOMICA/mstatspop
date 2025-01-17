@@ -1,4 +1,4 @@
-# Change log Version 1.1.0
+# Change log Version 1.1.1
 ## Fixes :
 * Fix mstatspop for some functions that give an incorrect exit (with ms format and output 10) 
 * add and modify functions to run rSFS stats.
