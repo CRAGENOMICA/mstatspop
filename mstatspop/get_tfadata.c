@@ -635,7 +635,8 @@ int get_tfadata(
       {
         strncpy(DNA_matr + (long long)n_site * (long long)x, DNA_matr2 + (long long)n_site * (long long)sort_nsam[x], n_site);
         // strncpy(names[x], names2[sort_nsam[x]], 50);
-        strncpy(tfasta->names[x], tfasta->names[sort_nsam[x]], 50);
+        //strncpy(tfasta->names[x], tfasta->names[sort_nsam[x]], 50);
+        strncpy(tfasta->names[x], names2[sort_nsam[x]], 50);
       }
       /*delete duplicated matr*/
       for (x = 0; x < n_samp; x++)
