@@ -132,9 +132,9 @@ echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -G 
 ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.12.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -n chr10.txt
 echo
 echo Example ms.13.txt: Two pops + outg + missing + weight for nonsyn + permutation test + s/v ratio + 10 replicates
-../bin/ms 42 1000 -t 10 -I 2 40 2 -ej 2.0 2 1 -p 9 > ./100Kchr10_simulation10.ms.txt
-echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation10.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -s 1684 -v 2.0 -r 00 -n chr10.txt
-../bin/mstatspop  -f ms -i ./100Kchr10_simulation10.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -s 1684 -v 2.0 -r 10 -n chr10.txt
+../bin/ms 42 1000 -t 1000 -I 2 40 2 -ej 2.0 2 1 -p 9 > ./100Kchr10_simulation1000.ms.txt
+echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation1000.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -r 10 -n chr10.txt
+../bin/mstatspop  -f ms -i ./100Kchr10_simulation1000.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -r 10 -n chr10.txt
 echo
 echo --------------------------------------------------------------------------------------------------
 echo PARAMETERS FOR TFASTA INPUT -f tfa: -w [-z -Y -W -E -O  -T -s] SLIDING WINDOW ANALYSIS OF EMPIRICAL DATA
@@ -328,7 +328,7 @@ echo ---------------------------------------------------------------------------
 echo "indexing tfasta files:"
 echo --------------------------------------------------------------------------------------------------
 echo
-echo #Usage: ./tfa_index  [options] <input.tfa|input.tfa.bgz|input.tfa.gz|weights.txt|weights.txt.gz>
+echo #Usage: ./tfa_index  [options] <input.tfa|input.tfa.gz|input.tfa.gz|weights.txt|weights.txt.gz>
 echo #Options:
 echo # --version
 echo # --help
@@ -355,7 +355,7 @@ echo "Converting Examples/V0.1.0/100Kchr10_tfa2tfa_03c.tfa.gz_npops3_nsam42_nons
 ../bin/tfa_index  ./V0.1.0/100Kchr10_tfa2tfa_03c.tfa.gz_npops3_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz -f -o ../Results/V1.0.0/100Kchr10_tfa2tfa_03c.tfa.gz_npops3_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz
 echo # Examples/V0.1.0/100Kchr10.tfa.gz
 echo "Converting Examples/V0.1.0/100Kchr10.tfa.gz"
-../bin/tfa_index  ./V0.1.0/100Kchr10.tfa.gz -f -o ../Results/V1.0.0//100Kchr10.tfa.gz
+../bin/tfa_index  ./V0.1.0/100Kchr10.tfa.gz -f -o ../Results/V1.0.0/100Kchr10.tfa.gz
 echo
 echo --------------------------------------------------------------------------------------------------
 echo "Merge tfasta files (same assembly reference but different individuals):"
