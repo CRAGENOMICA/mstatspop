@@ -1,10 +1,10 @@
-# mstatspop v.1.0.0
+# mstatspop v.0.1beta (20230907)
 
-## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests. 
+## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 
 #### Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 
-### Flags:
+## Flags:
       -f [input format file: ms, fasta OR tfa (gz file indexed)]
       -i [path and name of the input file]
       -o [output format file: 0 (extended),
@@ -14,10 +14,9 @@
                               4 (single line pairwise distribution)
                               5 (single line freq. variant per line/window)
                               6 (SNP genotype matrix)
-                              7 (SweepFiinder format -only first pop-)
+                              7 (SweepFinder-like format -only first pop-)
                               8 (single line/window: Frequency of each haplotype in the populations)
                               9 (single line/window: Frequency of variants per line and population)
-                              92 (single line/window: -rSFS- Frequency of variants per population relative to all)
                              10 (full extended)]
       -N [#_pops] [#samples_pop1] ... [#samples_popN]
       -n [name of the file containing the name(s) of scaffold(s) and their length (separated by a tab), one per line (ex. fai file)]
@@ -25,6 +24,7 @@
 ##### OPTIONAL GENERAL PARAMETERS:
       -G [outgroup (0/1)] (last population). DEFAULT 0.
       -u [include unknown positions (0/1)].  DEFAULT 0.
+      -R [performs analysis using only rSFS (0/1)].  DEFAULT 0.
       -A [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)
           File format: (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,
           fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]
@@ -72,33 +72,3 @@
       -K [make a MASK file with the valid positions for this fasta. Useful for running ms simulations (1/0)]. DEFAULT 0.
 ##### HELP:
       -h [help and exit]
-
-### Create index file and tfasta convertion
-To create an index file for tfasta file use `tfa_index` program. 
-Note : if the tfasta file is in version 1, it will convert it to version 2 and create the index.
-`tfa_index` program also accepts weight files. In this case, it will create an index for the weight file and convert it to the correct format if needed.
-
-```bash
-Usage:  tfa_index  [options] <input.tfa|input.tfa.bgz|input.tfa.gz|weights.txt|weights.txt.gz>
-Options:
-  --version
-  --help
-  --threads <int>
-  --force
-  --weight
-   the input file is a weight file. In this case create and index for it. and convert it to the correct format
-  --output FILE           set custom name to the output file, only used when converting from TFAv1 to TFAv2 or compressing the input file
-```
-  
-  Conversion example 
-
-```bash
-  tfa_index  ./Examples/V0.1.0/100Kchr10.tfa.gz -o ./Examples/V1.0.0//100Kchr10.tfa.gz
-```
-
-Create an index example
-```bash
-  tfa_index  ./Examples/V1.0.0/100Kchr10.tfa.gz
-  # use -f to force create the index file if it already exists
-  tfa_index  ./Examples/V1.0.0/100Kchr10.tfa.gz -f
-```

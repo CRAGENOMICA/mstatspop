@@ -4963,7 +4963,7 @@ void usage(void)
     printf("                              4 (single line pairwise distribution)\n");
     printf("                              5 (single line freq. variant per line/window)\n");
     printf("                              6 (SNP genotype matrix)\n");
-    printf("                              7 (SweepFinder format -only first pop-)\n");
+    printf("                              7 (SweepFinder-like format -only first pop-)\n");
     printf("                              8 (single line/window: Frequency of each haplotype in the populations)\n");
     printf("                              9 (single line/window: Frequency of variants per line and population)\n");
     //printf("                              92 (single line/window: -rSFS- Frequency of variants per population relative to all)\n");
