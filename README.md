@@ -88,9 +88,10 @@ Options:
   --weight
    the input file is a weight file. In this case create and index for it. and convert it to the correct format
   --output FILE           set custom name to the output file, only used when converting from TFAv1 to TFAv2 or compressing the input file
-  ```
+```
+  
+  Conversion example 
 
-Convertion example 
 ```bash
   tfa_index  ./Examples/V0.1.0/100Kchr10.tfa.gz -o ./Examples/V1.0.0//100Kchr10.tfa.gz
 ```

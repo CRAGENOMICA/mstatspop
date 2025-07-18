@@ -1,7 +1,4 @@
-mstatspop v.1.1.0 (20250107192157)
-Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene,  Gonzalo Vera and Ahmed Hafez
-Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
-
+mstatspop 
 mstatspop -f fasta -i ./MC1R_PigsOutg_aligned.fas -o 0 -p 1 -u 0 -s 123456 -G 1 -N 3 48 46 1 -A ./MC1R_H1frq.txt -S ./MC1R_H0frq.txt -T ./MC1R_PigsOutg_NSyn_Opttest_H0.txt -n MC1R.txt 
 
 
@@ -164,7 +161,7 @@ frH1[0,1]: 2.00000	frH1[0,2]: 1.00000	frH1[0,3]: 0.66667	frH1[0,4]: 0.50000	frH1
 frH1[1,1]: 3.00000	frH1[1,2]: 1.50000	frH1[1,3]: 1.00000	frH1[1,4]: 0.75000	frH1[1,5]: 0.60000	frH1[1,6]: 0.50000	frH1[1,7]: 0.42857	frH1[1,8]: 0.37500	frH1[1,9]: 0.33333	frH1[1,10]: 0.30000	frH1[1,11]: 0.27273	frH1[1,12]: 0.25000	frH1[1,13]: 0.23077	frH1[1,14]: 0.21429	frH1[1,15]: 0.20000	frH1[1,16]: 0.18750	frH1[1,17]: 0.17647	frH1[1,18]: 0.16667	frH1[1,19]: 0.15789	frH1[1,20]: 0.15000	frH1[1,21]: 0.14286	frH1[1,22]: 0.13636	frH1[1,23]: 0.13043	frH1[1,24]: 0.12500	frH1[1,25]: 0.12000	frH1[1,26]: 0.11538	frH1[1,27]: 0.11111	frH1[1,28]: 0.10714	frH1[1,29]: 0.10345	frH1[1,30]: 0.10000	frH1[1,31]: 0.09677	frH1[1,32]: 0.09375	frH1[1,33]: 0.09091	frH1[1,34]: 0.08824	frH1[1,35]: 0.08571	frH1[1,36]: 0.08333	frH1[1,37]: 0.08108	frH1[1,38]: 0.07895	frH1[1,39]: 0.07692	frH1[1,40]: 0.07500	frH1[1,41]: 0.07317	frH1[1,42]: 0.07143	frH1[1,43]: 0.06977	frH1[1,44]: 0.06818	frH1[1,45]: 0.06667	
 
 Optimal tests given SNM as null model: To[inf,inf], To[0,0], To[inf,0], ToQc[inf,inf], ToQw[inf,inf].
-To_ii[0]: -1.806923	To_00[0]: -0.022995	To_i0[0]: -1.317738	To_Qc_ii[0]: -0.050478	To_Qw_ii[0]: -0.597433	
+To_ii[0]: -1.806923	To_00[0]: -0.023864	To_i0[0]: -1.317738	To_Qc_ii[0]: -0.050478	To_Qw_ii[0]: -0.597433	
 To_ii[1]: 1.885580	To_00[1]: 0.025419	To_i0[1]: 1.072861	To_Qc_ii[1]: NA	To_Qw_ii[1]: -0.650337	
 
 NULL Expected Frequency Spectrum of variants for each population:
@@ -347,10 +344,4 @@ freq[42]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 freq[43]:	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	4	0	4	4	4	0	4	0	
 freq[44]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 freq[45]:	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-
-
--rSFS: relative Site Frequency Spectrum -Frequency of variants for each pop in relation to the whole sample - and excluding ougroup if defined - :
-	rSFS[1]	rSFS[2]	rSFS[3]	rSFS[4]	rSFS[5]	rSFS[6]	rSFS[7]	rSFS[8]	rSFS[9]	rSFS[10]	rSFS[11]	rSFS[12]	rSFS[13]	rSFS[14]	rSFS[15]	rSFS[16]	rSFS[17]	rSFS[18]	rSFS[19]	rSFS[20]	rSFS[21]	rSFS[22]	rSFS[23]	rSFS[24]	rSFS[25]	rSFS[26]	rSFS[27]	rSFS[28]	rSFS[29]	rSFS[30]	rSFS[31]	rSFS[32]	rSFS[33]	rSFS[34]	rSFS[35]	rSFS[36]	rSFS[37]	rSFS[38]	rSFS[39]	rSFS[40]	rSFS[41]	rSFS[42]	rSFS[43]	rSFS[44]	rSFS[45]	rSFS[46]	rSFS[47]	rSFS[48]	rSFS[49]	rSFS[50]	rSFS[51]	rSFS[52]	rSFS[53]	rSFS[54]	rSFS[55]	rSFS[56]	rSFS[57]	rSFS[58]	rSFS[59]	rSFS[60]	rSFS[61]	rSFS[62]	rSFS[63]	rSFS[64]	rSFS[65]	rSFS[66]	rSFS[67]	rSFS[68]	rSFS[69]	rSFS[70]	rSFS[71]	rSFS[72]	rSFS[73]	rSFS[74]	rSFS[75]	rSFS[76]	rSFS[77]	rSFS[78]	rSFS[79]	rSFS[80]	rSFS[81]	rSFS[82]	rSFS[83]	rSFS[84]	rSFS[85]	rSFS[86]	rSFS[87]	rSFS[88]	rSFS[89]	rSFS[90]	rSFS[91]	rSFS[92]	rSFS[93]
-Pop[0]	0	0	1	1	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
-Pop[1]	0	2	0	1	2	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	4	0	0	1	0	0	0	0	1	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	0	
 
