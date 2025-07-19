@@ -737,7 +737,7 @@ int read_tfasta_DNA(
           // log_debug("Nucleotide %d  : %c", i,  cc[i]);
           // fill the matrix
           // DNA_matr[(((long long)nseq * (unsigned long)*n_site) + (unsigned long)col)] = '1';
-          int DNA_matr2_index = (((long long)tfasta->n_sam * (unsigned long)*n_site) + (unsigned long)i);
+          long int DNA_matr2_index = (((long long)tfasta->n_sam * (unsigned long)*n_site) + (unsigned long)i);
           char dna_char =  get_DNA_char(&cc[i]);
           if(dna_char == -1) {
             log_error("Unexpected value in tfa file: position %ld, sample %d \n%c", position, i, cc[i]);
@@ -1006,7 +1006,7 @@ int read_tfasta_DNA_lite(
           // log_debug("Nucleotide %d  : %c", i,  cc[i]);
           // fill the matrix
           // DNA_matr[(((long long)nseq * (unsigned long)*n_site) + (unsigned long)col)] = '1';
-          int DNA_matr2_index = (((long long)tfasta->n_sam * (unsigned long)*n_site) + (unsigned long)i);
+          long int DNA_matr2_index = (((long long)tfasta->n_sam * (unsigned long)*n_site) + (unsigned long)i);
           char dna_char =  get_DNA_char(&cc[i]);
           if(dna_char == -1) {
             log_error("Unexpected value in tfa file: position %ld, sample %d \n%c", position, i, cc[i]);
