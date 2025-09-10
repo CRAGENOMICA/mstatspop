@@ -3307,18 +3307,18 @@ int main(int argc, const char *argv[])
                 processed_sites += args.length;
         
                 // only report progress 
-                //if (processed_sites % (chr_length_array_size / 100) == 0)
+                if (processed_sites % (chr_length_array_size / 100) == 0)
                 {
                     // calculate the percentage of processed sites
                     double processed_sites_percentage = (double)processed_sites / chr_length_array_size * 100;
-                    // report process 
+                    // report process
                     log_info("Processing scaffold %s %ld/%ld sites (%.2f%%)",
                              chr_name,
                              processed_sites,
                              chr_length_array_size,
                              processed_sites_percentage);
-                } 
-                // // calculate the percentage of processed sites
+                }
+                // calculate the percentage of processed sites
                 // double processed_sites_percentage = (double)processed_sites / chr_length_array_size * 100;
                 // // report process 
                 // log_info("Processing scaffold %s %ld/%ld sites (%.2f%%)", processed_sites, chr_length_array_size, processed_sites_percentage);
