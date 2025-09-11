@@ -4952,7 +4952,12 @@ int main(int argc, const char *argv[])
 
 void usage(void)
 {
-    printf( MSTATSPOP );
+    printf(MSTATSPOP);
+    printf("\n");
+    printf(MSTATSPOPVERSION);
+    printf(MSTATSPOPTITLE);
+    printf(MSTATSPOPAUTHORS);
+    printf("\n");
     printf("Flags:\n");
     printf("      -f [input format file: ms, fasta OR tfa (gz file indexed)]\n");
     printf("      -i [path and name of the input file]\n");

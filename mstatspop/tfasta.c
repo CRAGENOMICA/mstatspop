@@ -676,7 +676,7 @@ int read_tfasta_DNA(
   char *DNA_matr2;
   // allocate memory for the matrix by muliple of tfasta.n_sam by init n positions
   // we expect that the number of sites will be in the range of init_site and end_site
-  int expected_sites = end_site - init_site + 1;
+  long int expected_sites = end_site - init_site + 1;
   long long DNA_matr2_size = tfasta->n_sam * expected_sites;
   if ((DNA_matr2 = (char *)calloc(DNA_matr2_size, sizeof(char))) == 0)
   {
@@ -696,7 +696,7 @@ int read_tfasta_DNA(
   kstring_t str = {0, 0, NULL};
   const char *delim = ":\t\n";
   // keep track DNA_matr2 size
-  int count = 0;
+  long int count = 0;
   while (tbx_itr_next(tfasta->fp, tfasta->tbx, iter, &str) >= 0)
   {
     // if line start with # then it is a comment

@@ -27,10 +27,14 @@ extern "C" {
 #define FULL_VERSION "v." VERSION_NUMBER " (" BUILD_NUMBER ")"
 
 //uncomment FULL VERSION for compiling using build.sh!∫
-#define MSTATSPOP "mstatspop " //FULL_VERSION "\n" \
+#define MSTATSPOP "#mstatspop " //FULL_VERSION "\n" \
 "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene,  Gonzalo Vera and Ahmed Hafez\n" \
 "Variability Analyses of multiple populations: " \
 "Calculation and estimation of statistics and neutrality tests.\n"
+#define MSTATSPOPVERSION "version 0.1-20250911\n"
+#define MSTATSPOPTITLE "Variability Analyses of multiple populations: " \
+"Calculation and estimation of statistics and neutrality tests.\n"
+#define MSTATSPOPAUTHORS "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene,  Gonzalo Vera and Ahmed Hafez\n"
 
 
 #define MSP_MAX_FILENAME			(unsigned long) 1024 /**< @brief Maximum Filename Length allowed */
