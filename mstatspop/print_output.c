@@ -161,7 +161,7 @@ int print_output(
             { /*tfasta*/
                 if (npriors == 2)
                 {
-                    fprintf(file_out, "scaffold_name: %s\t", chr_name);
+                    fprintf(file_out, "\nscaffold_name: %s\t", chr_name);
                     fprintf(file_out, "start_window: %.0f\t", vector_priors[0]);
                     fprintf(file_out, "end_window: %.0f\t", vector_priors[1]);
                 }
