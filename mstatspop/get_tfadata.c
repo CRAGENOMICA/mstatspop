@@ -48,6 +48,12 @@ int get_tfadata(
     double *nsites2_pop_outg,
     double *nsites3_pop,
     double *nsites3_pop_outg,
+                double *rnsites1_pop,
+                double *rnsites1_pop_outg,
+                double *rnsites2_pop,
+                double *rnsites2_pop_outg,
+                double *rnsites3_pop,
+                double *rnsites3_pop_outg,
     double *anx,
     double *bnx,
     double *anxo,
@@ -635,7 +641,8 @@ int get_tfadata(
       {
         strncpy(DNA_matr + (long long)n_site * (long long)x, DNA_matr2 + (long long)n_site * (long long)sort_nsam[x], n_site);
         // strncpy(names[x], names2[sort_nsam[x]], 50);
-        strncpy(tfasta->names[x], tfasta->names[sort_nsam[x]], 50);
+        //strncpy(tfasta->names[x], tfasta->names[sort_nsam[x]], 50);
+        strncpy(tfasta->names[x], names2[sort_nsam[x]], 50);
       }
       /*delete duplicated matr*/
       for (x = 0; x < n_samp; x++)
@@ -905,6 +912,12 @@ int get_tfadata(
             nsites2_pop_outg,
             nsites3_pop,
             nsites3_pop_outg,
+                     rnsites1_pop,
+                     rnsites1_pop_outg,
+                     rnsites2_pop,
+                     rnsites2_pop_outg,
+                     rnsites3_pop,
+                     rnsites3_pop_outg,
             anx,
             bnx,
             anxo,

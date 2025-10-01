@@ -15,7 +15,7 @@ extern "C" {
 #endif
 
 
-int jointfreqdist(int npops, int *nsam, char *matrix_pol,long int *matrix_pos, long int length, struct stats *statistics,long int *sites_matrix, double **jfd, int **nfd,int outgroup_presence,int force_outgroup);
+int jointfreqdist(int npops, int *nsam, char *matrix_pol,long int *matrix_pos, long int length, struct stats *statistics,long int *sites_matrix, double **jfd, int **nfd,int outgroup_presence,int force_outgroup, int output);
 
 #ifdef	__cplusplus
 }

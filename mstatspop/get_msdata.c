@@ -20,6 +20,7 @@ int get_msdata( FILE *file_input,SGZip *input_gz,
 		long int **matrix_sv, int outgroup_presence, int force_outgroup, float freq_revert, double *sum_sam,
 		double *nsites1_pop, double *nsites1_pop_outg, int formatfile,
 		double *nsites2_pop,double *nsites2_pop_outg,double *nsites3_pop,double *nsites3_pop_outg,
+        double *rnsites1_pop,double *rnsites1_pop_outg, double *rnsites2_pop,double *rnsites2_pop_outg,double *rnsites3_pop,double *rnsites3_pop_outg,
 		double *anx, double *bnx,double *anxo, double *bnxo,double **lengthamng,double **lengthamng_outg, int include_unknown,
 		char *file_mas, double freq_missing_ms, int kind_length,
 		double **sum_sam_mask, double *length_mask, long int *length_mask_real, double *missratio, int location_missing_ms,int *sort_nsam)
@@ -44,6 +45,7 @@ int get_msdata( FILE *file_input,SGZip *input_gz,
 	int ft;
 	long int n,xx,li3;
 	int x,z,v,p,z2,v2;
+    int vt;
 	
 	long int *mhitbp;
 	long int *discarded;
@@ -661,14 +663,19 @@ int get_msdata( FILE *file_input,SGZip *input_gz,
 		}
 		
 		/*calculate the number of positions per population considering or not the outgroup*/
-		/*calculate nsites1_pop and nsites1_pop_outg*/
 		for(y=0;y<npops-!outgroup_presence;y++) {
-			nsites1_pop[y] = 0.;
-			nsites1_pop_outg[y] = 0.;
-			nsites2_pop[y] = 0.;
-			nsites2_pop_outg[y] = 0.;
-			nsites3_pop[y] = 0.;
-			nsites3_pop_outg[y] = 0.;
+            nsites1_pop[y] = 0.;
+            nsites1_pop_outg[y] = 0.;
+            nsites2_pop[y] = 0.;
+            nsites2_pop_outg[y] = 0.;
+            nsites3_pop[y] = 0.;
+            nsites3_pop_outg[y] = 0.;
+            rnsites1_pop[y] = 0.;
+            rnsites1_pop_outg[y] = 0.;
+            rnsites2_pop[y] = 0.;
+            rnsites2_pop_outg[y] = 0.;
+            rnsites3_pop[y] = 0.;
+            rnsites3_pop_outg[y] = 0.;
 		}
 		z = 0;
 		for(y=0;y<npops-1;y++) {
@@ -677,8 +684,12 @@ int get_msdata( FILE *file_input,SGZip *input_gz,
 			for(xx=0;xx<length;xx++) {
 				v = 0;
 				for(x=z;x<z+nsamuser[y];x++) {
-					if(matrix_mask[x*length+xx] == -1 || matrix_mask2[x*length+xx] == -1) v += 1; /*number of Ns*/
+					if(matrix_mask[x*length+xx] == -1 || matrix_mask2[x*length+xx] == -1) v += 1; /*number of Ns in pop y*/
 				}
+                vt = 0;
+                for(x=0;x<nsamtot-nsamuser[(npops-1)];x++) {
+                    if(matrix_mask[x*length+xx] == -1 || matrix_mask2[x*length+xx] == -1) vt += 1; /*number of Ns in total sample (excluding outgroup)*/
+                }
 /*
 				if(discarded[xx] == 0 && ((include_unknown == 1 && vector_mask[xx] > 0) ||
 				   (include_unknown==0 && v == 0 && vector_mask[xx] > 0))) {
@@ -687,12 +698,18 @@ int get_msdata( FILE *file_input,SGZip *input_gz,
                    ((include_unknown == 1 && vector_mask[xx] > 0) ||
                     (include_unknown == 0 && vector_mask[xx] > 0  && v == 0))) {
 
-                    if(v < nsamuser[y])
-						nsites1_pop[y] += vector_mask[xx];
-					if(v < nsamuser[y]-1) 
-						nsites2_pop[y] += vector_mask[xx];
-					if(v < nsamuser[y]-2) 
-						nsites3_pop[y] += vector_mask[xx];
+                    if(v < nsamuser[y]-0) {
+                        nsites1_pop[y] += vector_mask[xx];
+                        if(vt < nsamtot-nsamuser[(npops-1)]-0) rnsites1_pop[y] += vector_mask[xx];
+                        if(vt < nsamtot-nsamuser[(npops-1)]-1) rnsites2_pop[y] += vector_mask[xx];
+                        if(vt < nsamtot-nsamuser[(npops-1)]-2) rnsites3_pop[y] += vector_mask[xx];
+                    }
+                    if(v < nsamuser[y]-1) {
+                        nsites2_pop[y] += vector_mask[xx];
+                    }
+                    if(v < nsamuser[y]-2) {
+                        nsites3_pop[y] += vector_mask[xx];
+                    }
 					for(k=1;k<nsamuser[y]-v;k++) {
 						anx[y] += 1.0/((double)k);
 						bnx[y] += 1.0/((double)k*(double)k);
@@ -701,12 +718,18 @@ int get_msdata( FILE *file_input,SGZip *input_gz,
 					if(outgroup_presence == 1 || force_outgroup == 1) {//modified 20220603
 						for(x=nsamtot-1;x>=nsamtot-nsamuser[npops-1];x--)
 							if(matrix_mask2[x*length+xx] == -1 || matrix_mask[x*length+xx] == -1 ) p += 1;
-						if(p < nsamuser[npops-1] && v < nsamuser[y])
-							nsites1_pop_outg[y] += vector_mask[xx];
-						if(p < nsamuser[npops-1] && v < nsamuser[y]-1)
-							nsites2_pop_outg[y] += vector_mask[xx];
-						if(p < nsamuser[npops-1] && v < nsamuser[y]-2)
-							nsites3_pop_outg[y] += vector_mask[xx];
+                        if(p < nsamuser[npops-1] && v < nsamuser[y]-0){
+                            nsites1_pop_outg[y] += vector_mask[xx];
+                            if(p < nsamuser[npops-1] && vt < nsamtot-nsamuser[(npops-1)]-0) rnsites1_pop_outg[y] += vector_mask[xx];
+                            if(p < nsamuser[npops-1] && vt < nsamtot-nsamuser[(npops-1)]-1) rnsites2_pop_outg[y] += vector_mask[xx];
+                            if(p < nsamuser[npops-1] && vt < nsamtot-nsamuser[(npops-1)]-2) rnsites3_pop_outg[y] += vector_mask[xx];
+                        }
+                        if(p < nsamuser[npops-1] && v < nsamuser[y]-1){
+                            nsites2_pop_outg[y] += vector_mask[xx];
+                        }
+                        if(p < nsamuser[npops-1] && v < nsamuser[y]-2){
+                            nsites3_pop_outg[y] += vector_mask[xx];
+                        }
 						if(p < nsamuser[npops-1] && v < nsamuser[y]) {
 							for(k=1;k<nsamuser[y]-v;k++) {
 								anxo[y] += 1.0/((double)k);

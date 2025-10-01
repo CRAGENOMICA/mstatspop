@@ -45,7 +45,13 @@ int get_obsstats(
     double *nsites2_pop_outg,
     double *nsites3_pop, 
     double *nsites3_pop_outg,
-    double *anx, 
+                 double *rnsites1_pop,
+                 double *rnsites1_pop_outg,
+                 double *rnsites2_pop,
+                 double *rnsites2_pop_outg,
+                 double *rnsites3_pop,
+                 double *rnsites3_pop_outg,
+   double *anx,
     double *bnx,
     double *anxo, 
     double *bnxo, 
@@ -75,6 +81,7 @@ int get_obsstats(
   int m_0, k_0, m_1, k_1;
   int v, w, x, y, z, mis, p, q, k, v2, y2, z2, xm;
   int a, aloutg, al1, al2, fal1, fal2, fal[5];
+  int vt;
 
   long int xx;
 
@@ -961,14 +968,28 @@ int get_obsstats(
             if (w >= 48 + 5)
               v += 1;
           }
+          /*calculate missing samples for relative SFS*/
+          vt = 0;
+          for(x=0;x<args->int_total_nsam -args->vint_perpop_nsam[args->npops];x++) {
+              w = *(DNA_matr + (((long long)n_site * (unsigned long)x) + (unsigned long)xx));
+              if (w >= 48 + 5)
+                vt += 1;
+          }
           while (xm < *nmhits && mhitbp[xm] < xx + 1)
           {
             xm++;
           }
           if ((matrix_sizepos[xx] > 0 /* && mhitbp[xm] != xx+1*/) /* && ((include_unknown == 1) || (include_unknown==0 && v == 0))*/)
           {
-            if (v < args->vint_perpop_nsam[y])
-              nsites1_pop[y] += (matrix_sizepos[xx]);
+              if (v < args->vint_perpop_nsam[y] - 0) {
+                  nsites1_pop[y] += (matrix_sizepos[xx]);
+                  if(vt < args->int_total_nsam -args->vint_perpop_nsam[args->npops]-0)
+                      rnsites1_pop[y] += (matrix_sizepos[xx]); /*calculate nsites for relative SFS*/
+                  if(vt < args->int_total_nsam -args->vint_perpop_nsam[args->npops]-1)
+                      rnsites2_pop[y] += (matrix_sizepos[xx]);
+                  if(vt < args->int_total_nsam -args->vint_perpop_nsam[args->npops]-2)
+                      rnsites3_pop[y] += (matrix_sizepos[xx]);
+              }
             if (v < args->vint_perpop_nsam[y] - 1)
               nsites2_pop[y] += (matrix_sizepos[xx]);
             if (v < args->vint_perpop_nsam[y] - 2)
@@ -987,8 +1008,18 @@ int get_obsstats(
                 if (q >= 48 + 5)
                   p += 1;
               }
-              if (p < args->vint_perpop_nsam[args->npops - 1] && v < args->vint_perpop_nsam[y] /* && mhitbp[xm] != xx+1*/) /*{*/
-                nsites1_pop_outg[y] += (matrix_sizepos[xx]);                             /*printf("%ld ",xx);}*/
+                if (p < args->vint_perpop_nsam[args->npops - 1] && v < args->vint_perpop_nsam[y] - 0/* && mhitbp[xm] != xx+1*/) {/*{*/
+                    nsites1_pop_outg[y] += (matrix_sizepos[xx]);                             /*printf("%ld ",xx);}*/
+                    if(p < args->vint_perpop_nsam[args->npops - 1] &&
+                       vt < args->int_total_nsam -args->vint_perpop_nsam[args->npops]-0)
+                        rnsites1_pop[y] += (matrix_sizepos[xx]);
+                    if(p < args->vint_perpop_nsam[args->npops - 1] &&
+                       vt < args->int_total_nsam -args->vint_perpop_nsam[args->npops]-1)
+                        rnsites2_pop[y] += (matrix_sizepos[xx]);
+                    if(p < args->vint_perpop_nsam[args->npops - 1] &&
+                       vt < args->int_total_nsam -args->vint_perpop_nsam[args->npops]-2)
+                        rnsites3_pop[y] += (matrix_sizepos[xx]);
+               }
               if (p < args->vint_perpop_nsam[args->npops - 1] && v < args->vint_perpop_nsam[y] - 1 /* && mhitbp[xm] != xx+1*/)
                 nsites2_pop_outg[y] += (matrix_sizepos[xx]);
               if (p < args->vint_perpop_nsam[args->npops - 1] && v < args->vint_perpop_nsam[y] - 2 /* && mhitbp[xm] != xx+1*/)

@@ -23,7 +23,7 @@ extern "C" {
 
 /* prints out ALL the results... */
 int print_output( 
-   // int mainargc,
+    // int mainargc,
     //int npops,
     //int *vint_perpop_nsam,
     FILE *file_out, 
@@ -68,7 +68,13 @@ int print_output(
     double *nsites2_pop_outg,
     double *nsites3_pop, 
     double *nsites3_pop_outg,
-    long int niterdata, 
+    double *rnsites1_pop,
+    double *rnsites1_pop_outg,
+    double *rnsites2_pop,
+    double *rnsites2_pop_outg,
+    double *rnsites3_pop,
+    double *rnsites3_pop_outg,
+    long int niterdata,
     char *matrix_pol, 
     //int *r2i_ploidies,
     char *matrix_pol_tcga, 

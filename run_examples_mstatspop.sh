@@ -69,7 +69,11 @@ echo
 echo Example fa.11.txt: Three pops + outg + missing + reordering the two pops in inverse order + GTF2 for nonsyn
 echo ../bin/mstatspop  -f fasta -i ./100Kchr10.fa -o 0 -N 3 20 20 2 -T ../Results/mstatspop_100chr10.fa.11.txt -G 1 -K 0 -u 1 -O 42 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 40 41  -g ./100Kchr10.gtf nonsynonymous Nuclear_Universal -c max -n chr10.txt
 ../bin/mstatspop  -f fasta -i ./100Kchr10.fa -o 0 -N 3 20 20 2 -T ../Results/mstatspop_100chr10.fa.11.txt -G 1 -u 1 -K 0 -O 42 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 40 41  -g ./100Kchr10.gtf nonsynonymous Nuclear_Universal -c max -n chr10.txt
-echo 
+echo
+echo Example fa.12.txt: One pop + rSFS + missing + GTF2 for nonsyn
+echo ../bin/mstatspop  -f fasta -i ./100Kchr10.fa -o 0 -R 1 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 -T ../Results/mstatspop_100chr10.fa.12.txt -G 0 -u 1  -g ./100Kchr10.gtf nonsynonymous Nuclear_Universal -c max -K 1 -n chr10.txt
+../bin/mstatspop  -f fasta -i ./100Kchr10.fa -o 0 -R 1 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 -T ../Results/mstatspop_100chr10.fa.12.txt -G 0 -u 1  -g ./100Kchr10.gtf nonsynonymous Nuclear_Universal -c max -K 1 -n chr10.txt
+echo
 echo --------------------------------------------------------------------------------------------------
 echo PARAMETERS FOR MS INPUT -f ms: [-r -m -F -v -q] SIMULATION ANALYSIS OF A SINGLE REGION
 echo --------------------------------------------------------------------------------------------------
@@ -131,10 +135,9 @@ echo Example ms.12.txt: Two pops + outg + missing + weight for nonsyn + permutat
 echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.12.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -n chr10.txt
 ../bin/mstatspop  -f ms -i ./100Kchr10_simulation.ms.txt -o 0 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.12.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -t 1000 -s 1684 -v 2.0 -n chr10.txt
 echo
-echo Example ms.13.txt: Two pops + outg + missing + weight for nonsyn + permutation test + s/v ratio + 10 replicates
-../bin/ms 42 1000 -t 10 -I 2 40 2 -ej 2.0 2 1 -p 9 > ./100Kchr10_simulation10.ms.txt
-echo ../bin/mstatspop  -f ms -i ./100Kchr10_simulation10.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -s 1684 -v 2.0 -r 00 -n chr10.txt
-../bin/mstatspop  -f ms -i ./100Kchr10_simulation10.ms.txt -o 1 -N 2 40 2 -G 1 -T ../Results/mstatspop_100chr10.ms.13.txt -l 100000 -G 1 -u 1 -m ./100Kchr10_fa2ms_04b.ms.txt_npops2_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_outg_ploidy1_MASK.txt -s 1684 -v 2.0 -r 10 -n chr10.txt
+echo Example ms.14.txt: One pop + rSFS + missing + weight for nonsyn
+echo ../bin/mstatspop  -f ms -R 1 -i ./100Kchr10_simulation.ms.txt -o 0 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 -T ../Results/mstatspop_100chr10.ms.14.txt -l 100000 -G 0 -u 1 -m ./100Kchr10_fa2ms_04.ms.txt_npops1_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
+../bin/mstatspop  -f ms -R 1 -i ./100Kchr10_simulation.ms.txt -o 0 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 -T ../Results/mstatspop_100chr10.ms.14.txt -l 100000 -G 0 -u 1 -m ./100Kchr10_fa2ms_04.ms.txt_npops1_nsam42_nonsynonymous_max_ExcludeMissingVariantsmhits_NOoutg_ploidy1_MASK.txt -n chr10.txt
 echo
 echo --------------------------------------------------------------------------------------------------
 echo PARAMETERS FOR TFASTA INPUT -f tfa: -w [-z -Y -W -E -O  -T -s] SLIDING WINDOW ANALYSIS OF EMPIRICAL DATA
@@ -240,6 +243,10 @@ echo Example tfa.19.txt: Three pops LESS SAMPLES + reordering + outg + missing +
 echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.19.txt -G 1 -u 1 -w 100 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10.txt
  ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100chr10.tfa.19.txt -G 1 -u 1 -w 100 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10.txt
 echo
+echo Example tfa.20.txt: rSFS in a single line
+echo ../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -R 1 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1   -T ../Results/mstatspop_100chr10.tfa.20.txt -w 100000 -n chr10.txt
+../bin/mstatspop -f tfa -i ./100Kchr10.tfa.gz -o 1 -R 1 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1   -T ../Results/mstatspop_100chr10.tfa.20.txt -w 100000 -n chr10.txt
+echo
 echo --------------------------------------------------------------------------------------------------
 echo Examples using MULTICHROMOSOME TFA FILE
 echo --------------------------------------------------------------------------------------------------
@@ -308,6 +315,10 @@ echo three pops and different sample order
 echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100allchr.tfa.12.txt -G 1 -u 1 -w 1000 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10-12-14.txt
 ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -N 3 10 10 2 -T ../Results/mstatspop_100allchr.tfa.12.txt -G 1 -u 1 -w 1000 -z 100 -O 22 20 21 22 23 24 25 26 27 28 29 0 1 2 3 4 5 6 7 8 9 40 41 -n chr10-12-14.txt
 echo
+echo rSFS in single line output
+echo ../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -R 1 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1   -T ../Results/mstatspop_100allchr.tfa.20.txt   -w 100000 -n chr10-12-14.txt
+../bin/mstatspop -f tfa -i ./100Kallchr.tfa.gz -o 1 -R 1 -N 20 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1   -T ../Results/mstatspop_100allchr.tfa.20.txt   -w 100000 -n chr10-12-14.txt
+echo
 echo --------------------------------------------------------------------------------------------------
 echo Collect some columns from the mstatspop output file:
 echo --------------------------------------------------------------------------------------------------
@@ -328,7 +339,7 @@ echo ---------------------------------------------------------------------------
 echo "indexing tfasta files:"
 echo --------------------------------------------------------------------------------------------------
 echo
-echo #Usage: ./tfa_index  [options] <input.tfa|input.tfa.bgz|input.tfa.gz|weights.txt|weights.txt.gz>
+echo #Usage: ./tfa_index  [options] <input.tfa|input.tfa.gz|input.tfa.gz|weights.txt|weights.txt.gz>
 echo #Options:
 echo # --version
 echo # --help
@@ -355,7 +366,7 @@ echo "Converting Examples/V0.1.0/100Kchr10_tfa2tfa_03c.tfa.gz_npops3_nsam42_nons
 ../bin/tfa_index  ./V0.1.0/100Kchr10_tfa2tfa_03c.tfa.gz_npops3_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz -f -o ../Results/V1.0.0/100Kchr10_tfa2tfa_03c.tfa.gz_npops3_nsam42_nonsynonymous_max_IncludeMissingVariantsmhits_outg_ploidy1_WEIGHTS.gz
 echo # Examples/V0.1.0/100Kchr10.tfa.gz
 echo "Converting Examples/V0.1.0/100Kchr10.tfa.gz"
-../bin/tfa_index  ./V0.1.0/100Kchr10.tfa.gz -f -o ../Results/V1.0.0//100Kchr10.tfa.gz
+../bin/tfa_index  ./V0.1.0/100Kchr10.tfa.gz -f -o ../Results/V1.0.0/100Kchr10.tfa.gz
 echo
 echo --------------------------------------------------------------------------------------------------
 echo "Merge tfasta files (same assembly reference but different individuals):"

@@ -1,10 +1,10 @@
-# mstatspop v.1.0.0
+# mstatspop v.0.1beta (20230907)
 
-## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests. 
+## Variability Analyses of multiple populations: Calculation and estimation of statistics and neutrality tests.
 
 #### Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene and Gonzalo Vera
 
-### Flags:
+## Flags:
       -f [input format file: ms, fasta OR tfa (gz file indexed)]
       -i [path and name of the input file]
       -o [output format file: 0 (extended),
@@ -14,10 +14,9 @@
                               4 (single line pairwise distribution)
                               5 (single line freq. variant per line/window)
                               6 (SNP genotype matrix)
-                              7 (SweepFiinder format -only first pop-)
+                              7 (SweepFinder-like format -only first pop-)
                               8 (single line/window: Frequency of each haplotype in the populations)
                               9 (single line/window: Frequency of variants per line and population)
-                              92 (single line/window: -rSFS- Frequency of variants per population relative to all)
                              10 (full extended)]
       -N [#_pops] [#samples_pop1] ... [#samples_popN]
       -n [name of the file containing the name(s) of scaffold(s) and their length (separated by a tab), one per line (ex. fai file)]
@@ -25,6 +24,7 @@
 ##### OPTIONAL GENERAL PARAMETERS:
       -G [outgroup (0/1)] (last population). DEFAULT 0.
       -u [include unknown positions (0/1)].  DEFAULT 0.
+      -R [performs analysis using only rSFS (0/1)].  DEFAULT 0.
       -A [Alternative Spectrum File (Only for Optimal Test): alternative_spectrum for each population (except outg)
           File format: (average absolute values) header plus fr(0,1) fr(0,2) ... fr(0,n-1) theta(0)/nt,
           fr(1,1) fr(1,2) ... fr(1,n-1) theta(1)/nt...]

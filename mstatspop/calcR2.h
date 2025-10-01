@@ -25,6 +25,7 @@ extern "C" {
  * @return
  * @todo Review documentation
  */
+
 int calcR2(int npops, int *nsam, char *matrix_pol, long int length, struct stats *statistics, char *);
 
 /**
@@ -37,6 +38,7 @@ int calcR2(int npops, int *nsam, char *matrix_pol, long int length, struct stats
  * @return
  * @todo Review documentation
  */
+
 double R2(long int *unic,double pi,int sample_size,long int S);
 
 int calcR2p(int npops, int *nsam, char *matrix_pol, long int length, struct stats *statistics, double *sum_sam, int *r2i_ploidies,int outgroup);
