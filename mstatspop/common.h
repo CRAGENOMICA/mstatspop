@@ -31,7 +31,7 @@ extern "C" {
 "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene,  Gonzalo Vera and Ahmed Hafez\n" \
 "Variability Analyses of multiple populations: " \
 "Calculation and estimation of statistics and neutrality tests.\n"
-#define MSTATSPOPVERSION "version 0.1-20250911\n"
+#define MSTATSPOPVERSION "version" VERSION_NUMBER "-" BUILD_NUMBER "\n"
 #define MSTATSPOPTITLE "Variability Analyses of multiple populations: " \
 "Calculation and estimation of statistics and neutrality tests.\n"
 #define MSTATSPOPAUTHORS "Sebastian E. Ramos-Onsins, Luca Ferretti, Emanuele Raineri, Giacomo Marmorini, William Burgos, Joan Jene,  Gonzalo Vera and Ahmed Hafez\n"
