@@ -174,22 +174,35 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ github.token }}
 
+    - name: find linux artifact
+      id: find_linux
+      run: |
+        LINUX_FILE=$(find ${{ github.workspace }}/mstatspop-release -name "*Linux.tar.gz" | head -1)
+        echo "linux_file=$LINUX_FILE" >> "$GITHUB_OUTPUT"
+        echo "Found Linux file: $LINUX_FILE"
+    
     - name: upload linux artifact
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/mstatspop-release/mstatspop-release-ubuntu-latest-*/mstatspop-${{ steps.version.outputs.version }}-Linux.tar.gz
-        # asset_path: ${{ steps.strings.outputs.build-output-dir }}/*.Linux.tar.gz
+        asset_path: ${{ steps.find_linux.outputs.linux_file }}
         asset_name: mstatspop-v${{ steps.version.outputs.version }}-Linux.tar.gz
         asset_content_type: application/gzip
+    - name: find macos artifact
+      id: find_macos
+      run: |
+        MACOS_FILE=$(find ${{ github.workspace }}/mstatspop-release -name "*Darwin.tar.gz" | head -1)
+        echo "macos_file=$MACOS_FILE" >> "$GITHUB_OUTPUT"
+        echo "Found macOS file: $MACOS_FILE"
+    
     - name: upload macos artifact
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/mstatspop-release/mstatspop-release-macos-latest-*/mstatspop-${{ steps.version.outputs.version }}-Darwin.tar.gz
+        asset_path: ${{ steps.find_macos.outputs.macos_file }}
         asset_name: mstatspop-v${{ steps.version.outputs.version }}-Darwin.tar.gz
         asset_content_type: application/gzip
