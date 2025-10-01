@@ -115,7 +115,7 @@ jobs:
         cd ${{ steps.strings.outputs.build-output-dir }}
         cpack -G TGZ
     - name: Upload release tarball
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         # Name of the artifact. This is the name that will be displayed in the GitHub Actions UI.
         # get the name of the release tarball
@@ -144,7 +144,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     - name: Download release tarball
-      uses: actions/download-artifact@v3
+      uses: actions/download-artifact@v4
       with:
         name: mstatspop-release
         path: ${{ github.workspace }}/mstatspop-release
