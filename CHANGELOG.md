@@ -1,3 +1,12 @@
+# Change log Version 1.1.2
+
+## Fixes and Improvements:
+* **GitHub Actions**: Updated artifact actions from v3 to v4 to resolve deprecation warnings and fix artifact naming conflicts
+* **Documentation**: Added documentation files including calculation legend and tfa_merge guide
+* **Testing && fixes**: Fixed data type issues using `long int` instead of `int` in tfasta.c for better compatibility and add more tests
+* **Print Output**: Improved print output formatting and error handling
+
+
 # Change log Version 1.1.1
 ## Fixes :
 * Fix mstatspop for some functions that give an incorrect exit (with ms format and output 10) 
