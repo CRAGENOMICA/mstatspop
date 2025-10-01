@@ -21,6 +21,7 @@ extern "C" {
 #include "calcFs.h"
 #include "calc_Toptimal_tests.h"
 #include "freq_stats.h"
+#include "rfreq_stats.h"
 #include "missing_freqs.h"
 #include "jointfreqdist.h"
 #include "mismatch.h"
@@ -75,7 +76,13 @@ extern "C" {
 
 void usage(void);
 int read_index_file(char *chr_name_all, unsigned long *nscaffolds,char ***chr_name_array,char ***chr_length_array);
-    
+
+//int weights_unfolded(double *ww, double *wt, double *wfw, double *wfl, double *wl, /*double **wpsi_ij, */int nsam, /*int subnsam,*/ double freq_cut);
+//int weights_unfolded_wpsi(double *wpsi_ij, int nsam, int fr, int subnsam);
+//int weights_folded(double *ww, double *wt, double *wfl, double *wl, double *wphi_i, /*double **wpsi_ij, */ int nsam, /*int subnsam, */double freq_cut);
+//int weights_folded_wpsi(double *wpsi_ij, int nsam, int fr, int subnsam);
+
+
 #ifdef	__cplusplus
 }
 #endif

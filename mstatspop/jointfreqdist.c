@@ -12,7 +12,7 @@
 
 int jointfreqdist(	int npops, int *nsam, char *matrix_pol,long int *matrix_pos,
 					long int length, struct stats *statistics,long int *sites_matrix,
-					double **jfd, int **nfd,int outgroup_presence,int force_outgroup )
+					double **jfd, int **nfd,int outgroup_presence,int force_outgroup, int output)
 {
 	long int j;  
 	int x,sumnsam;
@@ -54,32 +54,34 @@ int jointfreqdist(	int npops, int *nsam, char *matrix_pol,long int *matrix_pos,
             if(outgroup_presence+force_outgroup == 1 && polc== 0) { /*outgroup*/
                 anc = a0; /*a0 is the outgroup value (ancestral)*/
                 /*BEGIN SECTION popfreq*/
-                pol2 = 0; /*pol2 is the KNOWN frequency of non-ancestral considering all populations*/
-                for(x=0;x<npops-1;x++) {
-                    a0 = a1 = 0;
-                    inits = initsq1[x];
-                    while((a0 = matrix_pol[j*sumnsam+inits]) == '-' && inits < initsq1[x]+nsam[x]) inits += 1;
-                    if(inits > initsq1[x]+nsam[x]-1) break;
-                    else {
-                        for(pop1=inits+0;pop1<initsq1[x]+nsam[x];pop1++) {/*note +0 and not +1*/
-                            while((a1 = matrix_pol[j*sumnsam+pop1]) == '-' && pop1 < initsq1[x]+nsam[x]) pop1++;
-                            if(pop1 >= initsq1[x]+nsam[x]) break;
-                            if(a1 != anc) {
-                                pol2 += 1;
+                if(output==92) {
+                    pol2 = 0; /*pol2 is the KNOWN frequency of non-ancestral considering all populations*/
+                    for(x=0;x<npops-1;x++) {
+                        a0 = a1 = 0;
+                        inits = initsq1[x];
+                        while((a0 = matrix_pol[j*sumnsam+inits]) == '-' && inits < initsq1[x]+nsam[x]) inits += 1;
+                        if(inits > initsq1[x]+nsam[x]-1) break;
+                        else {
+                            for(pop1=inits+0;pop1<initsq1[x]+nsam[x];pop1++) {/*note +0 and not +1*/
+                                while((a1 = matrix_pol[j*sumnsam+pop1]) == '-' && pop1 < initsq1[x]+nsam[x]) pop1++;
+                                if(pop1 >= initsq1[x]+nsam[x]) break;
+                                if(a1 != anc) {
+                                    pol2 += 1;
+                                }
                             }
                         }
                     }
-                }
-                /*count frequency of snps per pop considering all pops except outgroup*/
-                /*the frequency is calculated for derived, even if it is fixed in this population. Must be polymorphic in global */
-                for(x=0;x<npops-1;x++) {
-                    inits = initsq1[x];
-                    for(pop1=inits;pop1<initsq1[x]+nsam[x];pop1++) {
-                        while((a1 = matrix_pol[j*sumnsam+pop1]) == '-' && pop1 < initsq1[x]+nsam[x]) pop1++;
-                        if(pop1 >= initsq1[x]+nsam[x]) break;
-                        if(a1 != anc) {
-                            statistics[0].popfreq[x][pol2] += 1;
-                            break; /*only count once in the population*/
+                    /*count frequency of snps per pop considering all pops except outgroup*/
+                    /*the frequency is calculated for derived, even if it is fixed in this population. Must be polymorphic in global */
+                    for(x=0;x<npops-1;x++) {
+                        inits = initsq1[x];
+                        for(pop1=inits;pop1<initsq1[x]+nsam[x];pop1++) {
+                            while((a1 = matrix_pol[j*sumnsam+pop1]) == '-' && pop1 < initsq1[x]+nsam[x]) pop1++;
+                            if(pop1 >= initsq1[x]+nsam[x]) break;
+                            if(a1 != anc) {
+                                statistics[0].popfreq[x][pol2] += 1;
+                                break; /*only count once in the population*/
+                            }
                         }
                     }
                 }
@@ -122,39 +124,41 @@ int jointfreqdist(	int npops, int *nsam, char *matrix_pol,long int *matrix_pos,
                 if(initso < sumnsam) {
                     anc = a0; /*a0 is the value added in a pop (not necessarily ancestral)*/
                     /*BEGIN SECTION popfreq*/
-                    pol2 = 0; /*pol2 is the KNOWN frequency of non-ancestral considering all populations*/
-                    n = 0;
-                    for(x=0;x<npops-1;x++) {
-                        a0 = 0;
-                        inits = initsq1[x];
-                        while((a0 = matrix_pol[j*sumnsam+inits]) == '-' && inits < initsq1[x]+nsam[x]) inits += 1;
-                        if(inits > initsq1[x]+nsam[x]-1) break;
-                        else {
-                            for(pop1=inits+0;pop1<initsq1[x]+nsam[x];pop1++) {/*note +0 and not +1*/
+                    if(output==92) {
+                        pol2 = 0; /*pol2 is the KNOWN frequency of non-ancestral considering all populations*/
+                        n = 0;
+                        for(x=0;x<npops-1;x++) {
+                            a0 = 0;
+                            inits = initsq1[x];
+                            while((a0 = matrix_pol[j*sumnsam+inits]) == '-' && inits < initsq1[x]+nsam[x]) inits += 1;
+                            if(inits > initsq1[x]+nsam[x]-1) break;
+                            else {
+                                for(pop1=inits+0;pop1<initsq1[x]+nsam[x];pop1++) {/*note +0 and not +1*/
+                                    while((a0 = matrix_pol[j*sumnsam+pop1]) == '-' && pop1 < initsq1[x]+nsam[x]) pop1++;
+                                    if(pop1 >= initsq1[x]+nsam[x]) break;
+                                    if(a0 != anc) {
+                                        pol2 += 1;
+                                        a1 = a0;
+                                    }
+                                    n += 1;
+                                }
+                            }
+                        }
+                        if(pol2 > n-pol2) {
+                            pol2 = n-pol2;
+                            anc = a1;
+                        }
+                        /*count frequency of snps per pop considering all pops except outgroup*/
+                        /*the frequency is calculated for maf, even if it is fixed in this population. Must be polymorphic in global */
+                        for(x=0;x<npops-1;x++) {
+                            inits = initsq1[x];
+                            for(pop1=inits;pop1<initsq1[x]+nsam[x];pop1++) {
                                 while((a0 = matrix_pol[j*sumnsam+pop1]) == '-' && pop1 < initsq1[x]+nsam[x]) pop1++;
                                 if(pop1 >= initsq1[x]+nsam[x]) break;
                                 if(a0 != anc) {
-                                    pol2 += 1;
-                                    a1 = a0;
+                                    statistics[0].popfreq[x][pol2] += 1;
+                                    break; /*only count once in the population*/
                                 }
-                                n += 1;
-                            }
-                        }
-                    }
-                    if(pol2 > n-pol2) {
-                        pol2 = n-pol2;
-                        anc = a1;
-                    }
-                    /*count frequency of snps per pop considering all pops except outgroup*/
-                    /*the frequency is calculated for maf, even if it is fixed in this population. Must be polymorphic in global */
-                    for(x=0;x<npops-1;x++) {
-                        inits = initsq1[x];
-                        for(pop1=inits;pop1<initsq1[x]+nsam[x];pop1++) {
-                            while((a0 = matrix_pol[j*sumnsam+pop1]) == '-' && pop1 < initsq1[x]+nsam[x]) pop1++;
-                            if(pop1 >= initsq1[x]+nsam[x]) break;
-                            if(a0 != anc) {
-                                statistics[0].popfreq[x][pol2] += 1;
-                                break; /*only count once in the population*/
                             }
                         }
                     }

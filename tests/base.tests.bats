@@ -1,4 +1,11 @@
-
+function _is_first_test() {
+    local FIRST_RUN_TEST=/tmp/first_test
+    if [[ ! -e "$FIRST_RUN_TEST" ]]; then
+        touch "$FIRST_RUN_TEST"
+        echo "0"
+    fi
+    echo "1"
+}
 setup() {
     # get the containing directory of this file
     # use $BATS_TEST_FILENAME instead of ${BASH_SOURCE[0]} or $0,

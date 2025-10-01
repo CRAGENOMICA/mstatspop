@@ -74,7 +74,13 @@ int get_obsdata(
     double *nsites2_pop_outg, 
     double *nsites3_pop, 
     double *nsites3_pop_outg,
-    double *anx, 
+                double *rnsites1_pop,
+                double *rnsites1_pop_outg,
+                double *rnsites2_pop,
+                double *rnsites2_pop_outg,
+                double *rnsites3_pop,
+                double *rnsites3_pop_outg,
+    double *anx,
     double *bnx, 
     double *anxo, 
     double *bnxo,
@@ -85,8 +91,6 @@ int get_obsdata(
     char *chr_name,
     int first,
     mstatspop_args_t *args);
-
-
 
 int var_char(FILE *file_input,SGZip *input_gz,
     // FILE *file_logerr,SGZip *file_logerr_gz,

@@ -13,7 +13,6 @@
 #define NITER 1e6
 
 /**
- *
  * @param npops
  * @param nsam
  * @param matrix_pol
@@ -140,6 +139,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
     if(outgroup_presence+force_outgroup==1)
     {
         for(pop1=0;pop1<npops-1;pop1++) {
+            /*init*/
             an = 0;
             bn = 0;
             /*Si = 0;*/
@@ -183,6 +183,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                 statistics[0].freq[pop1][x] = 0;
                 sfreqn[x] = 0;
             }
+            /*calculation*/
             if(nsam[pop1] > 1) {
                 for(j=0;j<length;j++) {		
                     freqo[0]=freqo[1]=freqo[2]=freqo[3]=0;
@@ -194,7 +195,7 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                     }
                     if(freqo[0]) {
                         if(freqo[1] != freqo[0] && freqo[1] != 0) {
-                            if(pop1==0) sfreq[npops-1][freqo[1]] += (int)1;
+                            if(pop1==0) sfreq[npops-1][freqo[1]] += (int)1;/*count polymorphic freq in outg*/
                             ancestral[0] = (char)0;/*if the outgroup is polymorphic, we do not consider for neutrality tests with outgroup*/
                         }
                         else {
@@ -206,9 +207,10 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                             }	
                         }
                     }
-                    else ancestral[0] = (char)0;
+                    else ancestral[0] = (char)0; /*outgroup not considered*/
                     no[j] = ancestral[0]; /*if the outgroup is valid 1, if not 0*/
                     /*if(ancestral[0]==0) *miss_outg +=1; */
+                    
                     /*pop*/
                     inits = initsq1[pop1];
                     max   = initsq1[pop1]+nsam[pop1];
@@ -220,18 +222,18 @@ int calc_freqstats(int npops, int *nsam, char *matrix_pol,long int length, struc
                         if(matrix_pol[j*sumnsam+y] == '-') {freq[3] += 1;nx[y-inits][j] = 0;}
                     }
                     if(freq[0]) {
-                        if(freq[2]>0 && freq[2]<freq[0]) {
+                        if(freq[2]>0 && freq[2]<freq[0]) {/*count freq (no outgroup)*/
                             Sc += 1.0;
                             snfreq[pop1][freq[2]] += (int)1; /*no mhits allowed!*/
                         }
-                        if(ancestral[0] == '0') {
+                        if(ancestral[0] == '0') {/*count freq (outgroup)*/
                             if(freq[2]>0 && freq[2]<freq[0]) {
                                 S += 1;
                                 sfreq[pop1][freq[2]] += (int)1; /*no mhits allowed!*/
                             }
                             /*else sfreq[pop1][freq[0]+freq[3]] += (int)1; *//*no mhits allowed!*/
                         }
-                        if(ancestral[0] == '1') {
+                        if(ancestral[0] == '1') {/*count freq (outgroup) and revert 0->1 and 1->0*/
                             if(freq[1]>0 && freq[1]<freq[0]) {
                                 S += 1;
                                 sfreq[pop1][freq[1]] += (int)1;
