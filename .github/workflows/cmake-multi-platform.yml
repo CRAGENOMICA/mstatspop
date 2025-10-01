@@ -120,7 +120,7 @@ jobs:
         # Name of the artifact. This is the name that will be displayed in the GitHub Actions UI.
         # get the name of the release tarball
 
-        name: mstatspop-release
+        name: mstatspop-release-${{ matrix.os }}-${{ matrix.c_compiler }}
         path: | 
            ${{ steps.strings.outputs.build-output-dir }}/*.tar.gz 
            ${{ steps.strings.outputs.build-output-dir }}/version.txt
@@ -143,10 +143,10 @@ jobs:
     if: github.ref == 'refs/heads/master'
     steps:
     - uses: actions/checkout@v4
-    - name: Download release tarball
+    - name: Download release tarballs
       uses: actions/download-artifact@v4
       with:
-        name: mstatspop-release
+        pattern: mstatspop-release-*
         path: ${{ github.workspace }}/mstatspop-release
 
     - name: check release tarball
@@ -154,8 +154,10 @@ jobs:
 
     - name: version
       run: |
-        echo "version=$(cat ${{ github.workspace }}/mstatspop-release/version.txt)" >> "$GITHUB_ENV"
-        echo "version=$(cat ${{ github.workspace }}/mstatspop-release/version.txt)" >> "$GITHUB_OUTPUT"
+        # Find the first version.txt file in any subdirectory
+        VERSION_FILE=$(find ${{ github.workspace }}/mstatspop-release -name "version.txt" | head -1)
+        echo "version=$(cat $VERSION_FILE)" >> "$GITHUB_ENV"
+        echo "version=$(cat $VERSION_FILE)" >> "$GITHUB_OUTPUT"
       id: version
 
 
@@ -178,7 +180,7 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/mstatspop-release/mstatspop-${{ steps.version.outputs.version }}-Linux.tar.gz
+        asset_path: ${{ github.workspace }}/mstatspop-release/mstatspop-release-ubuntu-latest-*/mstatspop-${{ steps.version.outputs.version }}-Linux.tar.gz
         # asset_path: ${{ steps.strings.outputs.build-output-dir }}/*.Linux.tar.gz
         asset_name: mstatspop-v${{ steps.version.outputs.version }}-Linux.tar.gz
         asset_content_type: application/gzip
@@ -188,6 +190,6 @@ jobs:
         GITHUB_TOKEN: ${{ github.token }}
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: ${{ github.workspace }}/mstatspop-release/mstatspop-${{ steps.version.outputs.version }}-Darwin.tar.gz
+        asset_path: ${{ github.workspace }}/mstatspop-release/mstatspop-release-macos-latest-*/mstatspop-${{ steps.version.outputs.version }}-Darwin.tar.gz
         asset_name: mstatspop-v${{ steps.version.outputs.version }}-Darwin.tar.gz
         asset_content_type: application/gzip
