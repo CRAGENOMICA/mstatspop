@@ -524,11 +524,13 @@ long int get_interval_length(const char* chr_name,tbx_t *tbx) {
   // find the index of 
   for (int i = 0; i < nseq; i++)
   {
+      log_debug("Seqname: %s chr_name: %s",seqnames[i],chr_name);
     if (strcmp(seqnames[i], chr_name) == 0)
     {
       uint64_t n_records;
       uint64_t unmaped;
       hts_idx_get_stat(tbx->idx, i, &n_records, &unmaped);
+        log_debug("Seqname: %s n_positions: %ld",seqnames[i],n_records);
       free(seqnames);
       return n_records;
     }
