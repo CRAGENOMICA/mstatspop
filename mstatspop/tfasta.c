@@ -595,6 +595,7 @@ int read_tfasta_DNA(
     // reading all 
     log_debug("Reading DNA data for %s from %ld to end of sequence", chr_name, init_site);
     end_site =  get_interval_length(chr_name, tfasta->tbx);
+    log_debug("Reading DNA data for %s from %ld to %ld of sequence", chr_name, init_site, end_site);
     if (end_site <=0)
     {
       log_error("Failed to get the length of the sequence for %s", chr_name);
@@ -864,6 +865,7 @@ int read_tfasta_DNA_lite(
     // reading all 
     log_debug("Reading DNA data for %s from %ld to end of sequence", chr_name, init_site);
     end_site =  get_interval_length(chr_name, tfasta->tbx);
+    log_debug("Reading DNA data for %s from %ld to %ld of sequence", chr_name, init_site, end_site);
     if (end_site <=0)
     {
       log_error("Failed to get the length of the sequence for %s", chr_name);
