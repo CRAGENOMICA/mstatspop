@@ -19,7 +19,7 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
     int pop1,pop2;
     int **freq,**freq1;
     int sumnsam,*initsq1,inits,max,initso,a0;
-    double pia,piw,piT,*pia1all;
+    double pia,piw,piT,*pia1all,*pit1all;
     double /*spiw,*/spiwn,spia,spian;
     /*double *mean_nsam,**mean_nsam_amng;*/
     /*long int *n_nsam,**n_nsam_amng;*/
@@ -59,6 +59,7 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
     
     initsq1 = (int *)calloc(npops,sizeof(int));
     pia1all = (double *)calloc(npops,sizeof(double));
+    pit1all = (double *)calloc(npops,sizeof(double));
     piwallno1 = (double *)calloc(npops,sizeof(double));
     freq = (int **)calloc(npops,sizeof(int *));
     for(x=0;x<npops;x++) freq[x] = (int *)calloc(4,sizeof(int));
@@ -125,6 +126,7 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
                 }
                 y++;
             }
+            piw=pia=piT=0;
             if(initso - nsam[pop1] > 1 && freq1[pop1][0] > 1) {
                 piw = (double)(freq1[pop1][1]*freq1[pop1][2])/(double)(freq1[pop1][0]*(freq1[pop1][0]-1.0)/2.0);
                 piwallno1[pop1] += piw;
@@ -133,9 +135,13 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
                 pia = (double)(freq[pop1][1]*freq1[pop1][2] + freq[pop1][2]*freq1[pop1][1])/(double)(freq[pop1][0]*freq1[pop1][0]);
                 pia1all[pop1] += pia;
             }
+            if(initso - nsam[pop1] > 1 && freq[pop1][0] > 1 && freq1[pop1][0] > 0) {
+                piT = 0.5 * piw + 0.5 * pia;
+                pit1all[pop1] += piT;
+            }
             /**/
         }
-        z=0;
+        z=0;pia=0;
         for(pop1=0;pop1<npops-1;pop1++) {
             for(pop2=pop1+1;pop2<npops-0;pop2++) {
                 if((freq[pop1][0]*freq[pop2][0]) > 0) {
@@ -146,21 +152,24 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
                     if(pop2 == npops-1)
                         statistics[0].K[pop1] += pia;
                     /*we do not show these results. we do not consider those values that are not in Fst*//*
-                                                                                                          if((pop2 < npops-1 || npops == 2) && nsam[pop1]>1 && nsam[pop2]>1) {
-                                                                                                          pia1all[pop1] += pia;
-                                                                                                          pia1all[pop2] += pia;
-                                                                                                          }*//*
-                                                                                                              mean_nsam_amng[pop1][pop2] += (double)freq[pop1][0] * (double)freq[pop2][0];
-                                                                                                              n_nsam_amng[pop1][pop2] += 1;*/
+                     if((pop2 < npops-1 || npops == 2) && nsam[pop1]>1 && nsam[pop2]>1) {
+                       pia1all[pop1] += pia;
+                       pia1all[pop2] += pia;
+                     }*//*
+                     mean_nsam_amng[pop1][pop2] += (double)freq[pop1][0] * (double)freq[pop2][0];
+                     n_nsam_amng[pop1][pop2] += 1;*/
                 }
                 z++;
             }
         }
-        z = 0;
+        z = 0;piT=piw=0;
         for(pop1=0;pop1<npops-1;pop1++) {
             for(pop2=pop1+1;pop2<npops-0;pop2++) {
-                if((nsam[pop1]+nsam[pop2]) > 1 && (freq[pop1][0]+freq[pop2][0]) > 1) {
-                    piT = (double)((freq[pop1][1]+freq[pop2][1])*(freq[pop1][2]+freq[pop2][2]))/(double)((freq[pop1][0]+freq[pop2][0])*((freq[pop1][0]+freq[pop2][0])-1.0)/2.0);
+                if((nsam[pop1]+nsam[pop2]) > 1 /*&& (freq[pop1][0]+freq[pop2][0]) > 1*/ && (freq[pop1][0]*freq[pop2][0]) > 0) {
+                    piT = 0.25 * ((double)(freq[pop1][1]*freq[pop1][2])/(double)(freq[pop1][0]*(freq[pop1][0]-1.0)/2.0)  +
+                                  (double)(freq[pop2][1]*freq[pop2][2])/(double)(freq[pop2][0]*(freq[pop2][0]-1.0)/2.0)) +
+                          0.50 * ((double)(freq[pop1][1]*freq[pop2][2] + freq[pop1][2]*freq[pop2][1])/(double)(freq[pop1][0]*freq[pop2][0]));
+                    //(double)((freq[pop1][1]+freq[pop2][1])*(freq[pop1][2]+freq[pop2][2]))/(double)((freq[pop1][0]+freq[pop2][0])*((freq[pop1][0]+freq[pop2][0])-1.0)/2.0);
                     statistics[0].piT[z] += piT;
                     if(flag == 1) if(matrix_sv[j] == 1) statistics[0].svT[pop1][pop2][0] += piT;
                     if(flag == 1) if(matrix_sv[j] == 2) statistics[0].svT[pop1][pop2][1] += piT;
@@ -269,7 +278,7 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
                     P1 = statistics[0].svT[pop1][pop2][0] * (gA*gG/(gA*gG + gT*gC));
                     P2 = statistics[0].svT[pop1][pop2][0] * (gT*gC/(gA*gG + gT*gC));		
                     Q =  statistics[0].svT[pop1][pop2][1];		
-                    statistics[0].piTHKY[z] = tn93(gT,gC,gG,gA,P1,P2,Q,/*statistics[0].total_length*/ /**/total_effective_length/**/);/*it is incorrect in case missing values are considered...*/
+                    statistics[0].piTHKY[z] = -10000; //NOT CONSIDERED //tn93(gT,gC,gG,gA,P1,P2,Q,/*statistics[0].total_length*/ /**/total_effective_length/**/);/*it is incorrect in case missing values are considered...*/
                     /*piTnt*/  
                     //statistics[0].piTnt[z] = statistics[0].piT[z]/(double)(/**/total_effective_length/*statistics[0].total_length*/);/*incorrect*/
                     
@@ -426,6 +435,7 @@ int calc_piwpiafst(int flag, int formatfile,int npops, int *nsam, char *matrix_p
     
     free(initsq1);
     free(pia1all);
+    free(pit1all);
     for(x=0;x<npops;x++) free(freq[x]);
     free(freq);
     for(x=0;x<npops;x++) free(freq1[x]);

@@ -3062,7 +3062,7 @@ int main(int argc, const char *argv[])
     }
 
     /* Aqui el PROCESAMIENTO DE DATOS (y leer los fragmentos de datos (MS o TFA)*/
-    int chr_length_array_size = 0;
+    long int chr_length_array_size = 0;
     long int processed_sites = 0;
     for (first = 0; first < nscaffolds; first++)
     {
