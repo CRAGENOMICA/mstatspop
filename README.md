@@ -9,12 +9,14 @@ mstatspop is designed for users interested in performing detailed analyses of nu
 mstatspop supports the simultaneous analysis of multiple populations, the inclusion of one or more outgroups for the study of polarized variants (ancestral and derived), and allows users to define the order of the input sequences according to their preferences.
 
 The program is available at:
-`https://github.com/CRAGENOMICA/mstatspop`
+
+	`https://github.com/CRAGENOMICA/mstatspop`
 
 It also includes complementary tools, available at:
 
-`https://github.com/CRAGENOMICA/fastaconvtr`
-`https://github.com/sramosonsins/gVCF2tFasta`
+	`https://github.com/CRAGENOMICA/fastaconvtr`
+
+	`https://github.com/sramosonsins/gVCF2tFasta`
 
 ### Annotation File Inclusion
 
@@ -123,15 +125,10 @@ The options available in mstatspop are described below:
 #### Effective length for each population:
 
       - Eff_length1_pop_outg[0]: Effective length1 for population 0. That is, considering the outgroup, how many positions have at least one sequence per population 0 and the outgroup exist. Useful in case considering missing positions (-u 1). In case -u 0 all lengths are equal. Useful for calculating divergence vs outgroup or versus populations.
-	
       - Eff_length2_pop_outg[0]: Effective length2 for population 0. That is, considering the outgroup, how many positions have at least two sequences per population 0 and the outgroup exist. Useful in case considering missing positions (-u 1). In case -u 0 all lengths are equal. Useful for calculating levels of variability.
-
       - Eff_length3_pop_outg[0]: Effective length3 for population 0. That is, considering the outgroup, how many positions have at least three sequences per population 0 and the outgroup exist.Useful in case considering missing positions (-u 1). In case -u 0 all lengths are equal. Useful for calculating tests of neutrality (variances).
-
       - Eff_length1_pop[0]: Effective length1 for population 0. That is, how many positions have at least one sequence per population 0. Useful in case considering missing positions (-u 1). In case -u 0 all lengths are equal. Useful for calculating divergence versus populations.
-
       - Eff_length2_pop[0]: Effective length2 for population 0. That is, how many positions have at least two sequences per population 0. Useful in case considering missing positions (-u 1). In case -u 0 all lengths are equal. Useful for calculating levels of variability.
-
       - Eff_length3_pop[0]: Effective length3 for population 0. That is, how many positions have at least three sequences per population 0. Useful in case considering missing positions (-u 1). In case -u 0 all lengths are equal. Useful for calculating tests of neutrality (variances).
 
 In principle, if the analysis contains an outgroup, all analysis are conditioned to the presence of the outgroup variant.
