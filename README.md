@@ -15,23 +15,23 @@ It also includes complementary tools, available at:
 `https://github.com/CRAGENOMICA/fastaconvtr`
 `https://github.com/sramosonsins/gVCF2tFasta`
 
-**Annotation File Inclusion**
+### Annotation File Inclusion
 
 mstatspop can integrate information contained in annotation files in GTF format, allowing for the analysis of variability in different functional categories, such as synonymous sites, non-synonymous sites, 0-fold, 4-fold coding, non-coding, and other features indicated in the feature column (e.g., introns, UTRs, etc.).
 
-**Sliding Windows**
+### Sliding Windows
 
 The program performs analyses using a sliding window approach, with user-defined size and slide parameters. The maximum window size corresponds to the full length of the scaffold or chromosome. Windows can be defined in two ways: (i) by their physical position (based on genomic coordinates) or (ii) by their effective length (based on the actual number of positions analyzed). Additionally, a BED file with specific coordinates (e.g., genes or regions of interest) can be provided and used as analysis windows.
 
-**Statistics and Neutrality and Differentiation Tests**
+### Statistics and Neutrality and Differentiation Tests
 
 mstatspop includes a comprehensive set of genetic variability statistics and neutrality tests, as well as population differentiation statistics and Fst significance estimates using permutations. A particularly relevant feature is the calculation of frequency-based statistics considering positions with missing data. The program also implements optimal neutrality tests, in which the user can specify an expected alternative hypothesis. Furthermore, the null hypothesis can be modified based on a user-defined demographic model.
 
-**Output Formats**
+### Output Formats
 
 mstatspop offers several output formats, including (i) an extended format for viewing scaffolds or entire chromosomes, (ii) tabular formats optimized for further processing, where each line corresponds to an individual window, (iii) formats compatible with programs such as dadi and SweepFinder, and (iv) a multi-population frequency spectrum (SFS) in tabular format.
 
-**Included Complementary Tools**
+### Included Complementary Tools
 
 The mstatspop package includes several programs and scripts for manipulating input and output files: (i) *VCF2Tfasta*: converts VCF files to Tfasta format for further analysis, (ii) *tfa_merge*: combines multiple Tfasta files (compressed and indexed) for joint analysis, (iii) *fastaconvtr*: transforms GTF files into index files with the information needed for analysis (e.g., silent positions), (iv) *collect_data_columns.pl*: allows you to extract specific columns from output files in windows.
 
