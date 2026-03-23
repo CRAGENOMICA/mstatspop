@@ -524,13 +524,11 @@ long int get_interval_length(const char* chr_name,tbx_t *tbx) {
   // find the index of 
   for (int i = 0; i < nseq; i++)
   {
-      log_debug("Seqname: %s chr_name: %s",seqnames[i],chr_name);
     if (strcmp(seqnames[i], chr_name) == 0)
     {
       uint64_t n_records;
       uint64_t unmaped;
       hts_idx_get_stat(tbx->idx, i, &n_records, &unmaped);
-        log_debug("Seqname: %s n_positions: %ld",seqnames[i],n_records);
       free(seqnames);
       return n_records;
     }
@@ -597,7 +595,6 @@ int read_tfasta_DNA(
     // reading all 
     log_debug("Reading DNA data for %s from %ld to end of sequence", chr_name, init_site);
     end_site =  get_interval_length(chr_name, tfasta->tbx);
-    log_debug("Reading DNA data for %s from %ld to %ld of sequence", chr_name, init_site, end_site);
     if (end_site <=0)
     {
       log_error("Failed to get the length of the sequence for %s", chr_name);
@@ -743,10 +740,11 @@ int read_tfasta_DNA(
           long int DNA_matr2_index = (((long long)tfasta->n_sam * (unsigned long)*n_site) + (unsigned long)i);
           char dna_char =  get_DNA_char(&cc[i]);
           if(dna_char == -1) {
-            log_error("Unexpected value in tfa file: position %ld, sample %d \n%c", position, i, cc[i]);
-            free(DNA_matr2);
-            hts_itr_destroy(iter);
-            return (-1);
+            log_error("Unexpected value in tfa file: position %ld, sample %d \n%c. Assigned 'N'", position, i, cc[i]);
+            DNA_matr2[DNA_matr2_index] = 'N';
+            //free(DNA_matr2);
+            //hts_itr_destroy(iter);
+            //return (-1);
           }
           if(dna_char > 0) {
             DNA_matr2[DNA_matr2_index] = dna_char;
@@ -867,7 +865,6 @@ int read_tfasta_DNA_lite(
     // reading all 
     log_debug("Reading DNA data for %s from %ld to end of sequence", chr_name, init_site);
     end_site =  get_interval_length(chr_name, tfasta->tbx);
-    log_debug("Reading DNA data for %s from %ld to %ld of sequence", chr_name, init_site, end_site);
     if (end_site <=0)
     {
       log_error("Failed to get the length of the sequence for %s", chr_name);
@@ -1012,12 +1009,13 @@ int read_tfasta_DNA_lite(
           // DNA_matr[(((long long)nseq * (unsigned long)*n_site) + (unsigned long)col)] = '1';
           long int DNA_matr2_index = (((long long)tfasta->n_sam * (unsigned long)*n_site) + (unsigned long)i);
           char dna_char =  get_DNA_char(&cc[i]);
-          if(dna_char == -1) {
-            log_error("Unexpected value in tfa file: position %ld, sample %d \n%c", position, i, cc[i]);
-            free(DNA_matr2);
-            hts_itr_destroy(iter);
-            return (-1);
-          }
+            if(dna_char == -1) {
+              log_error("Unexpected value in tfa file: position %ld, sample %d \n%c. Assigned 'N'", position, i, cc[i]);
+              DNA_matr2[DNA_matr2_index] = 'N';
+              //free(DNA_matr2);
+              //hts_itr_destroy(iter);
+              //return (-1);
+            }
           if(dna_char > 0) {
             DNA_matr2[DNA_matr2_index] = dna_char;
             count++;
