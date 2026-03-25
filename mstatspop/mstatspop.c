@@ -3103,6 +3103,9 @@ int main(int argc, const char *argv[])
                 {
                     exit(1);
                 }
+                if(nwindows==0) {
+                    continue;
+                }
                 args.window = -1;
                 args.slide = -1;
                 fzclose(file_wcoor, &file_wcoor_gz);

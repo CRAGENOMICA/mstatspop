@@ -1137,11 +1137,14 @@ int read_coordinates(
   }
   if (xx == 0)
   {
-    // fprintf(file_logerr,"\nError: no coordinates assigned, read_coordinates.2 \n");
-    log_error("Error: no coordinates assigned, read_coordinates.2");
-    /*free(*wgenes);
-     file_wcoor=0;*/
-    return (0);
+      printf("No coordinates assigned for this scaffold\n");
+      log_warn("No coordinates assigned for this scaffold.");
+      //log_error("Error: no coordinates assigned, read_coordinates.2");
+      //file_wcoor=0;
+      *nwindows = 0;
+      free(*wgenes);
+      free(valn);
+      return (1);
   }
   *nwindows = (xx) / 2;
   /*}*/
@@ -1235,7 +1238,7 @@ int read_weights_positions_file(
 		log_error("Failed to parse region: %s", chr_name);
     return 0;
   }
-	int expected_sites = end_site - init_site + 1;
+	long int expected_sites = end_site - init_site + 1;
 	
 	// for wP, wPV and wV free the memory if it is already allocated
 	if (*wP != NULL)
@@ -1261,8 +1264,8 @@ int read_weights_positions_file(
 
 
 	kstring_t str = {0, 0, NULL};
-  const char *delim = ":\t\n";
-	int n_sites = 0;
+    const char *delim = ":\t\n";
+	long int n_sites = 0;
 	while (tbx_itr_next(wtfasta->fp, wtfasta->tbx, iter, &str) >= 0) {
 
 		if(n_sites >= expected_sites) {

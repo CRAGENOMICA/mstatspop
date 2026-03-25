@@ -12,5 +12,6 @@ npm install  https://github.com/ztombol/bats-file
 
 
 # To Run the Test
+```
 bats ./tests/mstatspop.tests.bats
 ```
