@@ -4372,11 +4372,6 @@ int main(int argc, const char *argv[])
         log_trace("Clearning sum_sam_mask");
         free(sum_sam_mask);
     }
-    if (args.formatfile > 0)
-    {
-        log_trace("Cleaning file_input and file_input_gz");
-        fzclose(file_input, &file_input_gz);
-    }
     log_trace("cleaning file_output");
     if (file_output)
         fclose(file_output);
@@ -4693,6 +4688,79 @@ int main(int argc, const char *argv[])
     log_trace("cleaning statistics[0].popfreq");
     free(statistics[0].popfreq);
 
+    //free rSFS stats
+    if(args.include_rsfs) {
+        log_trace("cleaning rSFS weights");
+        for(x=0;x<args.int_total_nsam;x++) {
+            free(rw->ww[x]);
+            free(rw->wt[x]);
+            free(rw->wfw[x]);
+            free(rw->wfl[x]);
+            free(rw->wl[x]);
+            free(rw->wwA[x]);
+            free(rw->wtA[x]);
+            free(rw->wfwA[x]);
+            free(rw->wflA[x]);
+            free(rw->wlA[x]);
+            free(rw->wphi_i[x]);
+            for(z=0;z<x+1;z++)
+                free(rw->wpsi_ij[x][z]);
+            free(rw->wpsi_ij[x]);
+        }
+        free(rw->ww);
+        free(rw->wt);
+        free(rw->wfw);
+        free(rw->wfl);
+        free(rw->wl);
+        free(rw->wwA);
+        free(rw->wtA);
+        free(rw->wfwA);
+        free(rw->wflA);
+        free(rw->wlA);
+        free(rw->wphi_i);
+        free(rw->wpsi_ij);
+        
+        log_trace("cleaning rSFS rweights pointer");
+        free(rw);
+        
+        log_trace("cleaning statistics[0].rS");
+        free(statistics[0].rS);
+        log_trace("cleaning statistics[0].rSo");
+        free(statistics[0].rSo);
+        log_trace("cleaning statistics[0].rthetaS");
+        free(statistics[0].rthetaS);
+        log_trace("cleaning statistics[0].rthetaT");
+        free(statistics[0].rthetaT);
+        log_trace("cleaning statistics[0].rthetaSo");
+        free(statistics[0].rthetaSo);
+        log_trace("cleaning statistics[0].rthetaTo");
+        free(statistics[0].rthetaTo);
+        log_trace("cleaning statistics[0].rthetaFL");
+        free(statistics[0].rthetaFL);
+        log_trace("cleaning statistics[0].rthetaFW");
+        free(statistics[0].rthetaFW);
+        log_trace("cleaning statistics[0].rthetaL");
+        free(statistics[0].rthetaL);
+        log_trace("cleaning statistics[0].rthetaSA");
+        free(statistics[0].rthetaSA);
+        log_trace("cleaning statistics[0].rthetaTA");
+        free(statistics[0].rthetaTA);
+        log_trace("cleaning statistics[0].rDtaj");
+        free(statistics[0].rDtaj);
+        log_trace("cleaning statistics[0].rDfl");
+        free(statistics[0].rDfl);
+        log_trace("cleaning statistics[0].rFfl");
+        free(statistics[0].rFfl);
+        log_trace("cleaning statistics[0].rHnfw");
+        free(statistics[0].rHnfw);
+        log_trace("cleaning statistics[0].rEz");
+        free(statistics[0].rEz);
+        log_trace("cleaning statistics[0].rYach");
+        free(statistics[0].rYach);
+        log_trace("cleaning statistics[0].rFH");
+        free(statistics[0].rFH);
+
+    }
     log_trace("cleaning statistics");
     free(statistics);
 
@@ -4861,85 +4929,17 @@ int main(int argc, const char *argv[])
         log_trace("cleaning piter");
         free(piter);
     }
-    //free rSFS stats
-    if(args.include_rsfs) {
-        log_trace("cleaning rSFS weights");
-        for(x=0;x<args.int_total_nsam;x++) {
-            free(rw->ww[x]);
-            free(rw->wt[x]);
-            free(rw->wfw[x]);
-            free(rw->wfl[x]);
-            free(rw->wl[x]);
-            free(rw->wwA[x]);
-            free(rw->wtA[x]);
-            free(rw->wfwA[x]);
-            free(rw->wflA[x]);
-            free(rw->wlA[x]);
-            free(rw->wphi_i[x]);
-            for(z=0;z<x+1;z++)
-                free(rw->wpsi_ij[x][z]);
-            free(rw->wpsi_ij[x]);
-        }
-        free(rw->ww);
-        free(rw->wt);
-        free(rw->wfw);
-        free(rw->wfl);
-        free(rw->wl);
-        free(rw->wwA);
-        free(rw->wtA);
-        free(rw->wfwA);
-        free(rw->wflA);
-        free(rw->wlA);
-        free(rw->wphi_i);
-        free(rw->wpsi_ij);
-        
-        log_trace("cleaning rSFS rweights pointer");
-        free(rw);
-        
-        log_trace("cleaning statistics[0].rS");
-        free(statistics[0].rS);
-        log_trace("cleaning statistics[0].rSo");
-        free(statistics[0].rSo);
-        log_trace("cleaning statistics[0].rthetaS");
-        free(statistics[0].rthetaS);
-        log_trace("cleaning statistics[0].rthetaT");
-        free(statistics[0].rthetaT);
-        log_trace("cleaning statistics[0].rthetaSo");
-        free(statistics[0].rthetaSo);
-        log_trace("cleaning statistics[0].rthetaTo");
-        free(statistics[0].rthetaTo);
-        log_trace("cleaning statistics[0].rthetaFL");
-        free(statistics[0].rthetaFL);
-        log_trace("cleaning statistics[0].rthetaFW");
-        free(statistics[0].rthetaFW);
-        log_trace("cleaning statistics[0].rthetaL");
-        free(statistics[0].rthetaL);
-        log_trace("cleaning statistics[0].rthetaSA");
-        free(statistics[0].rthetaSA);
-        log_trace("cleaning statistics[0].rthetaTA");
-        free(statistics[0].rthetaTA);
-        log_trace("cleaning statistics[0].rDtaj");
-        free(statistics[0].rDtaj);
-        log_trace("cleaning statistics[0].rDfl");
-        free(statistics[0].rDfl);
-        log_trace("cleaning statistics[0].rFfl");
-        free(statistics[0].rFfl);
-        log_trace("cleaning statistics[0].rHnfw");
-        free(statistics[0].rHnfw);
-        log_trace("cleaning statistics[0].rEz");
-        free(statistics[0].rEz);
-        log_trace("cleaning statistics[0].rYach");
-        free(statistics[0].rYach);
-        log_trace("cleaning statistics[0].rFH");
-        free(statistics[0].rFH);
-
-    }
     
     // fix issue : free f if formatfile is not tfa
     if (args.formatfile != TFA_FORMAT)
     {
         log_trace("cleaning f");
         free(f);
+    }
+    if (args.formatfile > 0)
+    {
+        log_trace("Cleaning file_input and file_input_gz");
+        //fzclose(file_input, &file_input_gz);
     }
 
     log_trace("cleaning args.r2i_ploidies");
